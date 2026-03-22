@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>SIG | ENTRADA DE NOTAS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'sig-blue': '#0056b3',
+                        'sig-dark': '#1e293b'
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/css/sig-ui.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #f1f5f9; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
+        .grid-container { flex-grow: 1; overflow-y: auto; padding: 15px; }
+        .sig-table-container { background: white; border: 1px solid #e2e8f0; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .sticky-header { position: sticky; top: 0; background: #f8fafc; z-index: 10; border-bottom: 2px solid #0056b3; }
+        .sig-btn-primary { background: #0056b3; color: white; }
+    </style>
+</head>
+
+<body>
+    <!-- TOOLBAR CORPORATIVA -->
+    <div class="sig-toolbar p-2 border-b border-slate-300 gap-1">
+        <button class="sig-btn-icon" title="Confirmar Entrada e Gerar Estoque" onclick="window.confirmarNota()"><span class="material-symbols-outlined !text-emerald-600">check_circle</span></button>
+        <button class="sig-btn-icon" title="Gravar Rascunho" onclick="window.salvarRascunho()"><span class="material-symbols-outlined !text-blue-600">save</span></button>
+        <button class="sig-btn-icon" title="Nova Nota" onclick="window.novaNota()"><span class="material-symbols-outlined">add_box</span></button>
+        <div class="sig-divider"></div>
+        <button class="sig-btn-icon !bg-emerald-50 border-emerald-200" title="IMPORTAR XML DA NOTA FISCAL" onclick="window.importarXML()"><span class="material-symbols-outlined !text-emerald-700">upload_file</span></button>
+        <div class="sig-divider"></div>
+        <button class="sig-btn-icon" title="Voltar" onclick="window.voltar()"><span class="material-symbols-outlined">arrow_back</span></button>
+        <div class="flex-grow text-center text-blue-900">
+            <span class="text-[10px] font-black tracking-widest text-slate-400 uppercase">Gestão de Compras e Entradas (V58)</span>
+        </div>
+        <div class="sig-divider"></div>
+        <button class="sig-btn-icon" title="Configurações"><span class="material-symbols-outlined">settings</span></button>
+    </div>
+
+    <div class="grid-container">
+        <!-- SEÇÃO: CABEÇALHO DA NOTA -->
+        <div class="sig-fieldset mb-4">
+            <span class="sig-legend !text-sig-blue font-bold flex items-center gap-1">
+                <span class="material-symbols-outlined !text-[14px]">description</span> DADOS DA NOTA FISCAL
+            </span>
+            <div class="grid grid-cols-6 gap-3 p-1">
+                <div class="col-span-1">
+                    <label class="sig-label-dense">NÚMERO DA NOTA</label>
+                    <input type="text" id="ent-numero" class="sig-input-dense w-full font-bold" placeholder="000.000.000">
+                </div>
+                <div class="col-span-1">
+                    <label class="sig-label-dense">SÉRIE</label>
+                    <input type="text" id="ent-serie" class="sig-input-dense w-full text-center" value="1">
+                </div>
+                <div class="col-span-2">
+                    <label class="sig-label-dense">FORNECEDOR</label>
+                    <div class="flex gap-1">
+                        <select id="ent-fornecedor-id" class="sig-input-dense w-full uppercase font-bold text-blue-900 border-blue-200 bg-blue-50/30">
+                            <option value="0">SELECIONE O FORNECEDOR...</option>
+                        </select>
+                        <button class="sig-btn-icon !w-7 !h-7 bg-white"><span class="material-symbols-outlined !text-[16px]">person_add</span></button>
+                    </div>
+                </div>
+                <div class="col-span-1">
+                    <label class="sig-label-dense">DATA EMISSÃO</label>
+                    <input type="date" id="ent-data-emissao" class="sig-input-dense w-full">
+                </div>
+                <div class="col-span-1">
+                    <label class="sig-label-dense">SITUAÇÃO</label>
+                    <div id="ent-status" class="flex items-center justify-center h-6 px-3 bg-amber-100 text-amber-700 font-black text-[10px] rounded border border-amber-300 uppercase">Rascunho</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEÇÃO: ITENS DA NOTA -->
+        <div class="sig-fieldset mb-4 flex-grow flex flex-col min-h-[400px]">
+            <span class="sig-legend !text-sig-blue font-bold flex items-center gap-1">
+                <span class="material-symbols-outlined !text-[14px]">shopping_cart</span> ITENS E CONFERÊNCIA LOGÍSTICA
+            </span>
+            
+            <div class="flex gap-2 p-1 bg-slate-100/50 border-b border-slate-200 mb-2 items-end">
+                <div class="w-1/3">
+                    <label class="sig-label-dense font-bold text-blue-800">BUSCAR PRODUTO (SKU OU DESCRIÇÃO)</label>
+                    <div class="flex gap-1">
+                        <input type="text" id="busca-produto" class="sig-input-dense w-full font-bold uppercase" placeholder="Procurar peça ou ler código de barra...">
+                        <button class="sig-btn-icon !w-7 !h-7 bg-white border border-slate-300"><span class="material-symbols-outlined !text-[18px]">search</span></button>
+                    </div>
+                </div>
+                <div class="flex-grow"></div>
+                <button onclick="window.adicionarItem()" class="sig-btn sig-btn-primary !h-7 !px-4 hover:brightness-110 !font-bold flex items-center gap-1">
+                    <span class="material-symbols-outlined !text-[16px]">add_shopping_cart</span> INCLUIR ITEM
+                </button>
+            </div>
+
+            <div class="sig-table-container overflow-hidden flex-grow bg-white">
+                <div class="overflow-y-auto max-h-[500px]">
+                    <table class="sig-table text-[10px] w-full">
+                        <thead class="sticky-header">
+                            <tr>
+                                <th class="w-10">SEQ</th>
+                                <th class="w-[120px]">SKU / CÓDIGO</th>
+                                <th>DESCRIÇÃO DO PRODUTO</th>
+                                <th class="w-20">QTD</th>
+                                <th class="w-28 text-right">VALOR UNIT.</th>
+                                <th class="w-28 text-right">TOTAL ITEM</th>
+                                <th class="w-48">ENDEREÇO DESTINO</th>
+                                <th class="w-10 text-center">X</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lista-itens-entrada">
+                            <tr><td colspan="8" class="text-center p-12 text-slate-400 italic">Nenhum item adicionado à nota ainda.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEÇÃO: TOTAIS E RESUMO -->
+        <div class="grid grid-cols-4 gap-4">
+            <div class="col-span-3">
+                <div class="sig-fieldset h-full bg-white">
+                    <span class="sig-legend font-bold">OBSERVAÇÕES DA ENTRADA</span>
+                    <textarea id="ent-obs" class="sig-input w-full h-16 text-xs p-2 border-slate-200" placeholder="Ex: Frete pago por fora, nota com desconto especial..."></textarea>
+                </div>
+            </div>
+            <div class="col-span-1">
+                <div class="sig-fieldset bg-slate-50 !border-slate-400">
+                    <span class="sig-legend !bg-slate-700 !text-white font-black text-right pr-2">RESUMO FINANCEIRO (R$)</span>
+                    <div class="flex flex-col gap-1.5 p-1">
+                        <div class="flex justify-between border-b border-dotted border-slate-300 pb-1">
+                            <span class="text-[9px] font-bold text-slate-500 uppercase">Total Bruto</span>
+                            <span id="ent-tot-prod" class="text-[11px] font-bold text-slate-700">0,00</span>
+                        </div>
+                        <div class="flex justify-between border-b border-dotted border-slate-300 pb-1">
+                            <span class="text-[9px] font-bold text-slate-500 uppercase">Frete/IPI/ST</span>
+                            <span id="ent-tot-imp" class="text-[11px] font-bold text-slate-700">0,00</span>
+                        </div>
+                        <div class="flex justify-between pt-1">
+                            <span class="text-[10px] font-black text-sig-blue uppercase tracking-tighter">Total Líquido</span>
+                            <span id="ent-tot-geral" class="text-[16px] font-black text-sig-blue">0,00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- STATUS BAR -->
+    <div class="sig-statusbar border-t !border-slate-300 bg-white">
+        <div class="sig-statusbar-left">
+            <span class="sig-statusbar-label uppercase">Módulo:</span>
+            <span class="sig-statusbar-value font-black">ENTRADA DE MERCADORIA v1.0 (V56)</span>
+        </div>
+        <div class="sig-statusbar-right divide-x divide-slate-300">
+            <div class="sig-statusbar-item px-3 flex items-center gap-1">
+                <span class="sig-statusbar-label">USUÁRIO:</span>
+                <span class="sig-statusbar-value font-bold text-slate-800">ADMINISTRADOR</span>
+            </div>
+            <div class="sig-statusbar-item px-3">
+                <span class="sig-statusbar-value text-emerald-600 font-extrabold flex items-center gap-1">
+                    <span class="material-symbols-outlined !text-[12px]">verified</span> CONECTADO
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE PRODUTO GLOBAL (Para pré-cadastro rápido) -->
+    <script src="../../componentes/modal_produto.js"></script>
+    <script src="entradas.js"></script>
+</body>
+</html>

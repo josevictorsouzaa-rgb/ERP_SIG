@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>SISTEMA CORE - HUB</title>
+    <!-- Tailwind CSS v3 -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <style data-purpose="base-styling">
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #1f2937;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Cores customizadas com gradientes */
+        .bg-pos-blue {
+            background: linear-gradient(to bottom, #3b82f6, #2563eb);
+        }
+
+        .bg-pos-orange {
+            background: linear-gradient(to bottom, #f97316, #ea580c);
+        }
+
+        .bg-pos-dark-grey {
+            background: linear-gradient(to bottom, #4b5563, #374151);
+        }
+
+        .bg-pos-red {
+            background: linear-gradient(to bottom, #ef4444, #dc2626);
+        }
+
+        .bg-pos-green {
+            background: linear-gradient(to bottom, #10b981, #059669);
+        }
+
+        .bg-pos-lime {
+            background: linear-gradient(to bottom, #84cc16, #65a30d);
+        }
+
+        .bg-pos-emerald {
+            background: linear-gradient(to bottom, #059669, #047857);
+        }
+
+        .bg-pos-teal {
+            background: linear-gradient(to bottom, #0d9488, #0f766e);
+        }
+
+        .bg-pos-slate {
+            background: linear-gradient(to bottom, #64748b, #475569);
+        }
+
+        .bg-pos-dark-blue {
+            background: linear-gradient(to bottom, #1e40af, #1e3a8a);
+        }
+
+        .bg-pos-deep-red {
+            background: linear-gradient(to bottom, #991b1b, #7f1d1d);
+        }
+
+        .bg-pos-gold {
+            background: linear-gradient(to bottom, #d97706, #b45309);
+        }
+
+        .bg-pos-indigo {
+            background: linear-gradient(to bottom, #4f46e5, #4338ca);
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+</head>
+
+<body>
+
+    <!-- Cabeçalho Estilo Omie (Largura Final 100%) -->
+    <header class="bg-[#001b2b] text-white w-full px-6 py-2 flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+            <div class="flex items-center space-x-1">
+                <span class="text-[#00e5ff] font-extrabold text-2xl tracking-tighter uppercase">sig</span>
+                <span class="text-slate-400 text-[10px] mt-1 font-bold">| SISTEMA CORE ERP</span>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-6 text-slate-300">
+            <div class="flex items-center space-x-4 border-r border-slate-700 pr-4">
+                <span class="material-symbols-outlined cursor-pointer hover:text-[#00e5ff] text-xl">search</span>
+                <span class="material-symbols-outlined cursor-pointer hover:text-[#00e5ff] text-xl">grid_view</span>
+                <span class="material-symbols-outlined cursor-pointer hover:text-[#00e5ff] text-xl">verified_user</span>
+                <button title="Meu Perfil - Perfil do Usuário" onclick="abrirJanela('perfil')"
+                    class="flex items-center">
+                    <span class="material-symbols-outlined cursor-pointer hover:text-[#00e5ff] text-xl">settings</span>
+                </button>
+                <span class="material-symbols-outlined cursor-pointer hover:text-[#00e5ff] text-xl">notifications</span>
+            </div>
+
+            <div class="flex items-center space-x-3 pl-2">
+                <div class="text-right">
+                    <div class="text-[11px] font-semibold leading-none">THALES</div>
+                    <div class="text-[9px] text-slate-500 font-bold uppercase">Administrador</div>
+                </div>
+                <div
+                    class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold ring-1 ring-slate-500">
+                    T</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Linha de detalhe 100% largura -->
+    <div class="w-full h-[2px] bg-[#00e5ff] opacity-80 shadow-md"></div>
+
+    <main class="flex-grow overflow-y-auto p-8">
+        <div class="max-w-[1700px] mx-auto">
+
+            <section class="mb-10">
+                <h2 class="text-xl font-light mb-4 text-slate-700 uppercase tracking-wide">Mais Acessados</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 lg:grid-cols-7">
+                    <button onclick="abrirJanela('produtos')"
+                        class="bg-pos-indigo hover:brightness-110 transition-all shadow-sm flex flex-col justify-between items-end text-white border-b-2 border-[#312e81] h-20 rounded-md p-2">
+                        <span class="material-symbols-outlined self-start">inventory_2</span>
+                        <span class="text-[10px] font-medium text-right uppercase">Produtos</span>
+                    </button>
+                    <button onclick="abrirJanela('parametros')"
+                        class="bg-pos-dark-grey hover:brightness-110 transition-all shadow-sm flex flex-col justify-between items-end text-white border-b-2 border-slate-800 h-20 rounded-md p-2">
+                        <span class="material-symbols-outlined self-start">settings</span>
+                        <span class="text-[10px] font-medium text-right uppercase">Parâmetros</span>
+                    </button>
+                </div>
+            </section>
+
+            <div class="grid grid-cols-1 lg:grid-cols-7 gap-8">
+                <!-- Operacional -->
+                <section class="lg:col-span-3">
+                    <h2 class="text-xl font-light mb-4 text-slate-700 uppercase tracking-wide">Operacional</h2>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="abrirJanela('produtos')"
+                            class="bg-pos-indigo hover:brightness-110 transition-all p-4 h-32 rounded-lg shadow-sm flex flex-col justify-between items-end text-white">
+                            <span class="material-symbols-outlined text-4xl self-start">inventory_2</span>
+                            <span class="font-medium text-right text-sm uppercase">Produtos</span>
+                        </button>
+                        <button onclick="abrirJanela('pedidos_compra')"
+                            class="bg-pos-dark-blue hover:brightness-110 transition-all p-4 h-32 rounded-lg shadow-sm flex flex-col justify-between items-end text-white">
+                            <span class="material-symbols-outlined text-4xl self-start">shopping_cart_checkout</span>
+                            <span class="font-medium text-right text-sm uppercase">Pedidos de Compra</span>
+                        </button>
+                        <button onclick="abrirJanela('enderecamento')"
+                            class="bg-[#334155] hover:brightness-110 transition-all p-4 h-32 rounded-lg shadow-sm flex flex-col justify-between items-end text-white border-b-2 border-slate-900">
+                            <span class="material-symbols-outlined text-4xl self-start">location_on</span>
+                            <span class="font-medium text-right text-sm uppercase">Endereçamento</span>
+                        </button>
+                        <button onclick="abrirJanela('entradas')"
+                            class="bg-pos-emerald hover:brightness-110 transition-all p-4 h-32 rounded-lg shadow-sm flex flex-col justify-between items-end text-white border-b-2 border-emerald-900">
+                            <span class="material-symbols-outlined text-4xl self-start">shopping_bag</span>
+                            <span class="font-medium text-right text-sm uppercase">Entrada de Mercadoria</span>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Fiscal -->
+                <section class="lg:col-span-2">
+                    <h2 class="text-xl font-light mb-4 text-slate-700 uppercase tracking-wide">Fiscal</h2>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="abrirJanela('fiscal')"
+                            class="bg-pos-gold hover:brightness-110 transition-all p-4 h-32 rounded-lg shadow-sm flex flex-col justify-between items-end text-white border-b-2 border-amber-900">
+                            <span class="material-symbols-outlined text-4xl self-start">account_balance</span>
+                            <span class="font-medium text-right text-sm uppercase">Parâmetros Fiscais</span>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Utilitários -->
+                <section class="lg:col-span-2">
+                    <h2 class="text-xl font-light mb-4 text-slate-700 uppercase tracking-wide">Utilitários</h2>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="abrirJanela('parametros')"
+                            class="bg-pos-dark-blue hover:brightness-110 transition-all p-4 h-32 rounded-lg shadow-sm flex flex-col justify-between items-end text-white">
+                            <span class="material-symbols-outlined text-4xl self-start">admin_panel_settings</span>
+                            <span class="font-medium text-right text-sm uppercase">Parâmetros</span>
+                        </button>
+                    </div>
+                </section>
+            </div>
+
+        </div>
+    </main>
+
+    <div class="fixed bottom-12 right-6 z-50">
+        <button onclick="encerrarSistema()"
+            class="bg-pos-red hover:brightness-110 transition-all shadow-xl flex items-center space-x-2 text-white rounded-full px-6 py-3 border-b-2 border-red-700">
+            <span class="material-symbols-outlined">logout</span>
+            <span class="font-bold uppercase tracking-wider text-sm">Sair</span>
+        </button>
+    </div>
+
+    <footer class="bg-slate-200 border-t border-slate-300 shrink-0 z-50">
+        <div class="sig-progress-bar-container">
+            <div id="footer-progress" class="sig-progress-bar-fill" style="width: 0%;"></div>
+        </div>
+        <div
+            class="flex flex-wrap items-center justify-between px-4 py-1 text-[10px] text-slate-600 font-bold uppercase tracking-tight">
+            <div class="flex items-center space-x-4">
+                <span class="flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">terminal</span>
+                    TERMINAL: 01 (CORE)
+                </span>
+            </div>
+            <div class="flex items-center space-x-4 divide-x divide-slate-400">
+                <div class="px-3">Usuário: Admin</div>
+                <div class="px-3" id="data-hora-footer">--/--/---- --:--:--</div>
+                <div class="px-3">Banco: <span class="text-emerald-600 font-extrabold">PostgreSQL</span></div>
+                <div class="px-3 text-slate-400 font-medium lowercase">v2.0.14</div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        setInterval(() => {
+            const agora = new Date();
+            const el = document.getElementById('data-hora-footer');
+            if (el) el.innerText = agora.toLocaleString('pt-br');
+        }, 1000);
+
+        // CONTROLE DE CARREGAMENTO (PROGRESS BAR)
+        function setLoading(isLoading) {
+            const bar = document.getElementById('footer-progress');
+            if (!bar) return;
+            if (isLoading) {
+                bar.classList.add('loading');
+                bar.style.width = '30%';
+            } else {
+                bar.classList.remove('loading');
+                bar.style.width = '0%';
+            }
+        }
+
+        // Função para abrir janelas nativas independentes via Go
+        function abrirJanela(nome) {
+            if (window.parent && window.parent.go) {
+                window.parent.go.main.App.AbrirModulo(nome);
+            } else if (window.go) {
+                window.go.main.App.AbrirModulo(nome);
+            } else {
+                alert("Erro: Motor Wails (Go) não foi detectado no Frontend.");
+            }
+        }
+
+        // Função para encerrar o programa chamando o Go
+        function encerrarSistema() {
+            if (confirm("Deseja realmente sair do sistema?")) {
+                if (window.parent && window.parent.runtime) {
+                    window.parent.runtime.Quit();
+                } else if (window.runtime) {
+                    window.runtime.Quit();
+                }
+            }
+        }
+    </script>
+
+</body>
+
+</html>

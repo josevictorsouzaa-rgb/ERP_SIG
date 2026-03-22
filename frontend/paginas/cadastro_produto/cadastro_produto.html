@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>SIG - NOVO CADASTRO DE PRODUTO</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'sig-blue': '#1e40af',
+                        'sig-blue-dark': '#001b2b',
+                        'sig-brand-cyan': '#00e5ff',
+                        'sig-border': '#cbd5e1',
+                        'sig-bg-light': '#f8fafc'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="../../assets/css/sig-ui.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@300..700,0..1&display=swap"
+        rel="stylesheet" />
+</head>
+
+<body class="bg-slate-200 h-screen flex flex-col overflow-hidden">
+
+    <!-- CABEÇALHO ESTILO WINDOWS (Nativo Wails já tem barra, mas mantemos o branding) -->
+    <header class="bg-sig-blue-dark p-2 px-4 flex justify-between items-center shrink-0">
+        <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-sig-brand-cyan text-base">edit_note</span>
+            <h1 class="text-white font-bold text-[11px] uppercase tracking-wider">Cadastro Master de Produto</h1>
+        </div>
+        <div class="text-white/40 text-[9px] font-bold uppercase tracking-widest">
+            F3 - Interface de Engenharia
+        </div>
+    </header>
+
+    <main class="flex-1 overflow-hidden flex flex-col bg-white">
+        <!-- CORPO DO CADASTRO -->
+        <div class="flex-1 overflow-hidden flex gap-2 p-2">
+            <!-- COLUNA ESQUERDA (DADOS CADASTRAIS) -> 70% Width -->
+            <div class="w-[70%] flex flex-col gap-0 h-full overflow-hidden pr-0 custom-scrollbar">
+
+                <!-- BLOCO 1: IDENTIFICAÇÃO -->
+                <div class="sig-fieldset mt-2">
+                    <span class="sig-legend">Identificação do Item</span>
+                    <div class="flex gap-2">
+                        <div class="w-20">
+                            <label class="sig-label-dense">ID</label>
+                            <input type="text" class="sig-input-dense w-full bg-slate-100 font-bold text-center"
+                                value="AUTO" readonly tabindex="-1">
+                        </div>
+                        <div class="w-32">
+                            <label class="sig-label-dense">Cód. Fabricante</label>
+                            <input type="text" id="prod-cod-fab" class="sig-input-dense w-full uppercase"
+                                placeholder="EX: AL-548">
+                        </div>
+                        <div class="w-40">
+                            <label class="sig-label-dense">Cód. Original (OEM)</label>
+                            <input type="text" class="sig-input-dense w-full uppercase" placeholder="EX: 5U0.413.031">
+                        </div>
+                        <div class="w-32">
+                            <label class="sig-label-dense">Marca</label>
+                            <div class="flex gap-1">
+                                <input type="text" id="prod-marca" class="sig-input-dense w-full uppercase">
+                                <button onclick="abrirSelecaoMarca()" type="button"
+                                    class="bg-slate-200 hover:bg-slate-300 border border-slate-300 rounded-sm px-1 h-6 shrink-0 flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-[14px]">search</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <label class="sig-label-dense">EAN-13 (Código de Barras)</label>
+                            <input type="text" class="sig-input-dense w-full">
+                        </div>
+                    </div>
+                    <div class="flex gap-2 mt-2">
+                        <div class="flex-1">
+                            <label class="sig-label-dense">Descrição Completa (Utilizada na NFe)</label>
+                            <input type="text" id="prod-descricao"
+                                class="sig-input-dense w-full uppercase text-slate-900 font-semibold text-[12px]"
+                                placeholder="DESCREVA O PRODUTO AQUI...">
+                        </div>
+                        <div class="w-[30%]">
+                            <label class="sig-label-dense">Nome Popular (Apelido)</label>
+                            <input type="text" id="prod-nome-popular" class="sig-input-dense w-full uppercase" placeholder="Ex: Campana/Burrinho">
+                        </div>
+                    </div>
+
+                    <!-- BLOCO DE LOGÍSTICA -->
+                    <div class="flex gap-2 mt-2 bg-slate-50 p-1.5 rounded-sm border border-slate-200">
+                        <div class="w-24">
+                            <label class="sig-label-dense">Unidade</label>
+                            <select id="prod-unidade-id" class="sig-input-dense w-full font-bold">
+                                <option value="0">UN</option>
+                            </select>
+                        </div>
+                        <div class="w-28">
+                            <label class="sig-label-dense">Fator Conv.</label>
+                            <input type="text" id="prod-fator-conversao" class="sig-input-dense w-full text-center" value="1.0000">
+                        </div>
+                        <div class="flex-1 grid grid-cols-4 gap-2">
+                            <div>
+                                <label class="sig-label-dense">Peso (KG)</label>
+                                <input type="text" id="prod-peso" class="sig-input-dense w-full text-right" value="0.000">
+                            </div>
+                            <div>
+                                <label class="sig-label-dense">Alt (cm)</label>
+                                <input type="text" id="prod-altura" class="sig-input-dense w-full text-right" value="0.00">
+                            </div>
+                            <div>
+                                <label class="sig-label-dense">Larg (cm)</label>
+                                <input type="text" id="prod-largura" class="sig-input-dense w-full text-right" value="0.00">
+                            </div>
+                            <div>
+                                <label class="sig-label-dense">Comp (cm)</label>
+                                <input type="text" id="prod-comprimento" class="sig-input-dense w-full text-right" value="0.00">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BLOCO 2: APLICAÇÃO TÉCNICA -->
+                <div class="sig-fieldset sig-fieldset-flush">
+                    <span class="sig-legend">Aplicação Técnica Detalhada</span>
+                    <div
+                        class="h-[150px] overflow-y-auto w-full bg-slate-50 relative min-h-0 border border-slate-200 rounded-sm">
+                        <table class="sig-table sig-table-sm w-full">
+                            <thead class="sticky top-0 shadow-sm z-10">
+                                <tr>
+                                    <th class="w-16">Marca</th>
+                                    <th>Modelo</th>
+                                    <th>Versão / Motor</th>
+                                    <th class="w-20">Ano Início</th>
+                                    <th class="w-20">Ano Fim</th>
+                                    <th class="w-16 sig-text-center">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="lista-aplicacoes-tecnicas">
+                                <!-- Preenchido via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <button onclick="abrirModalAplicacao()"
+                        class="mt-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold px-4 py-1.5 text-[10px] rounded-sm shadow-sm flex items-center gap-2">
+                        <span class="material-symbols-outlined !text-[14px]">add_circle</span> ADICIONAR NOVA APLICAÇÃO
+                        [INS]
+                    </button>
+                </div>
+
+                <!-- BLOCO 3: CUSTO E PREÇO -->
+                <div class="flex gap-2">
+                    <div class="sig-fieldset flex-1">
+                        <span class="sig-legend">Formação de Custo e Fiscal</span>
+                        <div class="flex gap-2">
+                            <div class="flex-1">
+                                <label class="sig-label-dense">Custo Base</label>
+                                <input type="text" id="prod-custo-base"
+                                    class="sig-input-dense w-full text-right font-mono" value="0,00">
+                            </div>
+                            <div class="w-16">
+                                <label class="sig-label-dense">IPI %</label>
+                                <input type="text" id="prod-ipi" class="sig-input-dense w-full text-right" value="0">
+                            </div>
+                            <div class="flex-1">
+                                <label class="sig-label-dense">ST/Frete R$</label>
+                                <input type="text" id="prod-st-frete" class="sig-input-dense w-full text-right"
+                                    value="0,00">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sig-fieldset sig-fieldset-flush flex-1">
+                        <span class="sig-legend">Canais de Venda / Preços</span>
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr class="bg-slate-200 text-[10px] text-slate-600 font-bold border-b border-slate-300">
+                                    <th class="text-left py-1 pl-2">Tabela</th>
+                                    <th class="text-left py-1">MKP%</th>
+                                    <th class="text-right py-1 pr-2 w-28">Preço R$</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b border-slate-100">
+                                    <td class="py-1 px-2 text-[11px] font-semibold text-slate-700">Balcão</td>
+                                    <td><input type="text" id="prod-mkp-balcao" class="sig-input-dense w-16 text-center"
+                                            value="0"></td>
+                                    <td class="px-2"><input type="text" id="prod-preco-balcao"
+                                            class="sig-input-dense w-full sig-price-input sig-box-green" value="0,00">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="py-1 px-2 text-[11px] font-semibold text-[#1e40af]">Oficina</td>
+                                    <td><input type="text" id="prod-mkp-oficina"
+                                            class="sig-input-dense w-16 text-center" value="0"></td>
+                                    <td class="px-2 pb-1 pt-1"><input type="text" id="prod-preco-oficina"
+                                            class="sig-input-dense w-full sig-price-input sig-box-green" value="0,00">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLUNA DIREITA -->
+            <div class="w-[30%] flex flex-col gap-0 h-full">
+                <div class="sig-fieldset">
+                    <span class="sig-legend">Visual do Produto</span>
+                    <div
+                        class="w-full bg-[#f1f5f9] border border-[#cbd5e1] h-[150px] flex items-center justify-center text-[#94a3b8] rounded-sm mb-2 mt-2 shadow-inner relative overflow-hidden group hover:bg-[#e2e8f0] transition-colors cursor-pointer">
+                        <span class="material-symbols-outlined text-[48px] opacity-20">image</span>
+                    </div>
+                    <button
+                        class="w-full bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 font-bold text-[10px] py-1.5 rounded-sm flex justify-center items-center gap-2">
+                        <span class="material-symbols-outlined text-[14px]">linked_camera</span> Vincular Imagem
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RODAPÉ FIXO -->
+        <footer class="h-[50px] bg-[#e2e8f0] border-t border-[#cbd5e1] flex items-center justify-end px-4 gap-3">
+            <button onclick="ConfirmarSair()" class="sig-btn text-slate-600 hover:bg-white px-6 h-9 font-bold">CANCELAR
+                (ESC)</button>
+            <button onclick="GravarProduto()"
+                class="sig-btn sig-btn-success px-10 h-9 shadow-lg font-black tracking-widest">
+                <span class="material-symbols-outlined">save</span> GRAVAR REGISTRO (F5)
+            </button>
+        </footer>
+    </main>
+
+    <!-- MODAL NOVA APLICAÇÃO (VERTICAL STAGING) -->
+    <div id="modal-nova-aplicacao"
+        class="fixed inset-0 z-[200] bg-black/60 hidden items-center justify-center backdrop-blur-[1px]">
+        <div class="bg-white w-[500px] max-h-[90vh] rounded-sm shadow-2xl flex flex-col border border-slate-400">
+            <div class="bg-sig-blue-dark p-2 px-4 flex justify-between items-center shrink-0">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-sig-brand-cyan text-base">directions_car</span>
+                    <h3 class="text-white font-bold text-[11px] uppercase tracking-wider">Inclusão Múltipla de
+                        Aplicações</h3>
+                </div>
+                <button onclick="fecharModalAplicacao()"
+                    class="hover:bg-red-600 transition-colors px-2 h-full text-white">
+                    <span class="material-symbols-outlined text-base">close</span>
+                </button>
+            </div>
+            <div class="p-4 bg-slate-50 border-b border-slate-200">
+                <div class="grid grid-cols-12 gap-3">
+                    <div class="col-span-4">
+                        <label class="sig-label">Marca</label>
+                        <select id="app-marca" class="sig-input w-full">
+                            <option>VW</option>
+                            <option>FIAT</option>
+                            <option>CHEVROLET</option>
+                            <option>FORD</option>
+                            <option>TOYOTA</option>
+                            <option>HONDA</option>
+                        </select>
+                    </div>
+                    <div class="col-span-8">
+                        <label class="sig-label">Modelo</label>
+                        <input type="text" id="app-modelo" class="sig-input w-full uppercase" placeholder="EX: GOL G5">
+                    </div>
+                    <div class="col-span-6">
+                        <label class="sig-label">Vrs / Motor</label>
+                        <input type="text" id="app-motor" class="sig-input w-full uppercase" placeholder="EX: 1.0 8V">
+                    </div>
+                    <div class="col-span-3">
+                        <label class="sig-label">Início</label>
+                        <input type="text" id="app-ano-inicio" class="sig-input w-full text-center" placeholder="2000">
+                    </div>
+                    <div class="col-span-3">
+                        <label class="sig-label">Fim</label>
+                        <input type="text" id="app-ano-fim" class="sig-input w-full text-center" placeholder="2024">
+                    </div>
+                </div>
+                <button onclick="adicionarParaPrevia()" class="w-full mt-4 sig-btn sig-btn-primary h-10 shadow-md">
+                    ADICIONAR À LISTA [ENTER]
+                </button>
+            </div>
+            <div class="flex-1 overflow-y-auto bg-white p-2 min-h-[150px]">
+                <table class="sig-table sig-table-sm w-full">
+                    <tbody id="previa-novas-aplicacoes"></tbody>
+                </table>
+            </div>
+            <div class="bg-slate-100 p-3 border-t border-slate-300 flex justify-between items-center">
+                <span id="contador-previa" class="text-[9px] font-bold text-slate-500 uppercase">0 ITENS</span>
+                <button onclick="confirmarTudoAplicacao()" class="sig-btn sig-btn-success px-6 h-8">CONFIRMAR TUDO
+                    [F5]</button>
+            </div>
+        </div>
+    </div>
+
+    <script shadow>
+        let stagingAplicacoes = [];
+
+        window.onload = async () => {
+            try {
+                window.goEngine = window.go || window.parent.go;
+                if (window.goEngine) {
+                    const units = await window.goEngine.main.App.ListarUnidadesMedida();
+                    const sel = document.getElementById('prod-unidade-id');
+                    sel.innerHTML = '';
+                    units.forEach(u => sel.innerHTML += `<option value="${u.id}">${u.sigla} - ${u.descricao}</option>`);
+                }
+            } catch(e) { console.error(e); }
+        };
+
+        function abrirModalAplicacao() {
+            document.getElementById('modal-nova-aplicacao').classList.replace('hidden', 'flex');
+            document.getElementById('app-modelo').focus();
+            stagingAplicacoes = [];
+            renderizarPrevia();
+        }
+
+        function fecharModalAplicacao() {
+            document.getElementById('modal-nova-aplicacao').classList.replace('flex', 'hidden');
+        }
+
+        function adicionarParaPrevia() {
+            const marca = document.getElementById('app-marca').value;
+            const modelo = document.getElementById('app-modelo').value.trim().toUpperCase();
+            const motor = document.getElementById('app-motor').value.trim().toUpperCase();
+            const inicio = document.getElementById('app-ano-inicio').value.trim();
+            const fim = document.getElementById('app-ano-fim').value.trim();
+
+            if (!modelo) return alert("Modelo obrigatório!");
+            stagingAplicacoes.push({ marca, modelo, motor, inicio, fim });
+            renderizarPrevia();
+
+            document.getElementById('app-modelo').value = '';
+            document.getElementById('app-motor').value = '';
+            document.getElementById('app-ano-inicio').value = '';
+            document.getElementById('app-ano-fim').value = '';
+            document.getElementById('app-modelo').focus();
+        }
+
+        function renderizarPrevia() {
+            const tbody = document.getElementById('previa-novas-aplicacoes');
+            tbody.innerHTML = stagingAplicacoes.length === 0 ? '<tr><td colspan="3" class="text-center italic text-slate-400 py-4 italic">Lista vazia</td></tr>' : '';
+            stagingAplicacoes.forEach((item, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td><b>${item.marca}</b></td><td>${item.modelo} ${item.motor}</td><td>${item.inicio}/${item.fim}</td>`;
+                tbody.appendChild(tr);
+            });
+            document.getElementById('contador-previa').innerText = stagingAplicacoes.length + " ITENS";
+        }
+
+        function confirmarTudoAplicacao() {
+            const mainBody = document.getElementById('lista-aplicacoes-tecnicas');
+            stagingAplicacoes.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${item.marca}</td><td>${item.modelo}</td><td>${item.motor}</td><td class="text-center">${item.inicio}</td><td class="text-center">${item.fim}</td><td class="sig-text-center"><button onclick="this.closest('tr').remove()" class="text-red-600">[X]</button></td>`;
+                mainBody.appendChild(tr);
+            });
+            fecharModalAplicacao();
+        }
+
+        function GravarProduto() {
+            const moneyToFloat = (v) => parseFloat(v.replace('.', '').replace(',', '.')) || 0;
+            const payload = {
+                id: 0,
+                sku: document.getElementById('prod-cod-fab').value.trim().toUpperCase(),
+                descricao_tecnica: document.getElementById('prod-descricao').value.trim().toUpperCase(),
+                nome_popular: document.getElementById('prod-nome-popular').value.trim().toUpperCase(),
+                unidade_id: parseInt(document.getElementById('prod-unidade-id').value) || 0,
+                fator_conversao: parseFloat(document.getElementById('prod-fator-conversao').value) || 1,
+                peso: parseFloat(document.getElementById('prod-peso').value) || 0,
+                altura: parseFloat(document.getElementById('prod-altura').value) || 0,
+                largura: parseFloat(document.getElementById('prod-largura').value) || 0,
+                comprimento: parseFloat(document.getElementById('prod-comprimento').value) || 0,
+                custo: moneyToFloat(document.getElementById('prod-custo-base').value),
+                venda: moneyToFloat(document.getElementById('prod-preco-balcao').value),
+                marca_id: 1, // Exemplo
+                categoria_id: 1,
+                subcategoria_id: 1
+            };
+
+            if (!payload.sku || !payload.descricao_tecnica) {
+                return alert("Preencha Código e Descrição!");
+            }
+            
+            // Gravação real via Go
+            window.goEngine.main.App.SalvarProduto(payload).then(res => {
+                if (res.startsWith("OK")) {
+                    alert("Produto cadastrado com sucesso!");
+                    setTimeout(() => { if (window.runtime) window.runtime.Quit(); }, 500);
+                } else alert(res);
+            }).catch(e => alert("Erro: " + e));
+        }
+
+        function ConfirmarSair() {
+            if (confirm("Deseja cancelar o cadastro e sair?")) {
+                if (window.runtime && window.runtime.Quit) window.runtime.Quit();
+            }
+        }
+
+        window.onkeydown = (e) => {
+            if (e.key === 'Escape') fecharModalAplicacao() || ConfirmarSair();
+            if (e.key === 'F5') { e.preventDefault(); const modal = document.getElementById('modal-nova-aplicacao'); !modal.classList.contains('hidden') ? confirmarTudoAplicacao() : GravarProduto(); }
+            if (e.key === 'Enter') { const modal = document.getElementById('modal-nova-aplicacao'); if (!modal.classList.contains('hidden')) { e.preventDefault(); adicionarParaPrevia(); } }
+        };
+    </script>
+</body>
+
+</html>

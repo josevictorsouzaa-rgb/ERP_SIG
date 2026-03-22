@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>SIG - SELECIONAR PRODUTOS</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'sig-blue': '#1e40af',
+                        'sig-blue-dark': '#001b2b',
+                        'sig-brand-cyan': '#00e5ff',
+                        'sig-border': '#cbd5e1',
+                        'sig-bg-light': '#f8fafc'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="../../assets/css/sig-ui.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@300..700,0..1&display=swap"
+        rel="stylesheet" />
+    <style>
+        .aba-ativa {
+            background-color: white !important;
+            border-bottom-color: white !important;
+            color: #1e40af !important;
+            font-weight: 800 !important;
+        }
+
+        /* Alta Performance: Seleção de Linha de Alto Contraste */
+        .sig-row-selected {
+            background-color: #1e40af !important;
+            color: #ffffff !important;
+        }
+
+        .sig-row-selected td {
+            color: #ffffff !important;
+            border-right-color: rgba(255, 255, 255, 0.1) !important;
+            border-bottom-color: rgba(255, 255, 255, 0.05) !important;
+        }
+
+        .sig-row-selected .font-mono {
+            color: #ffffff !important;
+            font-weight: 800;
+        }
+
+        .sig-row-selected .material-symbols-outlined {
+            color: #ffffff !important;
+        }
+    </style>
+</head>
+
+<body class="flex flex-col h-screen overflow-hidden text-slate-800">
+
+
+
+    <!-- CABEÇALHO -->
+    <header class="bg-[#f1f5f9] px-6 py-2 border-b border-slate-300 flex justify-between items-center shrink-0">
+        <div class="flex items-center gap-6">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-blue-600 text-[24px]">shopping_cart_checkout</span>
+                <h1 class="text-slate-700 font-bold text-lg uppercase tracking-tight">Selecionar Itens para Pedido</h1>
+            </div>
+            <div class="flex gap-2 h-full items-end mt-2">
+                <button onclick="mudarAbaPesquisa('catalogo')" id="btn-catalogo"
+                    class="aba-ativa px-6 py-1.5 border border-slate-300 border-b-transparent text-[10px] font-bold uppercase transition-all bg-slate-100 hover:bg-white rounded-t-sm text-slate-500">
+                    Catálogo de Produtos (F2)
+                </button>
+                <button onclick="mudarAbaPesquisa('solicitacoes')" id="btn-solicitacoes"
+                    class="px-6 py-1.5 border border-slate-300 border-b-transparent text-[10px] font-bold uppercase transition-all bg-slate-100 hover:bg-white rounded-t-sm text-slate-500">
+                    Solicitações de Compra (F3)
+                </button>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <button id="btn-novo-produto" onclick="abrirCadastroProduto()"
+                class="sig-btn sig-btn-primary px-6 !h-8 transition-opacity duration-200">
+                <span class="material-symbols-outlined !text-base">add</span> NOVO PRODUTO (F6)
+            </button>
+            <button onclick="fecharJanelaSelecao()" class="sig-btn-close !w-8 !h-8">
+                <span class="material-symbols-outlined !text-base">close</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- ÁREA DE TRABALHO -->
+    <main class="flex-1 overflow-hidden bg-slate-200 relative">
+
+        <!-- VISUALIZAÇÃO DE PESQUISA (Sempre Ativa) -->
+        <div id="aba-f2" class="w-full h-full p-2 flex flex-col gap-2 bg-[#f8fafc]">
+            <!-- BLOCO 1: FILTROS (CENTRAL DE INTELIGÊNCIA) -->
+            <div class="sig-fieldset mt-0 shrink-0">
+                <span class="sig-legend flex items-center gap-2"><span
+                        class="material-symbols-outlined text-[14px]">search</span> CENTRAL DE INTELIGÊNCIA DE VENDAS
+                    [F2] - FILTROS AVANÇADOS HABILITADOS</span>
+
+                <!-- LINHAS DE CAMPOS -->
+                <div class="grid grid-cols-6 gap-2 w-full mt-1">
+                    <!-- Linha 1 -->
+                    <div>
+                        <label class="sig-label-dense">Descrição do Produto:</label>
+                        <input type="text" class="sig-input-dense w-full uppercase"
+                            placeholder="EX: AMORTECEDOR DIANTEIRO">
+                    </div>
+                    <div>
+                        <label class="sig-label-dense">Cód. Fabricante:</label>
+                        <input type="text" class="sig-input-dense w-full uppercase" placeholder="EX: AL-548">
+                    </div>
+                    <div>
+                        <label class="sig-label-dense">Marca do Veículo:</label>
+                        <select class="sig-input-dense w-full cursor-pointer">
+                            <option>Todas</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="sig-label-dense">Marca da Peça:</label>
+                        <select class="sig-input-dense w-full cursor-pointer">
+                            <option>Todas</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="sig-label-dense">Localização:</label>
+                        <select class="sig-input-dense w-full cursor-pointer">
+                            <option>Todos os Boxes</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="sig-label-dense">Cód. Barras (EAN):</label>
+                        <input type="text" class="sig-input-dense w-full uppercase" placeholder="789...">
+                    </div>
+
+                    <!-- Linha 2 -->
+                    <div>
+                        <label class="sig-label-dense">Cód. Interno / ID:</label>
+                        <input type="text" class="sig-input-dense w-full uppercase text-slate-400" placeholder="0000">
+                    </div>
+                    <div>
+                        <label class="sig-label-dense">Ref. Original (OEM):</label>
+                        <input type="text" class="sig-input-dense w-full uppercase" placeholder="5U0.413...">
+                    </div>
+                    <div>
+                        <label class="sig-label-dense">Modelo / Ano:</label>
+                        <input type="text" class="sig-input-dense w-full uppercase" placeholder="EX: GOL 2012">
+                    </div>
+                    <div>
+                        <label class="sig-label-dense">Grupo / Família:</label>
+                        <select class="sig-input-dense w-full cursor-pointer">
+                            <option>Todos</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="sig-label-dense">Filtrar Saldo:</label>
+                        <select class="sig-input-dense w-full cursor-pointer">
+                            <option>Todos</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="sig-label-dense">Similares de:</label>
+                        <input type="text" class="sig-input-dense w-full uppercase" placeholder="Cód. Concorrente">
+                    </div>
+                </div>
+
+                <!-- LINHA PESQUISA GRANDE -->
+                <!-- LINHA PESQUISA GRANDE + LIMPAR -->
+                <div class="flex gap-2 mt-3">
+                    <button onclick="pesquisarComFiltros()"
+                        class="flex-1 bg-slate-100 border border-slate-300 rounded-sm py-1.5 flex items-center justify-center gap-2 hover:bg-slate-200 transition-colors shadow-sm font-bold text-slate-700 text-[11px] uppercase tracking-wide">
+                        <span class="material-symbols-outlined text-[14px] text-blue-600">search</span>
+                        PESQUISAR COM FILTROS (F8)
+                        <span class="text-[9px] font-normal text-slate-400 ml-2 tracking-normal lowercase opacity-50">|
+                            use [tab] para navegar</span>
+                    </button>
+                    <button
+                        class="w-32 bg-slate-100 border border-slate-300 rounded-sm py-1.5 flex items-center justify-center gap-2 hover:bg-orange-50 hover:border-orange-300 transition-colors shadow-sm font-bold text-slate-600 text-[11px] uppercase tracking-wide group">
+                        <span
+                            class="material-symbols-outlined text-[14px] text-orange-500 group-hover:rotate-180 transition-transform duration-300">backspace</span>
+                        LIMPAR (F9)
+                    </button>
+                </div>
+            </div>
+
+            <!-- BLOCO 2: TABELA DE RESULTADOS MAIN -->
+            <div
+                class="flex-1 bg-white border border-slate-300 rounded-sm overflow-hidden flex flex-col min-h-0 relative">
+                <div class="overflow-y-auto flex-1 h-full w-full">
+                    <table class="sig-table sig-table-sm w-full whitespace-nowrap">
+                        <thead class="bg-slate-100 sticky top-0 shadow-sm z-10 border-b border-slate-300">
+                            <tr>
+                                <th class="w-32">Localização</th>
+                                <th class="w-16 text-center">Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Registo Simulado com Foco Delphi (Azul Escuro Letra Branca) -->
+                            <tr class="selected cursor-pointer group"
+                                onclick="selecionarProdutoParaPedido({id: '001259', cod_fab: 'AL-548', descricao: 'AMORTECEDOR DIANTEIRO DIREITO - TURBOGÁS', marca: 'COFAP', un: 'UN', valor: '192,00'})">
+                                <td class="font-mono font-bold">001259</td>
+                                <td class="font-bold">AL-548</td>
+                                <td class="font-bold uppercase tracking-tight">Amortecedor Dianteiro Direito - Turbogás
+                                </td>
+                                <td>COFAP</td>
+                                <td>SUSPENSÃO</td>
+                                <td class="font-mono">25 UN</td>
+                                <td class="font-mono text-[#00ffc4] font-bold tracking-widest">18 UN</td>
+                                <td class="text-right font-mono font-bold">R$ 192,00</td>
+                                <td>RUA A-04</td>
+                                <td class="text-center">
+                                    <button
+                                        class="bg-emerald-600 text-white rounded-sm px-2 py-0.5 text-[10px] font-black group-hover:bg-emerald-500">SELECIONAR</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SPLITTER PARA REDIMENSIONAR RODAPÉ -->
+            <div id="splitter-f2" class="sig-splitter-h"></div>
+
+            <!-- BLOCO 3: 4 PAINÉIS DE RODAPÉ (DINÂMICO PELO REGISTRO SELECIONADO) -->
+            <div id="painel-inferior-f2" class="h-[225px] shrink-0 flex gap-2">
+
+                <!-- 3.1: FLUXO DE ESTOQUE (TABELA DE SALDOS POR LOCAL) -->
+                <div class="sig-fieldset sig-fieldset-flush mb-0 flex-1 flex flex-col min-w-0">
+                    <span class="sig-legend flex items-center gap-1.5"><span
+                            class="material-symbols-outlined text-[12px] opacity-60">inventory_2</span> Painel de
+                        Inventário</span>
+                    <div
+                        class="flex-1 overflow-y-auto w-full bg-white relative min-h-0 border border-slate-200 rounded-sm">
+                        <table class="sig-table sig-table-sm w-full">
+                            <thead class="bg-slate-50 sticky top-0 z-10 border-b border-slate-200">
+                                <tr>
+                                    <th class="text-left">Localização</th>
+                                    <th class="text-right">Saldo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>ESTOQUE_01 (PRINCIPAL)</td>
+                                    <td class="text-right font-mono font-bold text-slate-700">22 UN</td>
+                                </tr>
+                                <tr>
+                                    <td>ESTOQUE_02 (RESERVA)</td>
+                                    <td class="text-right font-mono font-bold text-slate-700">03 UN</td>
+                                </tr>
+                            </tbody>
+                            <tfoot class="bg-blue-50 font-extrabold border-t-2 border-blue-200 text-blue-900">
+                                <tr>
+                                    <td class="py-1.5 px-2 uppercase tracking-wider text-[10px]">Saldo Total em Estoque:
+                                    </td>
+                                    <td class="py-1.5 px-2 text-right font-mono text-[13px]">25 UN</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 3.2: APLICAÇÃO TÉCNICA -->
+                <div class="sig-fieldset sig-fieldset-flush mb-0 flex-[2] flex flex-col min-w-0">
+                    <span class="sig-legend flex items-center gap-1.5"><span
+                            class="material-symbols-outlined text-[12px] opacity-60">directions_car</span> Aplicação
+                        Técnica Detalhada</span>
+                    <div
+                        class="flex-1 overflow-y-auto w-full bg-white relative min-h-0 border border-slate-200 rounded-sm">
+                        <table class="sig-table sig-table-sm w-full">
+                            <thead class="bg-slate-100 sticky top-0 shadow-sm">
+                                <tr>
+                                    <th>Marca Veíc.</th>
+                                    <th>Modelo</th>
+                                    <th>Motorização</th>
+                                    <th>Anos</th>
+                                    <th>Obs</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>VOLKSWAGEN</td>
+                                    <td>GOL G5 / G6</td>
+                                    <td>1.0 / 1.6 8V</td>
+                                    <td>2008..2014</td>
+                                    <td class="text-slate-500">S/ ABS</td>
+                                </tr>
+                                <tr>
+                                    <td>VOLKSWAGEN</td>
+                                    <td>VOYAGE</td>
+                                    <td>1.0 / 1.6 8V</td>
+                                    <td>2009..2015</td>
+                                    <td class="text-slate-500">Todos</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 3.3: SIMILARES E SALDOS -->
+                <div class="sig-fieldset sig-fieldset-flush mb-0 flex-1 flex flex-col min-w-0">
+                    <span class="sig-legend flex items-center gap-1.5"><span
+                            class="material-symbols-outlined text-[12px] opacity-60">flip_to_front</span> Similares e
+                        Saldos</span>
+                    <div
+                        class="flex-1 overflow-y-auto w-full bg-white relative min-h-0 border border-slate-200 rounded-sm">
+                        <table class="sig-table sig-table-sm w-full">
+                            <thead class="bg-slate-100 sticky top-0 shadow-sm">
+                                <tr>
+                                    <th>Marca</th>
+                                    <th>Código</th>
+                                    <th class="text-right">Saldo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>NAKATA</td>
+                                    <td>HG-31092</td>
+                                    <td class="text-right font-mono font-bold text-green-700">08 UN</td>
+                                </tr>
+                                <tr>
+                                    <td>MONROE</td>
+                                    <td>32456SP</td>
+                                    <td class="text-right font-mono font-bold text-green-700">03 UN</td>
+                                </tr>
+                                <tr>
+                                    <td>KYB</td>
+                                    <td>334812</td>
+                                    <td class="text-right font-mono font-bold text-red-600">00 UN</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 3.4: IMAGEM (TAMANHO FIXO QUADRADO) -->
+                <div class="sig-fieldset mb-0 w-[144px] shrink-0 flex flex-col min-h-0 items-center">
+                    <span class="sig-legend flex items-center gap-1.5 w-full"><span
+                            class="material-symbols-outlined text-[12px] opacity-60">image</span> Imagem</span>
+                    <div onclick="abrirZoomImagem()"
+                        class="w-[124px] h-[124px] bg-[#f1f5f9] border border-[#cbd5e1] flex items-center justify-center text-[#94a3b8] rounded-sm mt-1 shadow-inner relative overflow-hidden group hover:border-blue-400 cursor-zoom-in transition-colors">
+                        <!-- Imagem com object-contain para não esticar -->
+                        <img id="img-preview-f2" src="" class="absolute inset-0 w-full h-full object-contain hidden"
+                            alt="Preview">
+                        <div class="text-center flex flex-col items-center pointer-events-none">
+                            <span class="material-symbols-outlined text-[24px] opacity-20 mb-1">image</span>
+                            <span class="text-[9px] uppercase tracking-widest opacity-40 font-bold">Sem Foto</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- /FIM PAINÉIS INFERIORES -->
+
+        </div> <!-- /FIM PESQUISA -->
+
+        <!-- ABA SOLICITAÇÕES (Oculta por Padrão) -->
+        <div id="aba-solicitacoes" class="w-full h-full p-2 flex flex-col gap-2 bg-[#f8fafc] hidden">
+            <!-- BLOCO 1: FILTROS DE SOLICITAÇÃO -->
+            <div class="sig-fieldset mt-0 shrink-0">
+                <span class="sig-legend flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[14px]">request_quote</span> FILTROS DE SOLICITAÇÕES DE
+                    VENDAS
+                </span>
+
+                <div class="grid grid-cols-6 gap-2 w-full mt-1">
+                    <div class="col-span-2">
+                        <label class="sig-label-dense">Descrição do Produto Solicitado:</label>
+                        <input type="text" class="sig-input-dense w-full uppercase"
+                            placeholder="BUSCAR POR NOME DA PEÇA...">
+                    </div>
+                    <div>
+                        <label class="sig-label-dense">Vendedor (Solicitante):</label>
+                        <select class="sig-input-dense w-full cursor-pointer">
+                            <option>Todos</option>
+                            <option>JOÃO (Caixa 01)</option>
+                            <option>MARIA (Balcão)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="sig-label-dense">Status:</label>
+                        <select class="sig-input-dense w-full cursor-pointer">
+                            <option>Pendentes</option>
+                            <option>Atendidas</option>
+                            <option>Todas</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="sig-label-dense">Data Solicit.:</label>
+                        <input type="date" class="sig-input-dense w-full text-slate-600">
+                    </div>
+                    <div>
+                        <label class="sig-label-dense">Apenas sem Cadastro?</label>
+                        <select class="sig-input-dense w-full cursor-pointer">
+                            <option>Todos</option>
+                            <option>Sim</option>
+                            <option>Não</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex gap-2 mt-3">
+                    <button
+                        class="flex-1 bg-slate-100 border border-slate-300 rounded-sm py-1.5 flex items-center justify-center gap-2 hover:bg-slate-200 transition-colors shadow-sm font-bold text-slate-700 text-[11px] uppercase tracking-wide">
+                        <span class="material-symbols-outlined text-[14px] text-blue-600">search</span> Filtrar
+                        Solicitações (F8)
+                    </button>
+                    <button
+                        class="w-32 bg-slate-100 border border-slate-300 rounded-sm py-1.5 flex items-center justify-center gap-2 hover:bg-orange-50 hover:border-orange-300 transition-colors shadow-sm font-bold text-slate-600 text-[11px] uppercase tracking-wide group">
+                        <span
+                            class="material-symbols-outlined text-[14px] text-orange-500 group-hover:rotate-180 transition-transform duration-300">backspace</span>
+                        Limpar (F9)
+                    </button>
+                </div>
+            </div>
+
+            <!-- BLOCO 2: LISTA DE SOLICITAÇÕES -->
+            <div
+                class="flex-1 bg-white border border-slate-300 rounded-sm overflow-hidden flex flex-col min-h-0 relative">
+                <div class="overflow-y-auto flex-1 h-full w-full">
+                    <table class="sig-table sig-table-sm w-full whitespace-nowrap">
+                        <thead class="bg-slate-100 sticky top-0 shadow-sm z-10 border-b border-slate-300">
+                            <tr>
+                                <th class="w-20 text-center">Data</th>
+                                <th class="w-32">Solicitante</th>
+                                <th>Produto Desejado</th>
+                                <th class="w-20 text-center">Qtd Solicitada</th>
+                                <th class="w-20 text-center">Tem Cadastro?</th>
+                                <th class="w-32 text-center">Status</th>
+                                <th class="w-32 text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Registo com produto já cadastrado -->
+                            <tr class="hover:bg-blue-50 cursor-pointer transition-colors group">
+                                <td class="text-center font-mono text-[10px] text-slate-500 font-bold">10/03/26 09:15
+                                </td>
+                                <td class="font-bold text-[11px] text-slate-700">JOÃO (Caixa 01)</td>
+                                <td class="uppercase tracking-tight text-slate-800">
+                                    <span class="font-bold text-[11px]">PASTILHA DE FREIO DIANTEIRA GOL G5
+                                        (Cobreq)</span>
+                                    <div class="text-[9px] text-slate-400 font-normal mt-0.5">Cliente na loja aguardando
+                                        retorno.</div>
+                                </td>
+                                <td class="text-center font-mono font-bold text-blue-700">2.00 JG</td>
+                                <td class="text-center">
+                                    <span
+                                        class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full text-[9px] font-bold">Sim
+                                        (Cód: 5512)</span>
+                                </td>
+                                <td class="text-center">
+                                    <span
+                                        class="bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider">Pendente</span>
+                                </td>
+                                <td class="text-center">
+                                    <button
+                                        class="bg-sig-blue text-white rounded-sm px-3 py-1 text-[9px] font-black hover:bg-blue-800 shadow-sm w-[130px]"
+                                        onclick="selecionarProdutoParaPedido({id: '5512', descricao: 'PASTILHA DE FREIO DIANTEIRA GOL G5 (Cobreq)'})">
+                                        VINCULAR AO PEDIDO
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <!-- Registo sem cadastro -->
+                            <tr
+                                class="hover:bg-blue-50 cursor-pointer border-t border-slate-200 transition-colors group">
+                                <td class="text-center font-mono text-[10px] text-slate-500 font-bold">10/03/26 10:30
+                                </td>
+                                <td class="font-bold text-[11px] text-slate-700">MARIA (Balcão)</td>
+                                <td class="uppercase tracking-tight text-slate-800">
+                                    <span class="font-bold text-[11px]">BOMBA D'ÁGUA FIAT TORO 2.0 DIESEL 2021</span>
+                                    <div class="text-[9px] text-slate-400 font-normal mt-0.5">Ref: Urba UB0548. Cliente
+                                        confirmou orçamento.</div>
+                                </td>
+                                <td class="text-center font-mono font-bold text-blue-700">1.00 PC</td>
+                                <td class="text-center">
+                                    <span
+                                        class="bg-red-100 text-red-700 px-2 py-0.5 rounded-full text-[9px] font-bold border border-red-200">Não
+                                        Cadastrado</span>
+                                </td>
+                                <td class="text-center">
+                                    <span
+                                        class="bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider">Pendente</span>
+                                </td>
+                                <td class="text-center">
+                                    <button onclick="abrirCadastroProdutoComoSolicitacao()"
+                                        class="bg-emerald-600 text-white rounded-sm px-3 py-1 text-[9px] font-black hover:bg-emerald-700 shadow-sm flex items-center gap-1 justify-center mx-auto w-[130px]">
+                                        CADASTRAR PEÇA
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- O MODAL DE CADASTRO F3 FOI MOVIDO PARA O COMPONENTE GLOBAL: modal_produto.js -->
+    </main>
+
+    <!-- MENU DE CONTEXTO (Botão Direito) -->
+    <div id="context-menu"
+        class="hidden fixed bg-white border border-slate-300 shadow-xl z-[999] py-1 rounded-sm w-48 animate-in fade-in zoom-in duration-100">
+        <div onclick="if(window.copiarCadastro) window.copiarCadastro()"
+            class="flex items-center gap-3 px-4 py-2 hover:bg-blue-50 cursor-pointer text-slate-700 hover:text-blue-800 transition-colors">
+            <span class="material-symbols-outlined text-blue-600 text-[18px]">content_copy</span>
+            <span class="text-[11px] font-bold uppercase tracking-wide">Copiar Cadastro</span>
+        </div>
+        <div class="border-t border-slate-100 my-1"></div>
+        <div onclick="if(window.abrirCadastroProduto) window.abrirCadastroProduto(true)"
+            class="flex items-center gap-3 px-4 py-2 hover:bg-slate-50 cursor-pointer text-slate-700 transition-colors">
+            <span class="material-symbols-outlined text-slate-500 text-[18px]">edit</span>
+            <span class="text-[11px] font-bold uppercase tracking-wide">Editar Registro</span>
+        </div>
+    </div>
+
+    <!-- STATUS BAR / RODAPÉ PADRÃO SIG -->
+    <footer class="bg-slate-200 border-t border-slate-300 shrink-0 z-50">
+        <div class="sig-progress-bar-container">
+            <div id="footer-progress" class="sig-progress-bar-fill" style="width: 0%;"></div>
+        </div>
+        <div
+            class="flex flex-wrap items-center justify-between px-4 py-1 text-[10px] text-slate-600 font-bold uppercase tracking-tight">
+            <div class="flex items-center space-x-4">
+                <span class="flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">terminal</span>
+                    TERMINAL: 01 (PRODUTOS)
+                </span>
+                <span class="text-slate-400">|</span>
+                <span>F6 NOVO</span>
+                <span>F8 PESQUISAR</span>
+                <span>F5 GRAVAR</span>
+            </div>
+            <div class="flex items-center space-x-4 divide-x divide-slate-400">
+                <div class="px-3">Usuário: Admin</div>
+                <div class="px-3" id="data-hora-footer">--/--/---- --:--:--</div>
+                <div class="px-3">Banco: <span class="text-emerald-600 font-extrabold">PostgreSQL</span></div>
+                <div class="px-3 text-slate-400 font-medium lowercase">v2.0.14</div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL DE ZOOM DA IMAGEM -->
+    <div id="modal-zoom" class="sig-modal-overlay hidden" onclick="fecharZoomImagem()">
+        <div class="relative bg-white p-2 rounded-md shadow-2xl max-w-4xl max-h-full flex flex-col"
+            onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-2 px-2">
+                <span class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Visualização Técnica do
+                    Item</span>
+                <button onclick="fecharZoomImagem()" class="text-slate-400 hover:text-red-500 transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="bg-slate-100 p-4 border border-slate-200 rounded-sm">
+                <img id="img-zoom-target" src="" class="max-w-full max-h-[70vh] object-contain" alt="Zoom">
+            </div>
+            <div class="mt-4 flex justify-end">
+                <button onclick="fecharZoomImagem()"
+                    class="bg-slate-800 text-white font-bold text-[10px] px-6 py-2 rounded-sm uppercase tracking-widest hover:bg-black transition-colors">Fechar
+                    (ESC)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL NOVA APLICAÇÃO -->
+    <div id="modal-nova-aplicacao" class="sig-modal-overlay hidden">
+        <div class="bg-white w-[500px] rounded-md shadow-2xl flex flex-col animate-in fade-in zoom-in duration-150">
+            <div class="bg-[#f8fafc] p-2 px-4 flex justify-between items-center border-b border-slate-300">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-blue-600 text-sm">directions_car</span>
+                    <h3 class="text-slate-700 font-bold text-[11px] uppercase tracking-wider">Nova Aplicação Técnica
+                    </h3>
+                </div>
+                <button onclick="fecharModalAplicacao()" class="sig-btn-close !w-7 !h-7">
+                    <span class="material-symbols-outlined !text-base">close</span>
+                </button>
+            </div>
+            <div class="p-5 grid grid-cols-2 gap-4">
+                <div class="col-span-1">
+                    <label class="sig-label">Marca Veículo</label>
+                    <select id="app-marca" class="sig-input w-full">
+                        <option value="VW">VOLKSWAGEN</option>
+                        <option value="FIAT">FIAT</option>
+                        <option value="CHEVROLET">CHEVROLET</option>
+                        <option value="FORD">FORD</option>
+                        <option value="TOYOTA">TOYOTA</option>
+                    </select>
+                </div>
+                <div class="col-span-1">
+                    <label class="sig-label">Modelo</label>
+                    <input type="text" id="app-modelo" class="sig-input w-full uppercase" placeholder="EX: GOL G5">
+                </div>
+                <div class="col-span-2">
+                    <label class="sig-label">Motorização / Versão</label>
+                    <input type="text" id="app-motor" class="sig-input w-full uppercase" placeholder="EX: 1.6 8V">
+                </div>
+                <div>
+                    <label class="sig-label">Ano Início</label>
+                    <input type="text" id="app-ano-inicio" class="sig-input w-full text-center" placeholder="2000">
+                </div>
+                <div>
+                    <label class="sig-label">Ano Fim</label>
+                    <input type="text" id="app-ano-fim" class="sig-input w-full text-center" placeholder="2024">
+                </div>
+            </div>
+            <div class="bg-slate-100 p-3 border-t border-slate-300 flex justify-end gap-2">
+                <button onclick="fecharModalAplicacao()"
+                    class="sig-btn text-slate-500 hover:bg-slate-200 px-6 h-9 font-bold">CANCELAR</button>
+                <button onclick="confirmarNovaAplicacao()" class="sig-btn sig-btn-primary px-8 h-9 shadow-lg">CONFIRMAR
+                    INCLUSÃO</button>
+            </div>
+        </div>
+    </div>
+    <div id="modal-selecao-marca" class="sig-modal-overlay hidden">
+        <div
+            class="bg-white w-[420px] h-[520px] rounded-md shadow-2xl flex flex-col animate-in fade-in zoom-in duration-150">
+            <div class="bg-[#f8fafc] p-2 px-4 flex justify-between items-center border-b border-slate-300 shrink-0">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-slate-500 text-sm">label</span>
+                    <h3 class="text-slate-700 font-bold text-[11px] uppercase tracking-wider">Selecionar Marca
+                        Fabricante</h3>
+                </div>
+                <button onclick="fecharSelecaoMarca()" class="sig-btn-close !w-7 !h-7">
+                    <span class="material-symbols-outlined !text-base">close</span>
+                </button>
+            </div>
+            <div class="p-4 bg-slate-50 border-b border-slate-200">
+                <div class="relative">
+                    <input type="text" id="filtro-marcas" class="sig-input-dense w-full !pl-10"
+                        placeholder="Digite para filtrar marcas..." oninput="filtrarMarcas(this.value)">
+                    <span
+                        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 !text-lg">filter_alt</span>
+                </div>
+            </div>
+            <div class="flex-1 overflow-y-auto bg-white custom-scrollbar">
+                <table class="sig-table w-full">
+                    <thead class="sticky top-0 bg-slate-100 shadow-sm z-10">
+                        <tr>
+                            <th class="w-20 text-center">ID SISTEMA</th>
+                            <th>NOME DA MARCA / FABRICANTE</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lista-marcas">
+                        <!-- Renderizado via JS -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="bg-slate-100 px-4 py-2 border-t border-slate-300 flex justify-end shrink-0">
+                <button onclick="fecharSelecaoMarca()"
+                    class="sig-btn text-slate-500 hover:bg-slate-200 px-6 h-8 text-[11px] font-bold">FECHAR JANELA
+                    (ESC)</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function selecionarProdutoParaPedido(p) {
+            // Verifica se está dentro de um iframe (modal) ou janela independente
+            if (window.parent && window.parent.receberProdutoSelecionado) {
+                window.parent.receberProdutoSelecionado(p);
+            } else {
+                console.log("Selecionado para pedido:", p);
+                // Fallback para quando aberto via window.open ou direto
+                if (window.opener && window.opener.receberProdutoSelecionado) {
+                    window.opener.receberProdutoSelecionado(p);
+                    window.close();
+                } else {
+                    alert("Produto selecionado: " + p.descricao);
+                }
+            }
+        }
+
+        function fecharJanelaSelecao() {
+            if (window.parent && typeof window.parent.fecharPesquisaProdutos === 'function') {
+                window.parent.fecharPesquisaProdutos();
+            } else {
+                window.close();
+            }
+        }
+
+        // Atualiza Relógio do Rodapé
+        setInterval(() => {
+            const agora = new Date();
+            const el = document.getElementById('data-hora-footer');
+            if (el) el.innerText = agora.toLocaleString('pt-br');
+        }, 1000);
+
+        // CONTROLE DE CARREGAMENTO (PROGRESS BAR)
+        function setLoading(isLoading) {
+            const bar = document.getElementById('footer-progress');
+            if (!bar) return;
+            if (isLoading) {
+                bar.classList.add('loading');
+                bar.style.width = '30%';
+            } else {
+                bar.classList.remove('loading');
+                bar.style.width = '0%';
+            }
+        }
+
+        // SIMULAÇÃO DE PESQUISA COM CARREGAMENTO
+        function pesquisarComFiltros() {
+            setLoading(true);
+            // Simula delay de rede/processamento
+            setTimeout(() => {
+                setLoading(false);
+            }, 1500);
+        }
+
+        // QUANDO UM PRODUTO É SALVO GLOBALMENTE, INSERE ELE NO PEDIDO
+        window.addEventListener('produtoSalvo', (e) => {
+            const novoProduto = e.detail;
+            if (novoProduto) {
+                console.log("Produto Capturado Globalmente:", novoProduto);
+                selecionarProdutoParaPedido(novoProduto);
+            }
+        });
+
+        // MENU DE CONTEXTO (BOTÃO DIREITO)
+        const contextMenu = document.getElementById('context-menu');
+
+        document.addEventListener('contextmenu', (e) => {
+            const row = e.target.closest('tr');
+            if (row && row.closest('table').parentElement.parentElement.id !== 'aba-f3') {
+                e.preventDefault();
+
+                // Posição do Mouse
+                const x = e.clientX;
+                const y = e.clientY;
+
+                contextMenu.style.left = `${x}px`;
+                contextMenu.style.top = `${y}px`;
+                contextMenu.classList.remove('hidden');
+
+                // Marca a linha como selecionada visualmente
+                document.querySelectorAll('tr').forEach(tr => tr.classList.remove('selected'));
+                row.classList.add('selected');
+            } else {
+                fecharContextMenu();
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!contextMenu.contains(e.target)) fecharContextMenu();
+        });
+
+        function fecharContextMenu() {
+            contextMenu.classList.add('hidden');
+        }
+
+        // ZOOM DA IMAGEM
+        function abrirZoomImagem() {
+            const previewImg = document.getElementById('img-preview-f2');
+            const zoomModal = document.getElementById('modal-zoom');
+            const targetImg = document.getElementById('img-zoom-target');
+
+            // Simular uma imagem se não tiver (provisório para demo)
+            const src = previewImg.src && !previewImg.src.includes('undefined') && previewImg.src !== window.location.href
+                ? previewImg.src
+                : "https://images.tcdn.com.br/img/img_prod/704153/amortecedor_dianteiro_direito_turbogas_volkswagen_gol_g5_g6_voyage_saveiro_g5_g6_fox_polo_cofap_al548_255_1_20200505160537.jpg";
+
+            targetImg.src = src;
+            zoomModal.classList.remove('hidden');
+            zoomModal.classList.add('flex');
+        }
+
+        function fecharZoomImagem() {
+            const zoomModal = document.getElementById('modal-zoom');
+            zoomModal.classList.add('hidden');
+            zoomModal.classList.remove('flex');
+        }
+
+        // LÓGICA DO SPLITTER (RESIZE)
+        const splitter = document.getElementById('splitter-f2');
+        const painelInferior = document.getElementById('painel-inferior-f2');
+        let isResizing = false;
+
+        if (splitter) {
+            splitter.addEventListener('mousedown', (e) => {
+                isResizing = true;
+                document.body.style.cursor = 'row-resize';
+                document.addEventListener('mousemove', handleMouseMove);
+                document.addEventListener('mouseup', () => {
+                    isResizing = false;
+                    document.body.style.cursor = 'default';
+                    document.removeEventListener('mousemove', handleMouseMove);
+                });
+            });
+        }
+
+        function handleMouseMove(e) {
+            if (!isResizing) return;
+
+            // Calcula a nova altura baseado na posição do mouse em relação à janela
+            const windowHeight = window.innerHeight;
+            // O splitter está acima do painel, então a altura é o que falta da tela
+            // subtraindo a barra de status (aprox 46px) e a margem de segurança
+            const statusBarHeight = 46;
+            const paddingBottom = 8;
+
+            let newHeight = windowHeight - e.clientY - statusBarHeight - paddingBottom;
+
+            // Limite de altura melhorado: 
+            // - Mínimo 180px para garantir a visualização da imagem quadrada 124x124 + legendas.
+            if (newHeight < 180) newHeight = 180;
+            if (newHeight > 600) newHeight = 600; // Aumentado para permitir visão maior das aplicações
+
+            painelInferior.style.height = `${newHeight}px`;
+        }
+
+        // LÓGICA DE MARCAS
+        const mockMarcas = [
+            { id: 1, nome: 'COFAP' },
+            { id: 2, nome: 'NAKATA' },
+            { id: 3, nome: 'METAL LEVE' },
+            { id: 4, nome: 'BOSCH' },
+            { id: 5, nome: 'MONROE' },
+            { id: 6, nome: 'KYB' },
+            { id: 7, nome: 'MAGNETI MARELLI' },
+            { id: 8, nome: 'TRW' },
+            { id: 9, nome: 'MTE-THOMSON' },
+            { id: 10, nome: 'VALEO' },
+            { id: 11, nome: 'SABÓ' },
+            { id: 12, nome: 'FRAS-LE' },
+            { id: 13, nome: 'SKF' },
+            { id: 14, nome: 'LUK' },
+            { id: 15, nome: 'DAYCO' }
+        ];
+
+        function abrirSelecaoMarca() {
+            document.getElementById('modal-selecao-marca').classList.remove('hidden');
+            document.getElementById('modal-selecao-marca').classList.add('flex');
+            document.getElementById('filtro-marcas').value = '';
+            document.getElementById('filtro-marcas').focus();
+            renderListaMarcas(mockMarcas);
+        }
+
+        function fecharSelecaoMarca() {
+            document.getElementById('modal-selecao-marca').classList.add('hidden');
+            document.getElementById('modal-selecao-marca').classList.remove('flex');
+        }
+
+        // LÓGICA DE APLICAÇÃO TÉCNICA
+        function abrirModalAplicacao() {
+            const modal = document.getElementById('modal-nova-aplicacao');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.getElementById('app-modelo').focus();
+        }
+
+        function fecharModalAplicacao() {
+            const modal = document.getElementById('modal-nova-aplicacao');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function confirmarNovaAplicacao() {
+            const marca = document.getElementById('app-marca').value;
+            const modelo = document.getElementById('app-modelo').value.trim().toUpperCase();
+            const motor = document.getElementById('app-motor').value.trim().toUpperCase();
+            const inicio = document.getElementById('app-ano-inicio').value.trim();
+            const fim = document.getElementById('app-ano-fim').value.trim();
+
+            if (!modelo) {
+                alert("O modelo do veículo é obrigatório!");
+                document.getElementById('app-modelo').focus();
+                return;
+            }
+
+            const tbody = document.getElementById('lista-aplicacoes-tecnicas');
+            const tr = document.createElement('tr');
+            tr.className = 'bg-white';
+            tr.innerHTML = `
+                <td>${marca}</td>
+                <td>${modelo}</td>
+                <td>${motor}</td>
+                <td class="text-center">${inicio}</td>
+                <td class="text-center">${fim}</td>
+                <td class="sig-text-center">
+                    <button onclick="removerAplicacao(this)" class="text-red-600 hover:text-red-800 font-bold">[X]</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+
+            // Limpar e fechar
+            document.getElementById('app-modelo').value = '';
+            document.getElementById('app-motor').value = '';
+            document.getElementById('app-ano-inicio').value = '';
+            document.getElementById('app-ano-fim').value = '';
+            fecharModalAplicacao();
+        }
+
+        function removerAplicacao(btn) {
+            if (confirm("Deseja remover esta aplicação técnica?")) {
+                btn.closest('tr').remove();
+            }
+        }
+
+        function filtrarMarcas(query) {
+            const filtrados = mockMarcas.filter(m => m.nome.includes(query.toUpperCase()));
+            renderListaMarcas(filtrados);
+        }
+
+        function renderListaMarcas(lista) {
+            const tbody = document.getElementById('lista-marcas');
+            tbody.innerHTML = '';
+            lista.forEach(m => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-blue-50 cursor-pointer';
+                tr.innerHTML = `
+                    <td class="text-center font-mono text-slate-400 border-r border-slate-100">${m.id.toString().padStart(3, '0')}</td>
+                    <td class="font-bold uppercase text-slate-700">${m.nome}</td>
+                `;
+                tr.onclick = () => {
+                    document.getElementById('prod-marca').value = m.nome;
+                    fecharSelecaoMarca();
+                };
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Atalhos de Teclado
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const modalApp = document.getElementById('modal-nova-aplicacao');
+                if (!modalApp.classList.contains('hidden')) {
+                    fecharModalAplicacao();
+                    return;
+                }
+                const modalMarca = document.getElementById('modal-selecao-marca');
+                if (!modalMarca.classList.contains('hidden')) {
+                    fecharSelecaoMarca();
+                    return;
+                }
+
+                fecharJanelaSelecao();
+                return;
+            }
+            if (e.key === 'F2') {
+                e.preventDefault();
+                mudarAbaPesquisa('catalogo');
+            }
+            if (e.key === 'F3') {
+                const modalCadastro = document.getElementById('modal-cadastro');
+                if (modalCadastro.classList.contains('hidden')) {
+                    e.preventDefault();
+                    mudarAbaPesquisa('solicitacoes');
+                }
+            }
+            if (e.key === 'F6') {
+                const abaCat = document.getElementById('aba-f2');
+                if (!abaCat.classList.contains('hidden')) {
+                    e.preventDefault();
+                    if (window.abrirCadastroProduto) window.abrirCadastroProduto();
+                }
+            }
+            if (e.key === 'F8') {
+                e.preventDefault();
+                pesquisarComFiltros();
+            }
+            if (e.key === 'F5') {
+                const modalCadastro = document.getElementById('modal-cadastro');
+                if (modalCadastro && !modalCadastro.classList.contains('hidden')) {
+                    e.preventDefault();
+                    if (window.salvarProduto) window.salvarProduto();
+                }
+            }
+        });
+
+        // LÓGICA DE NAVEGAÇÃO ENTRE ABAS
+        function mudarAbaPesquisa(abaAtiva) {
+            const btnCatalogo = document.getElementById('btn-catalogo');
+            const btnSolicitacoes = document.getElementById('btn-solicitacoes');
+            const abaF2 = document.getElementById('aba-f2');
+            const abaSolicitacoes = document.getElementById('aba-solicitacoes');
+            const btnNovoProduto = document.getElementById('btn-novo-produto');
+
+            // Reset
+            btnCatalogo.classList.remove('aba-ativa');
+            btnCatalogo.classList.add('text-slate-500');
+            btnSolicitacoes.classList.remove('aba-ativa');
+            btnSolicitacoes.classList.add('text-slate-500');
+            abaF2.classList.add('hidden');
+            abaSolicitacoes.classList.add('hidden');
+
+            if (abaAtiva === 'catalogo') {
+                btnCatalogo.classList.add('aba-ativa');
+                btnCatalogo.classList.remove('text-slate-500');
+                abaF2.classList.remove('hidden');
+                btnNovoProduto.classList.remove('opacity-0', 'pointer-events-none');
+            } else if (abaAtiva === 'solicitacoes') {
+                btnSolicitacoes.classList.add('aba-ativa');
+                btnSolicitacoes.classList.remove('text-slate-500');
+                abaSolicitacoes.classList.remove('hidden');
+                // Esconde botão "Novo Produto" na aba de solicitações (regra do negócio)
+                btnNovoProduto.classList.add('opacity-0', 'pointer-events-none');
+            }
+        }
+
+        // Nova Lógica de Fluxo Específico: Cadastrar baseando-se em solicitação
+        function abrirCadastroProdutoComoSolicitacao() {
+            if (window.abrirCadastroProduto) window.abrirCadastroProduto();
+            // Mock de preenchimento automático para ilustrar
+            setTimeout(() => {
+                const desc = document.getElementById('prod-descricao');
+                if (desc) desc.value = "BOMBA D'ÁGUA FIAT TORO 2.0 DIESEL 2021";
+            }, 150);
+        }
+    </script>
+
+    <script src="../../componentes/modal_produto.js"></script>
+</body>
+
+</html>

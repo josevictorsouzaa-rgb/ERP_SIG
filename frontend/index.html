@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>SISTEMA CORE - NAVEGADOR</title>
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            background-color: #f8f9fa;
+        }
+
+        #app-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        #main-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+    <!-- LINK PARA O DESIGN SYSTEM PADRONIZADO -->
+    <link rel="stylesheet" href="./assets/css/sig-ui.css">
+    <!-- ÍCONES -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400&display=swap"
+        rel="stylesheet" />
+</head>
+
+<body>
+    <div id="app-container">
+        <!-- Iframe inicia vazio para segurança -->
+        <iframe id="main-frame"></iframe>
+    </div>
+
+    <script>
+        // Roteamento Multi-Window Nativo do Wails
+        window.onload = async () => {
+            // Aguarda a integração com Go e checa qual módulo ele deve abrir
+            const moduloInicial = await window.go.main.App.GetModuloInicial();
+            const frame = document.getElementById("main-frame");
+
+            if (moduloInicial && moduloInicial.trim() !== "") {
+                // Essa instância virou janela de módulo
+                frame.src = './paginas/' + moduloInicial + '/' + moduloInicial + '.html?v=' + Date.now();
+            } else {
+                // Modo padrão: Login antes do Hub
+                frame.src = './paginas/login/login.html?v=' + Date.now();
+            }
+        };
+
+        // Escuta o sucesso do login vindo do iframe
+        window.addEventListener('message', async (event) => {
+            if (event.data.type === 'LOGIN_SUCCESS') {
+                const frame = document.getElementById("main-frame");
+                // Maximiza a janela via Go antes de entrar no Hub
+                if (window.go) await window.go.main.App.MaximizarJanela();
+                frame.src = './paginas/hub/hub.html';
+            }
+        });
+    </script>
+</body>
+
+</html>

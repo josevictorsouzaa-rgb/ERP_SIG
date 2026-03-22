@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>SISTEMA CORE - LOGIN</title>
+    <!-- Tailwind CSS v3 -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="stylesheet" href="../../assets/css/sig-ui.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: transparent;
+            overflow: hidden;
+            font-family: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
+        }
+
+        /* Arrastar Janela */
+        .drag-region {
+            --wails-drop-target: drop;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            z-index: 50;
+        }
+
+        .login-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            background: white;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+        }
+
+        /* Lado Esquerdo - Arte com Texturas Geométricas Modernas */
+        .login-aside {
+            flex: 1.2;
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 80px;
+            position: relative;
+            overflow: hidden;
+            color: white;
+        }
+
+        /* Elementos Decorativos da Referência (Bolhas, Círculos, Ondas) */
+        .pattern {
+            position: absolute;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Círculos translúcidos */
+        .circle-rim {
+            border: 20px solid rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+        }
+
+        .circle-solid {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
+            border-radius: 50%;
+        }
+
+        .c1 {
+            width: 400px;
+            height: 400px;
+            top: -100px;
+            left: -100px;
+        }
+
+        .c2 {
+            width: 300px;
+            height: 300px;
+            bottom: -50px;
+            right: 10%;
+        }
+
+        .c3 {
+            width: 150px;
+            height: 150px;
+            top: 20%;
+            right: -50px;
+        }
+
+        /* Grid de Pontos */
+        .dots-grid {
+            width: 100px;
+            height: 100px;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.2) 2px, transparent 2px);
+            background-size: 15px 15px;
+            bottom: 40px;
+            left: 40px;
+        }
+
+        /* Chevrons */
+        .chevrons {
+            top: 40px;
+            left: 40px;
+            opacity: 0.2;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .chevron-unit {
+            width: 20px;
+            height: 4px;
+            background: white;
+            transform: skewY(-45deg);
+        }
+
+        /* Ondas sutis */
+        .wave-pattern {
+            width: 200px;
+            height: 50px;
+            border: 2px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            top: 50%;
+            right: -100px;
+            transform: rotate(-30deg);
+        }
+
+        .aside-content {
+            position: relative;
+            z-index: 10;
+        }
+
+        .sig-text-logo {
+            font-size: 86px;
+            font-weight: 900;
+            color: white;
+            letter-spacing: -4px;
+            line-height: 0.8;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        .sig-text-software {
+            font-size: 28px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.8);
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            margin-top: 10px;
+        }
+
+        .sig-text-desc {
+            font-size: 15px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.5);
+            line-height: 1.6;
+            margin-top: 40px;
+            max-width: 320px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Lado Direito - Card Branco Limpo */
+        .login-main {
+            flex: 1;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            position: relative;
+        }
+
+        .login-card-inner {
+            width: 100%;
+            max-width: 340px;
+        }
+
+        .btn-close-organic {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8fafc;
+            color: #94a3b8;
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 100;
+            border: none;
+        }
+
+        .btn-close-organic:hover {
+            background: #fee2e2;
+            color: #ef4444;
+            transform: rotate(90deg) scale(1.1);
+        }
+
+        .login-card-inner h2 {
+            font-size: 36px;
+            font-weight: 900;
+            color: #1e293b;
+            margin-bottom: 5px;
+            letter-spacing: -1px;
+        }
+
+        .login-card-inner .subtext {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 40px;
+            font-weight: 500;
+        }
+
+        /* Inputs Modernos com Borda Forte (Referência) */
+        .form-row {
+            margin-bottom: 25px;
+        }
+
+        .form-row label {
+            display: block;
+            font-size: 11px;
+            font-weight: 800;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .input-vibrant {
+            width: 100%;
+            height: 52px;
+            padding: 0 16px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #0f172a;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .input-vibrant:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Servidor Toggle */
+        .server-toggle {
+            display: flex;
+            gap: 15px;
+            margin-top: 5px;
+        }
+
+        .server-opt {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #64748b;
+            cursor: pointer;
+        }
+
+        .server-opt input {
+            accent-color: #3b82f6;
+            cursor: pointer;
+        }
+
+        /* Botão de Sistema */
+        .btn-access-sys {
+            width: 100%;
+            height: 56px;
+            background: #2563eb;
+            color: white;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 800;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 30px;
+            letter-spacing: 1px;
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-access-sys:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-access-sys:active {
+            transform: translateY(0);
+        }
+
+        .form-footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: #94a3b8;
+        }
+
+        .form-footer a {
+            color: #3b82f6;
+            text-decoration: none;
+            margin: 0 5px;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Drag Region -->
+    <div class="drag-region"></div>
+
+    <div class="login-wrapper">
+        <!-- Arte Lateral com as Texturas da Nova Referência -->
+        <aside class="login-aside">
+            <!-- Texturas Geométricas -->
+            <div class="pattern circle-rim c1"></div>
+            <div class="pattern circle-solid c2"></div>
+            <div class="pattern circle-rim c3"></div>
+            <div class="pattern dots-grid"></div>
+            <div class="pattern wave-pattern"></div>
+            <div class="pattern chevrons">
+                <div class="chevron-unit"></div>
+                <div class="chevron-unit"></div>
+                <div class="chevron-unit"></div>
+            </div>
+
+            <div class="aside-content">
+                <h1 class="sig-text-logo">SIG</h1>
+                <div class="sig-text-software">SOFTWARE</div>
+                <p class="sig-text-desc">
+                    SISTEMA DE INFRA E GESTÃO
+                </p>
+            </div>
+        </aside>
+
+        <!-- Área de Login -->
+        <main class="login-main">
+            <!-- Fechar Janela -->
+            <button class="btn-close-organic" onclick="fecharJanela()">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+
+            <div class="login-card-inner">
+                <h2>Olá,</h2>
+                <p class="subtext">Sincronize sua credencial para continuar.</p>
+
+                <form onsubmit="handleLogin(event)">
+                    <div class="form-row">
+                        <label>Usuário Corporativo</label>
+                        <input type="text" id="username" required class="input-vibrant" placeholder="nome.sobrenome">
+                    </div>
+
+                    <div class="form-row">
+                        <label>Chave de Acesso</label>
+                        <input type="password" id="password" required class="input-vibrant" placeholder="••••••••">
+                    </div>
+
+                    <div class="form-row">
+                        <label>Ambiente de Trabalho</label>
+                        <div class="server-toggle">
+                            <label class="server-opt">
+                                <input type="radio" name="conn" value="local" checked> Operação Local
+                            </label>
+                            <label class="server-opt">
+                                <input type="radio" name="conn" value="remoto"> Acesso Nuvem
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-access-sys">ENTRAR NO SISTEMA</button>
+
+                    <div class="form-footer">
+                        <a href="#">Trocar Senha</a>
+                        <span>•</span>
+                        <a href="#">Suporte Direto</a>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function fecharJanela() {
+            if (window.runtime) window.runtime.Quit();
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            btn.innerHTML = '<span class="animate-pulse">SINCRONIZANDO...</span>';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                if (window.parent) {
+                    window.parent.postMessage({ type: 'LOGIN_SUCCESS' }, '*');
+                }
+            }, 800);
+        }
+    </script>
+</body>
+
+</html>

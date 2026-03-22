@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>SIG - PARÂMETROS FISCAIS</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'sig-blue': '#1e40af',
+                        'sig-blue-dark': '#1e3a8a',
+                        'sig-brand-cyan': '#00e5ff',
+                        'sig-brand-dark': '#001b2b',
+                        'sig-border': '#cbd5e1',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="../../assets/css/sig-ui.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400&display=swap" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8fafc;
+        }
+        /* Ajuste de scrollbar para manter o look desktop clássico */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+
+<body class="bg-[#f8fafc] font-sans text-slate-700 h-screen flex flex-col overflow-hidden relative">
+
+    <!-- MODAL FISCAL: DESIGN PREMIUM INDUSTRIAL -->
+    <div id="modal-fiscal" class="sig-modal-overlay">
+        <div class="bg-white w-[650px] rounded-md shadow-2xl overflow-hidden border border-slate-400">
+            <!-- CABEÇALHO CLÁSSICO BLUE -->
+            <div class="bg-white p-3 px-6 flex justify-between items-center border-b border-slate-200">
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-sig-blue text-xl">account_balance</span>
+                    <h3 id="modal-titulo" class="text-sig-blue font-bold text-[12px] uppercase tracking-wider">Configuração de Perfil Fiscal</h3>
+                </div>
+                <button onclick="fecharModal()" class="sig-btn-close !w-8 !h-8">
+                    <span class="material-symbols-outlined !text-lg">close</span>
+                </button>
+            </div>
+
+            <div class="p-8 bg-white max-h-[80vh] overflow-y-auto">
+                <form id="form-fiscal" class="grid grid-cols-12 gap-x-6 gap-y-5">
+                    <input type="hidden" id="fis-id" value="0">
+                    
+                    <div class="col-span-8">
+                        <label class="sig-label">Nome do Perfil (Ex: Autopeça com ST)</label>
+                        <input type="text" id="fis-nome" class="sig-input font-bold uppercase" placeholder="DIGITE O NOME DO PERFIL">
+                    </div>
+
+                    <div class="col-span-4">
+                        <label class="sig-label">CFOP Padrão</label>
+                        <input type="text" id="fis-cfop" class="sig-input font-mono text-center" placeholder="0000">
+                    </div>
+
+                    <div class="col-span-6">
+                        <label class="sig-label">Operação</label>
+                        <select id="fis-operacao" class="sig-input bg-white cursor-pointer font-bold">
+                            <option value="ENTRADA">ENTRADA (COMPRA)</option>
+                            <option value="SAIDA">SAÍDA (VENDA)</option>
+                        </select>
+                    </div>
+
+                    <div class="col-span-6 flex items-center pt-5">
+                        <div class="flex items-center gap-3 bg-slate-50 border border-slate-200 px-4 py-2 rounded-sm w-full">
+                            <input type="checkbox" id="fis-st" class="w-4 h-4 rounded border-slate-300 text-blue-600">
+                            <label for="fis-st" class="text-[10px] font-black text-slate-600 uppercase tracking-wide cursor-pointer">Incidência de ST</label>
+                        </div>
+                    </div>
+
+                    <!-- SEÇÃO DE ALÍQUOTAS -->
+                    <div class="col-span-12 p-4 bg-slate-50 border border-slate-200 rounded-sm grid grid-cols-4 gap-4 mt-2">
+                        <div class="col-span-4 border-b border-slate-200 pb-2 mb-2">
+                            <h4 class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Alíquotas de Impostos (%)</h4>
+                        </div>
+                        <div>
+                            <label class="sig-label">ICMS</label>
+                            <input type="number" id="fis-icms" class="sig-input text-right font-mono" step="0.01" value="0.00">
+                        </div>
+                        <div>
+                            <label class="sig-label">IPI</label>
+                            <input type="number" id="fis-ipi" class="sig-input text-right font-mono" step="0.01" value="0.00">
+                        </div>
+                        <div>
+                            <label class="sig-label">PIS</label>
+                            <input type="number" id="fis-pis" class="sig-input text-right font-mono" step="0.01" value="0.00">
+                        </div>
+                        <div>
+                            <label class="sig-label">COFINS</label>
+                            <input type="number" id="fis-cofins" class="sig-input text-right font-mono" step="0.01" value="0.00">
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- FOOTER -->
+            <div class="px-8 py-4 bg-slate-50 border-t border-slate-200 flex justify-end gap-3">
+                <button onclick="fecharModal()" class="sig-btn text-slate-500 hover:bg-white border border-transparent hover:border-slate-200 transition-all uppercase !text-[10px] font-black px-6">Cancelar</button>
+                <button onclick="salvar()" class="sig-btn sig-btn-primary bg-sig-blue hover:bg-sig-blue-dark flex items-center gap-2 min-w-[180px] justify-center shadow-lg transition-all scale-100 hover:scale-[1.02]">
+                    <span class="uppercase font-black tracking-wider text-[11px]">Gravar Perfil (F10)</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex flex-1 overflow-hidden bg-white w-full">
+        <!-- SIDEBAR PADRÃO SIG -->
+        <aside class="sig-sidebar">
+            <div class="sig-sidebar-header">
+                <span>FISCAL <span class="text-[8px] text-[#00e5ff] font-black">PRO</span></span>
+            </div>
+            <nav class="sig-sidebar-menu flex-1 bg-white">
+                <div class="sig-menu-item ativa">
+                    <span>Perfis Fiscais</span>
+                    <span class="sig-shortcut">F2</span>
+                </div>
+                <div class="sig-menu-item opacity-40">
+                    <span>CNAEs</span>
+                    <span class="sig-shortcut">F3</span>
+                </div>
+                <div class="sig-menu-item opacity-40">
+                    <span>Certificados</span>
+                    <span class="sig-shortcut">F4</span>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- AREA PRINCIPAL -->
+        <main class="flex-1 flex flex-col overflow-hidden px-6 py-3 bg-white w-full">
+            <div class="sig-secao ativa flex flex-col h-full overflow-hidden">
+                <div class="mb-6 flex items-end justify-between border-b border-slate-100 pb-4">
+                    <div>
+                        <h2 class="sig-header-classic">Parâmetros Fiscais</h2>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase mt-1 tracking-widest italic opacity-70">
+                            Regras tributárias por perfil de operação</p>
+                    </div>
+                    <button onclick="abrirModal()" class="sig-btn sig-btn-primary shadow-sm flex items-center gap-2">
+                        <span class="text-xs">+</span> Novo Perfil
+                    </button>
+                </div>
+
+                <div class="flex-1 overflow-y-auto border border-slate-200 rounded-sm bg-white shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]">
+                    <table class="sig-table sig-table-sm w-full">
+                        <thead class="sticky top-0 bg-white shadow-sm z-10">
+                            <tr>
+                                <th width="30%">Perfil Fiscal</th>
+                                <th width="12%" class="sig-text-center">Operação</th>
+                                <th width="8%" class="sig-text-center">ICMS</th>
+                                <th width="8%" class="sig-text-center">ST</th>
+                                <th width="8%" class="sig-text-center">IPI</th>
+                                <th width="8%" class="sig-text-center">PIS</th>
+                                <th width="8%" class="sig-text-center">COFINS</th>
+                                <th width="10%" class="sig-text-center">CFOP</th>
+                                <th width="8%" class="sig-text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lista-perfis">
+                            <!-- Injetado via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- STATUS BAR / RODAPÉ PADRÃO SIG -->
+    <footer class="bg-slate-200 border-t border-slate-300 shrink-0 z-50">
+        <div class="sig-progress-bar-container">
+            <div id="footer-progress" class="sig-progress-bar-fill" style="width: 0%;"></div>
+        </div>
+        <div class="flex flex-wrap items-center justify-between px-4 py-1 text-[10px] text-slate-600 font-bold uppercase tracking-tight">
+            <div class="flex items-center space-x-4">
+                <span class="flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">terminal</span>
+                    TERMINAL: 01 (FISCAL)
+                </span>
+                <span class="text-slate-400">|</span>
+                <span>F2 ATUALIZAR</span>
+            </div>
+            <div class="flex items-center space-x-4 divide-x divide-slate-400">
+                <div class="px-3">Usuário: Admin</div>
+                <div class="px-3" id="data-hora-footer">--/--/---- --:--:--</div>
+                <div class="px-3 text-slate-400 font-medium lowercase">v2.0.14</div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="fiscal.js"></script>
+    <script>
+        setInterval(() => {
+            const el = document.getElementById('data-hora-footer');
+            if (el) el.innerText = new Date().toLocaleString('pt-br');
+        }, 1000);
+    </script>
+</body>
+
+</html>

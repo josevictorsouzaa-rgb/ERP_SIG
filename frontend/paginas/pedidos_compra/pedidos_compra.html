@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>SIG - PEDIDOS DE COMPRA</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'sig-blue': '#1e40af',
+                        'sig-blue-dark': '#001b2b',
+                        'sig-brand-cyan': '#00e5ff',
+                        'sig-border': '#cbd5e1',
+                        'sig-bg-light': '#f8fafc'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="../../assets/css/sig-ui.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@300..700,0..1&display=swap"
+        rel="stylesheet" />
+    <style>
+        .aba-ativa {
+            background-color: white !important;
+            border-bottom-color: white !important;
+            color: #1e40af !important;
+            font-weight: 800 !important;
+        }
+
+        .sig-input-dense {
+            height: 28px !important;
+            font-size: 11px !important;
+            padding: 0 8px !important;
+        }
+
+        .sig-fieldset-bloqueado {
+            opacity: 0.6;
+            pointer-events: none;
+            background-color: #f1f5f9 !important;
+        }
+
+        /* Estilo para o Toggle de Tipo (J/F) */
+        .toggle-tipo-btn {
+            flex: 1;
+            height: 28px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .toggle-tipo-btn.active {
+            background-color: white;
+            color: #1e40af;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-color: #cbd5e1;
+            border-radius: 1px;
+        }
+
+        .toggle-tipo-btn:not(.active) {
+            color: #64748b;
+        }
+
+        .toggle-tipo-btn:not(.active):hover {
+            color: #1e40af;
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .btn-search-blue {
+            background: linear-gradient(180deg, #1e40af 0%, #1e3a8a 100%);
+            color: white !important;
+            border: 1px solid #1e3a8a !important;
+            box-shadow: 1px 1px 0px #0f172a !important;
+        }
+
+        .btn-search-blue:hover {
+            filter: brightness(1.1);
+        }
+
+        /* Botão Incluir Verde (Definitivo) */
+        .btn-incluir-verde {
+            background: #10b981 !important;
+            color: white !important;
+            border: 1px solid #065f46 !important;
+            box-shadow: 1px 1px 0px #064e3b !important;
+            transition: all 0.2s;
+        }
+
+        .btn-incluir-verde:hover {
+            background: #059669 !important;
+            transform: translateY(-1px);
+        }
+
+        .btn-incluir-verde:active {
+            transform: translateY(1px);
+            box-shadow: none !important;
+        }
+
+        /* Alta Performance: Seleção de Linha de Alto Contraste com Harmonia */
+        .sig-row-selected {
+            background-color: #1e40af !important;
+            color: #ffffff !important;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .sig-row-selected td {
+            color: #ffffff !important;
+            border-right-color: rgba(255, 255, 255, 0.1) !important;
+            border-bottom-color: rgba(255, 255, 255, 0.05) !important;
+        }
+
+        .sig-row-selected .font-mono {
+            color: #ffffff !important;
+            font-weight: 800;
+        }
+
+        .sig-row-selected .material-symbols-outlined {
+            color: #ffffff !important;
+        }
+    </style>
+</head>
+
+<body class="flex flex-col h-screen overflow-hidden text-slate-800 bg-slate-200">
+
+    <!-- ÁREA DE TRABALHO UNIFICADA -->
+    <main class="flex-1 overflow-hidden relative flex flex-col bg-[#f1f5f9] p-2">
+
+        <!-- ABAS DE NAVEGAÇÃO / RASCUNHOS ATIVOS -->
+        <div id="container-abas-rascunhos"
+            class="flex items-end gap-1 px-1 pt-1 shrink-0 overflow-x-auto custom-scrollbar">
+            <!-- Abas Dinâmicas Injetadas Aqui -->
+        </div>
+
+        <div id="aba-workspace"
+            class="flex-1 border border-slate-300 border-t-0 rounded-b-md rounded-tr-md flex flex-col min-h-0 bg-white relative overflow-hidden">
+
+            <!-- VIEW DA LISTA DE PEDIDOS (HOME) -->
+            <div id="view-lista-pedidos" class="w-full h-full p-4 flex flex-col gap-4 bg-[#f8fafc] overflow-hidden">
+                <div class="flex items-center justify-between shrink-0">
+                    <div class="flex items-center gap-2">
+                        <input type="text" placeholder="Pesquisar pedido ou fornecedor..." class="sig-input w-80">
+                        <button class="sig-btn sig-btn-primary h-[34px]">
+                            <span class="material-symbols-outlined !text-base">search</span>
+                        </button>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] font-bold text-slate-400">STATUS:</span>
+                        <select class="sig-input h-[34px] w-40">
+                            <option>TODOS</option>
+                            <option>PENDENTE</option>
+                            <option>APROVADO</option>
+                            <option>CONCLUÍDO</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- CONTAINER SPLIT (LISTA / DETALHES) -->
+                <div class="flex-1 flex flex-col gap-4 overflow-hidden">
+                    <!-- PARTE SUPERIOR: LISTA PRINCIPAL -->
+                    <div class="h-[60%] overflow-auto border border-slate-300 rounded-sm bg-white shadow-sm">
+                        <table class="sig-table w-full">
+                            <thead class="sticky top-0 z-10">
+                                <tr>
+                                    <th class="w-20">Pedido</th>
+                                    <th class="w-28 text-center">Data</th>
+                                    <th>Fornecedor</th>
+                                    <th class="w-32 text-right">Valor Total</th>
+                                    <th class="w-20 text-center">Itens</th>
+                                    <th class="w-32 text-center">Status</th>
+                                    <th class="w-32 text-center">Prev. Entrega</th>
+                                    <th class="w-16 text-center">...</th>
+                                </tr>
+                            </thead>
+                            <tbody id="lista-pedidos-f2">
+                                <!-- Injetado via Mock/JS -->
+                                <tr class="hover:bg-blue-50 cursor-pointer transition-colors"
+                                    onclick="exibirDetalhesPedido(0)">
+                                    <td class="text-center font-mono font-bold">000125</td>
+                                    <td class="text-center">10/03/2026</td>
+                                    <td class="font-bold text-slate-700">DISTRIBUIDORA AUTOMOTIVA S.A.</td>
+                                    <td class="text-right font-mono text-blue-700 font-bold">R$ 12.450,00</td>
+                                    <td class="text-center font-bold">12</td>
+                                    <td class="text-center">
+                                        <span
+                                            class="bg-amber-100 text-amber-700 px-3 py-0.5 rounded-full text-[9px] font-black uppercase">Pendente</span>
+                                    </td>
+                                    <td class="text-center text-slate-500">15/03/2026</td>
+                                    <td class="text-center">
+                                        <span
+                                            class="material-symbols-outlined text-slate-400 hover:text-blue-600 text-sm">visibility</span>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-blue-50 cursor-pointer transition-colors border-t border-slate-100"
+                                    onclick="exibirDetalhesPedido(1)">
+                                    <td class="text-center font-mono font-bold">000128</td>
+                                    <td class="text-center">09/03/2026</td>
+                                    <td class="font-bold text-slate-700">COFAP FABRICACAO LTDA</td>
+                                    <td class="text-right font-mono text-blue-700 font-bold">R$ 4.200,00</td>
+                                    <td class="text-center font-bold">08</td>
+                                    <td class="text-center">
+                                        <span
+                                            class="bg-emerald-100 text-emerald-700 px-3 py-0.5 rounded-full text-[9px] font-black uppercase">Concluído</span>
+                                    </td>
+                                    <td class="text-center text-slate-500">12/03/2026</td>
+                                    <td class="text-center">
+                                        <span
+                                            class="material-symbols-outlined text-slate-400 hover:text-blue-600 text-sm">visibility</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- PARTE INFERIOR: DETALHES -->
+                    <div id="painel-detalhes-pedido"
+                        class="h-[40%] bg-white border border-slate-300 rounded-sm shadow-inner flex flex-col overflow-hidden">
+                        <div
+                            class="bg-slate-100 p-2 px-4 flex justify-between items-center border-b border-slate-300 shrink-0">
+                            <div class="flex items-center gap-3">
+                                <span class="material-symbols-outlined text-sig-blue !text-base">assignment</span>
+                                <span class="text-[11px] font-black text-slate-700 uppercase tracking-widest">Detalhes
+                                    do Pedido Selecionado</span>
+                                <span id="detalhe-pedido-label"
+                                    class="bg-sig-blue text-white px-3 py-0.5 rounded-sm text-[10px] font-black ml-2 shadow-sm">#--</span>
+                            </div>
+                            <div class="flex gap-4 items-center">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase">Fornecedor: <span
+                                        id="detalhe-fornecedor-nome" class="text-slate-700">Selecione um
+                                        pedido</span></span>
+                            </div>
+                        </div>
+
+                        <div class="flex-1 flex overflow-hidden">
+                            <div class="w-1/3 p-4 border-r border-slate-200 bg-slate-50/50 flex flex-col gap-3">
+                                <div>
+                                    <label class="sig-label !mb-0 opacity-50">Documento Beneficiário</label>
+                                    <span id="detalhe-fornecedor-doc"
+                                        class="text-xs font-bold text-slate-800">--.---.---/----.--</span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="sig-label !mb-0 opacity-50">Cond. Pagamento</label>
+                                        <span id="detalhe-cond-pagto" class="text-xs font-bold text-slate-700">30/60
+                                            DIAS</span>
+                                    </div>
+                                    <div>
+                                        <label class="sig-label !mb-0 opacity-50">Transporte</label>
+                                        <span id="detalhe-transporte" class="text-xs font-bold text-slate-700">CIF
+                                            (PRÓPRIO)</span>
+                                    </div>
+                                </div>
+                                <div class="mt-auto pt-2 border-t border-slate-200">
+                                    <label class="sig-label !mb-0 opacity-50 italic">Observação Interna</label>
+                                    <p id="detalhe-obs" class="text-[10px] text-slate-500 italic leading-tight">Não há
+                                        observações para este pedido.</p>
+                                </div>
+                            </div>
+                            <div class="flex-1 overflow-auto">
+                                <table class="sig-table sig-table-sm w-full border-none">
+                                    <thead class="sticky top-0 bg-white shadow-sm z-10 border-b border-slate-200">
+                                        <tr>
+                                            <th class="w-10 text-center">SEQ</th>
+                                            <th class="w-24 text-center">CÓDIGO</th>
+                                            <th>DESCRIÇÃO DO ITEM</th>
+                                            <th class="w-16 text-center">UN</th>
+                                            <th class="w-20 text-center">QTD</th>
+                                            <th class="w-32 text-right">VALOR UNIT.</th>
+                                            <th class="w-32 text-right">TOTAL</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="detalhe-itens-tabela">
+                                        <tr>
+                                            <td colspan="7"
+                                                class="py-10 text-center text-slate-300 font-bold uppercase text-[10px] tracking-widest italic">
+                                                Aguardando seleção de pedido...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW DE RASCUNHO/EDITOR (Oculto por padrão, ativado ao selecionar uma tab de rascunho) -->
+            <div id="view-editor-rascunho"
+                class="w-full h-full p-3 flex flex-col gap-2 bg-white overflow-y-auto hidden">
+                <!-- CABEÇALHO DO PEDIDO ATIVO -->
+                <div class="flex justify-between items-center px-4 py-2 bg-slate-50 border border-slate-200 rounded-sm">
+                    <div class="flex items-center gap-6">
+                        <div class="flex flex-col">
+                            <span class="sig-label !mb-0 opacity-70">Número do Pedido</span>
+                            <span id="rascunho-header-numero"
+                                class="text-xl font-black text-slate-800 tracking-tight">--</span>
+                        </div>
+                        <div class="h-8 w-px bg-slate-300"></div>
+                        <div class="flex flex-col">
+                            <span class="sig-label !mb-0 opacity-70">Data de Abertura</span>
+                            <span id="rascunho-header-data"
+                                class="text-xs font-bold text-slate-700 mt-1 uppercase">--/--/----</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span
+                            class="bg-yellow-100 text-yellow-800 border border-yellow-300 px-3 py-1 rounded-sm text-[10px] font-black uppercase tracking-wider flex items-center gap-1 shadow-sm">
+                            <span class="material-symbols-outlined text-sm">edit_note</span> RASCUNHO ABERTO
+                        </span>
+                    </div>
+                </div>
+
+                <!-- SEÇÃO FORNECEDOR -->
+                <div class="sig-fieldset relative">
+                    <span class="sig-legend">Identificação do Fornecedor</span>
+                    <div class="grid grid-cols-12 gap-3 mt-4">
+                        <div class="col-span-1">
+                            <label class="sig-label">Cód. (F1)</label>
+                            <div class="flex gap-1">
+                                <input type="text" id="forn-codigo" class="sig-input-dense w-full font-mono"
+                                    placeholder="0000">
+                                <button
+                                    class="sig-btn-icon bg-slate-100 border-slate-300 !h-[28px] !w-[28px] flex items-center justify-center"
+                                    onclick="abrirPesquisaFornecedor()">
+                                    <span class="material-symbols-outlined !text-[14px]">search</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-span-4">
+                            <label class="sig-label">Razão Social / Nome Fantasia</label>
+                            <input type="text" id="forn-razao" class="sig-input-dense w-full bg-slate-50" readonly>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="sig-label">CPF/CNPJ</label>
+                            <input type="text" id="forn-documento" class="sig-input-dense w-full bg-slate-50" readonly>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="sig-label">Tipo de Pedido</label>
+                            <select class="sig-input-dense w-full">
+                                <option>COMPRA NORMAL</option>
+                                <option>BONIFICAÇÃO</option>
+                                <option>GARANTIA</option>
+                            </select>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="sig-label">Prev. Entrega</label>
+                            <input type="date" class="sig-input-dense w-full">
+                        </div>
+                        <div class="col-span-1">
+                            <label class="sig-label">% Desc.</label>
+                            <input type="text" class="sig-input-dense w-full text-right" value="0,00">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SEÇÃO ITENS -->
+                <div class="sig-fieldset flex-1 flex flex-col min-h-0 bg-white">
+                    <span class="sig-legend">Itens do Pedido</span>
+
+                    <!-- INSERT ITENS -->
+                    <div
+                        class="grid grid-cols-12 gap-2 mt-4 bg-slate-50 p-2 border border-slate-200 rounded-sm shrink-0">
+                        <div class="col-span-2">
+                            <label class="sig-label">Cód. Prod. (F2)</label>
+                            <div class="flex gap-1">
+                                <input type="text" id="item-codigo" class="sig-input-dense flex-1 font-mono"
+                                    oninput="buscarProdutoPorCodigo(this.value)">
+                                <button
+                                    class="sig-btn-icon bg-slate-100 border-slate-300 !h-[28px] !w-[28px] flex items-center justify-center"
+                                    onclick="abrirPesquisaProdutosPedido()">
+                                    <span class="material-symbols-outlined !text-[14px]">search</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-span-4">
+                            <label class="sig-label">Descrição do Produto</label>
+                            <input type="text" id="item-descricao"
+                                class="sig-input-dense w-full bg-slate-50 uppercase font-bold" readonly>
+                        </div>
+                        <div class="col-span-1">
+                            <label class="sig-label">Emb.</label>
+                            <input type="text" id="item-un" class="sig-input-dense w-full text-center bg-slate-50"
+                                readonly>
+                        </div>
+                        <div class="col-span-1 text-blue-800">
+                            <label class="sig-label">Qtd. Compra</label>
+                            <input type="number" id="item-qtd" class="sig-input-dense w-full text-center font-black">
+                        </div>
+                        <div class="col-span-2 text-emerald-800">
+                            <label class="sig-label">Vlr. Unitário (Últ. Compra)</label>
+                            <input type="text" id="item-valor" class="sig-input-dense w-full text-right font-black">
+                        </div>
+                        <div class="col-span-1">
+                            <label class="sig-label">Subtotal</label>
+                            <input type="text" id="item-subtotal"
+                                class="sig-input-dense w-full text-right bg-slate-50 font-bold" readonly>
+                        </div>
+                        <div class="col-span-1">
+                            <label class="sig-label">Ação</label>
+                            <button onclick="adicionarItemPedido()"
+                                class="btn-incluir-verde w-full !h-[28px] flex items-center justify-center rounded-sm">
+                                <span class="material-symbols-outlined !text-sm">add</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- TABELA DE ITENS -->
+                    <div class="flex-1 mt-2 overflow-auto border border-slate-200">
+                        <table class="sig-table sig-table-sm w-full">
+                            <thead class="sticky top-0 bg-slate-100 shadow-sm z-10 border-b border-slate-300">
+                                <tr>
+                                    <th class="w-10 text-center">Seq.</th>
+                                    <th class="w-24 text-center">Código</th>
+                                    <th>Descrição do Item</th>
+                                    <th class="w-16 text-center">Emb.</th>
+                                    <th class="w-20 text-center">Qtd.</th>
+                                    <th class="w-28 text-right">Vlr. Unit.</th>
+                                    <th class="w-28 text-right">Total Item</th>
+                                    <th class="w-12 text-center">...</th>
+                                </tr>
+                            </thead>
+                            <tbody id="lista-itens-pedido">
+                                <!-- Itens adicionados aparecerão aqui -->
+                                <tr class="hover:bg-slate-50 cursor-default">
+                                    <td class="text-center font-mono opacity-50">01</td>
+                                    <td class="text-center font-mono">001259</td>
+                                    <td class="font-bold uppercase">AMORTECEDOR DIANTEIRO DIREITO - TURBOGÁS</td>
+                                    <td class="text-center">UN</td>
+                                    <td class="text-center font-black">10,00</td>
+                                    <td class="text-right font-mono text-emerald-700">R$ 192,00</td>
+                                    <td class="text-right font-mono font-black text-blue-800">R$ 1.920,00</td>
+                                    <td class="text-center"><span
+                                            class="material-symbols-outlined text-red-500 !text-sm cursor-pointer"
+                                            onclick="this.closest('tr').remove()">delete</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- SUBTOTAL -->
+                    <div
+                        class="h-[28px] bg-slate-100 border-t border-slate-300 flex items-center justify-end px-4 gap-4">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase">Total do Pedido:</span>
+                        <span class="text-sm font-black text-blue-800 font-mono">R$ 2.450,00</span>
+                    </div>
+                </div>
+
+                <!-- SEÇÃO DADOS FINAIS TABS -->
+                <div class="h-32 bg-white border border-slate-300 rounded-sm flex flex-col overflow-hidden">
+                    <div class="flex bg-slate-100 border-b border-slate-300">
+                        <button
+                            class="px-4 py-1.5 text-[9px] font-black uppercase bg-white border-r border-slate-300 text-blue-700">Dados
+                            Gerais</button>
+                        <button
+                            class="px-4 py-1.5 text-[9px] font-black uppercase text-slate-500 hover:bg-slate-50 border-r border-slate-300">Financeiro</button>
+                        <button
+                            class="px-4 py-1.5 text-[9px] font-black uppercase text-slate-500 hover:bg-slate-50">Aprovador
+                            Adicional</button>
+                    </div>
+                    <div class="p-3 grid grid-cols-12 gap-3 flex-1">
+                        <div class="col-span-3">
+                            <label class="sig-label">Transportadora</label>
+                            <select class="sig-input-dense w-full">
+                                <option>... SELECIONE ...</option>
+                            </select>
+                        </div>
+                        <div class="col-span-1">
+                            <label class="sig-label">Prazo</label>
+                            <input type="text" class="sig-input-dense w-full text-center" value="0">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="sig-label">Responsável</label>
+                            <input type="text" class="sig-input-dense w-full" value="ADMINISTRADOR" readonly>
+                        </div>
+                        <div class="col-span-4">
+                            <label class="sig-label">Observação do Pedido</label>
+                            <input type="text" class="sig-input-dense w-full">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="sig-label">Frete por conta</label>
+                            <div class="flex items-center gap-4 h-[24px]">
+                                <label class="flex items-center gap-1 text-[10px] font-bold cursor-pointer"><input
+                                        type="radio" name="frete" checked> COMPRADOR</label>
+                                <label class="flex items-center gap-1 text-[10px] font-bold cursor-pointer"><input
+                                        type="radio" name="frete"> FORNECEDOR</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- /FIM WORKSPACE DO PEDIDO ATUAL -->
+
+        </div> <!-- FIM CONTAINER CENTRAL BRANCO -->
+
+        <!-- RODAPÉ DE AÇÕES (Para o Editor) -->
+        <footer id="rodape-acoes-editor"
+            class="h-[52px] bg-[#f8fafc] border-t border-slate-300 flex items-center justify-between px-6 shrink-0 mt-auto hidden">
+            <div class="flex gap-2">
+                <button onclick="selecionarRascunho(0)" class="sig-btn sig-btn-neutral px-4 h-9">
+                    <span class="material-symbols-outlined !text-lg">close</span> Cancelar / Ocultar
+                </button>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="setLoading(true); setTimeout(()=>setLoading(false), 1500)"
+                    class="sig-btn sig-btn-primary px-8 h-9 !bg-emerald-600 !border-emerald-700 !shadow-[1px_1px_0px_#064e3b]">
+                    <span class="material-symbols-outlined !text-lg text-emerald-100">save</span> Salvar (F5)
+                </button>
+                <button class="sig-btn sig-btn-primary px-8 h-9 !bg-indigo-600 !border-indigo-700">
+                    <span class="material-symbols-outlined !text-lg">send</span> Enviar Pedido
+                </button>
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- STATUS BAR PADRÃO -->
+    <footer class="bg-slate-200 border-t border-slate-300 shrink-0 z-50">
+        <div class="sig-progress-bar-container">
+            <div id="footer-progress" class="sig-progress-bar-fill" style="width: 0%;"></div>
+        </div>
+        <div
+            class="flex flex-wrap items-center justify-between px-4 py-1 text-[10px] text-slate-600 font-bold uppercase tracking-tight">
+            <div class="flex items-center space-x-4">
+                <span class="flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">terminal</span> TERMINAL: 01 (COMPRAS)
+                </span>
+                <span class="text-slate-400">|</span>
+                <span>F2 PESQUISAR</span>
+                <span>F3 NOVO</span>
+                <span>F5 GRAVAR</span>
+                <span>ESC SAIR</span>
+            </div>
+            <div class="flex items-center space-x-4 divide-x divide-slate-400">
+                <div class="px-3">Usuário: Admin</div>
+                <div class="px-3" id="data-hora-footer">--/--/---- --:--:--</div>
+                <div class="px-3">Banco: <span class="text-emerald-600 font-extrabold">PostgreSQL</span></div>
+                <div class="px-3 text-slate-400 font-medium lowercase">v2.1.20</div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL PESQUISA FORNECEDOR (ESTILO SIG OFICIAL) -->
+    <div id="modal-pesquisa-fornecedor"
+        class="fixed inset-0 z-[100] bg-black/40 hidden items-center justify-center backdrop-blur-[2px]">
+        <div
+            class="bg-white w-[800px] h-[500px] rounded-sm shadow-2xl overflow-hidden border border-slate-400 flex flex-col animate-in fade-in zoom-in duration-150">
+            <!-- CABEÇALHO PADRÃO SIG -->
+            <div class="bg-[#f8fafc] p-2 px-4 flex justify-between items-center border-b border-slate-300 shrink-0">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-slate-500 text-sm">search</span>
+                    <h3 class="text-slate-700 font-bold text-[11px] uppercase tracking-wider">Localizar Fornecedor
+                        Acadastrado</h3>
+                </div>
+                <button onclick="fecharPesquisaFornecedor()" class="sig-btn-close !w-7 !h-7">
+                    <span class="material-symbols-outlined !text-base">close</span>
+                </button>
+            </div>
+
+            <!-- FILTROS -->
+            <div class="p-4 bg-slate-50 border-b border-slate-200 shrink-0">
+                <div class="flex gap-2">
+                    <div class="flex-1">
+                        <label class="sig-label">Pesquisa Global (Nome Fantasia, Razão Social ou CPF/CNPJ)</label>
+                        <div class="relative">
+                            <input type="text" id="forn-pesquisa-filtro" class="sig-input w-full !pl-10"
+                                placeholder="Digite para filtrar os resultados..."
+                                oninput="filtrarPesquisaFornecedor(this.value)">
+                            <span
+                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 !text-xl">filter_list</span>
+                        </div>
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="transicaoPesquisaParaNovo()"
+                            class="sig-btn sig-btn-primary h-[38px] !bg-emerald-600 !border-emerald-700 px-6 flex items-center gap-2">
+                            <span class="material-symbols-outlined !text-sm">add</span> NOVO (F4)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TABELA DE RESULTADOS (ALTURA FIXA VIA FLEX-1) -->
+            <div class="flex-1 overflow-y-auto bg-white">
+                <table class="sig-table w-full">
+                    <thead class="sticky top-0 z-10 bg-slate-100 shadow-sm">
+                        <tr>
+                            <th class="w-24 text-center">ID</th>
+                            <th>Fornecedor / Razão Social</th>
+                            <th class="w-48 text-center">CPF / CNPJ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lista-pesquisa-fornecedor">
+                        <!-- Itens renderizados via JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- RODAPÉ DO MODAL -->
+            <div class="bg-slate-100 px-4 py-2 border-t border-slate-300 flex justify-between items-center shrink-0">
+                <span class="text-[10px] text-slate-500 font-bold uppercase tracking-widest"
+                    id="forn-total-registros">Aguardando pesquisa...</span>
+                <button onclick="fecharPesquisaFornecedor()"
+                    class="sig-btn text-slate-500 hover:bg-slate-200 px-6 h-8 text-[11px] font-bold">Fechar Janela
+                    (ESC)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PESQUISA PRODUTOS (IFRAME PARA A TELA DUPLICADA) -->
+    <div id="modal-pesquisa-produtos" class="sig-modal-overlay hidden">
+        <div
+            class="bg-white w-[95%] h-[95%] rounded-md shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in duration-150">
+            <div class="flex-1">
+                <iframe src="pesquisa_produtos_pedido.html" class="w-full h-full border-none"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CADASTRO COMPLETO FORNECEDOR (ESTILO SIG OFICIAL) -->
+    <div id="modal-fornecedor-rapido" class="sig-modal-overlay hidden">
+        <div
+            class="bg-white w-[900px] h-[650px] rounded-md shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in duration-150">
+            <!-- CABEÇALHO PADRÃO SIG -->
+            <div class="bg-[#f8fafc] p-2 px-4 flex justify-between items-center border-b border-slate-300">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-sig-blue text-sm">person_add</span>
+                    <h3 class="text-slate-700 font-bold text-[11px] uppercase tracking-wider">Cadastro de Fornecedor
+                    </h3>
+                </div>
+                <button onclick="fecharCadastroRapidoFornecedor()" class="sig-btn-close !w-7 !h-7">
+                    <span class="material-symbols-outlined !text-base">close</span>
+                </button>
+            </div>
+
+            <!-- AREA DE CONTEÚDO (SEM ABAS, VISUAL ÚNICO) -->
+            <div class="flex-1 overflow-hidden flex flex-col bg-slate-50">
+                <div class="flex-1 p-5 grid grid-cols-12 gap-5 overflow-hidden">
+                    <!-- COLUNA ESQUERDA: FOTOS E DADOS PRINCIPAIS -->
+                    <div class="col-span-4 flex flex-col gap-4 overflow-hidden">
+                        <!-- LOGO DO FORNECEDOR -->
+                        <div class="sig-fieldset bg-white relative shrink-0">
+                            <span class="sig-legend text-blue-600">Logo do Fornecedor</span>
+                            <div class="flex flex-col items-center justify-center p-4 gap-3 bg-slate-50 border-2 border-dashed border-slate-200 rounded-sm group hover:border-sig-blue transition-colors cursor-pointer relative overflow-hidden h-[180px]"
+                                onclick="document.getElementById('forn-logo-input').click()">
+                                <input type="file" id="forn-logo-input" class="hidden" accept="image/*"
+                                    onchange="previewLogoFornecedor(this)">
+                                <img id="forn-logo-preview" class="hidden h-full w-full object-contain">
+                                <div id="forn-logo-placeholder"
+                                    class="flex flex-col items-center text-slate-400 group-hover:text-sig-blue">
+                                    <span class="material-symbols-outlined !text-4xl">add_photo_alternate</span>
+                                    <span class="text-[9px] font-black uppercase mt-1">Carregar Logotipo</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ID E DOCUMENTO -->
+                        <div class="sig-fieldset bg-white relative">
+                            <span class="sig-legend">Identificação</span>
+                            <div class="space-y-3 pt-1">
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div class="flex flex-col">
+                                        <label class="sig-label">Tipo Fornecedor</label>
+                                        <div class="flex bg-slate-200/60 p-0.5 rounded-sm border border-slate-300 h-8">
+                                            <input type="hidden" id="forn-completo-tipo" value="J">
+                                            <button id="btn-tipo-j" type="button" onclick="setTipoFornecedor('J')"
+                                                class="toggle-tipo-btn active">Jurídica</button>
+                                            <button id="btn-tipo-f" type="button" onclick="setTipoFornecedor('F')"
+                                                class="toggle-tipo-btn">Física</button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="sig-label">ID Sistema</label>
+                                        <input type="text" id="forn-completo-id"
+                                            class="sig-input sig-input-dense w-full bg-slate-100 text-center font-mono font-black border-slate-300 text-blue-900"
+                                            value="0156" readonly>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="sig-label">CNPJ / CPF *</label>
+                                    <div class="flex gap-1">
+                                        <input type="text" id="forn-completo-documento"
+                                            class="sig-input sig-input-dense font-mono flex-1 border-blue-200"
+                                            placeholder="00.000.000/0000-00" oninput="formatarDocumento(this)">
+                                        <button onclick="consultarCNPJ()"
+                                            class="sig-btn btn-search-blue px-3 !h-[28px] flex items-center shadow-sm">
+                                            <span class="material-symbols-outlined !text-sm">search</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="sig-label">Inscrição Estadual (IE)</label>
+                                    <input type="text" id="forn-completo-ie"
+                                        class="sig-input sig-input-dense w-full disabled-field"
+                                        placeholder="DIGITE O NÚMERO OU ISENTO" disabled>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COLUNA DIREITA: NOMES, ENDEREÇO E CONTATOS -->
+                    <div class="col-span-8 flex flex-col gap-4 overflow-hidden">
+                        <!-- NOMES -->
+                        <div id="section-nomes" class="sig-fieldset bg-white relative shrink-0 sig-fieldset-bloqueado">
+                            <span class="sig-legend text-blue-600">Nomes e Marcas</span>
+                            <div class="grid grid-cols-2 gap-4 mt-1">
+                                <div>
+                                    <label class="sig-label">Nome Fantasia (Como conhecemos) *</label>
+                                    <input type="text" id="forn-completo-fantasia"
+                                        class="sig-input sig-input-dense uppercase font-bold text-blue-800"
+                                        placeholder="EX: AUTO PEÇAS DO JOÃO">
+                                </div>
+                                <div>
+                                    <label class="sig-label">Razão Social (Oficial)</label>
+                                    <input type="text" id="forn-completo-razao"
+                                        class="sig-input sig-input-dense uppercase"
+                                        placeholder="EX: JOÃO DA SILVA AUTO PEÇAS LTDA">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ENDEREÇO COMPACTO -->
+                        <div id="section-endereco"
+                            class="sig-fieldset bg-white relative shrink-0 sig-fieldset-bloqueado">
+                            <span class="sig-legend">Localização & Logística</span>
+                            <div class="grid grid-cols-12 gap-3 mt-1">
+                                <div class="col-span-2">
+                                    <label class="sig-label">CEP</label>
+                                    <input type="text" id="forn-completo-cep"
+                                        class="sig-input sig-input-dense font-mono text-center" placeholder="00000-000">
+                                </div>
+                                <div class="col-span-7">
+                                    <label class="sig-label">Endereço (Logradouro)</label>
+                                    <input type="text" id="forn-completo-endereco"
+                                        class="sig-input sig-input-dense uppercase" placeholder="RUA, AVENIDA, ETC">
+                                </div>
+                                <div class="col-span-3">
+                                    <label class="sig-label">Número</label>
+                                    <input type="text" id="forn-completo-numero"
+                                        class="sig-input sig-input-dense text-center" placeholder="S/N">
+                                </div>
+                                <div class="col-span-4">
+                                    <label class="sig-label">Bairro</label>
+                                    <input type="text" id="forn-completo-bairro"
+                                        class="sig-input sig-input-dense uppercase" placeholder="NOME DO BAIRRO">
+                                </div>
+                                <div class="col-span-6">
+                                    <label class="sig-label">Cidade (Município)</label>
+                                    <input type="text" id="forn-completo-cidade"
+                                        class="sig-input sig-input-dense uppercase" placeholder="NOME DA CIDADE">
+                                </div>
+                                <div class="col-span-2">
+                                    <label class="sig-label">UF</label>
+                                    <input type="text" id="forn-completo-uf"
+                                        class="sig-input sig-input-dense uppercase text-center" placeholder="UF"
+                                        maxlength="2">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CONTATOS (GRID DINÂMICO) -->
+                        <div id="section-contatos"
+                            class="sig-fieldset bg-white relative flex-1 flex flex-col overflow-hidden min-h-[160px] sig-fieldset-bloqueado">
+                            <span class="sig-legend text-emerald-600">Canais de Atendimento</span>
+                            <div
+                                class="grid grid-cols-12 gap-2 mt-1 bg-slate-50 p-2 border border-slate-200 rounded-sm shrink-0">
+                                <div class="col-span-4">
+                                    <input type="text" id="contato-nome"
+                                        class="sig-input sig-input-dense w-full uppercase"
+                                        placeholder="NOME DO VENDEDOR">
+                                </div>
+                                <div class="col-span-4">
+                                    <input type="text" id="contato-tel" class="sig-input sig-input-dense w-full"
+                                        placeholder="(00) 00000-0000" oninput="formatarTelefone(this)">
+                                </div>
+                                <div class="col-span-3">
+                                    <input type="text" id="contato-dept"
+                                        class="sig-input sig-input-dense w-full uppercase"
+                                        placeholder="EX: VENDAS / FINANC">
+                                </div>
+                                <div class="col-span-1">
+                                    <button onclick="adicionarContato()"
+                                        class="btn-incluir-verde w-full !h-[28px] flex items-center justify-center rounded-sm">
+                                        <span class="material-symbols-outlined !text-sm">add</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="flex-1 overflow-y-auto mt-2 border border-slate-100 rounded-sm">
+                                <table class="sig-table sig-table-sm w-full">
+                                    <thead class="sticky top-0 z-10 bg-slate-100">
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th class="w-32 text-center">Telefone</th>
+                                            <th class="w-24 text-center">Dept.</th>
+                                            <th class="w-10 text-center">...</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="lista-contatos-fornecedor">
+                                        <!-- Vazio -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-3 bg-slate-100 border-t border-slate-300 flex justify-between items-center px-6 shrink-0">
+                <div class="flex items-center gap-2 text-[10px] text-slate-400 font-bold uppercase">
+                    <span class="material-symbols-outlined !text-sm">info</span> Utilize campos em destaque azul para
+                    busca automática
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="fecharCadastroRapidoFornecedor()"
+                        class="sig-btn sig-btn-neutral px-6 !h-[34px]">CANCELAR (ESC)</button>
+                    <button onclick="salvarFornecedorRapido()"
+                        class="sig-btn sig-btn-primary !bg-sig-blue !border-blue-900 min-w-[220px] shadow-md uppercase font-black text-[11px] tracking-wide !h-[34px]">
+                        GRAVAR FORNECEDOR (F10)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // RELÓGIO
+        setInterval(() => {
+            const agora = new Date();
+            const el = document.getElementById('data-hora-footer');
+            if (el) el.innerText = agora.toLocaleString('pt-br');
+        }, 1000);
+
+        // CONTROLE DE CARREGAMENTO
+        function setLoading(isLoading) {
+            const bar = document.getElementById('footer-progress');
+            if (!bar) return;
+            if (isLoading) {
+                bar.classList.add('loading');
+                bar.style.width = '30%';
+            } else {
+                bar.classList.remove('loading');
+                bar.style.width = '0%';
+            }
+        }
+
+        // Exposição desativada por não existirem mais as Abas antigas
+        function mudarAba(aba) {
+            if (aba === 'F2') selecionarRascunho(0); // 0 É o ID interno da view da Home
+            if (aba === 'F3') criarNovoRascunho();
+        }
+        // CONTROLE MODAL FORNECEDOR RÁPIDO
+        let proximoIdSistema = 156;
+
+        function abrirCadastroRapidoFornecedor() {
+            limparCamposFornecedor();
+            document.getElementById('modal-fornecedor-rapido').classList.remove('hidden');
+            document.getElementById('modal-fornecedor-rapido').classList.add('flex');
+            document.getElementById('forn-completo-id').value = String(proximoIdSistema).padStart(4, '0');
+            document.getElementById('forn-completo-documento').focus();
+            bloquearCampos(true);
+        }
+
+        function fecharCadastroRapidoFornecedor() {
+            document.getElementById('modal-fornecedor-rapido').classList.add('hidden');
+            document.getElementById('modal-fornecedor-rapido').classList.remove('flex');
+            limparCamposFornecedor();
+        }
+
+        function bloquearCampos(lock) {
+            const sections = ['section-nomes', 'section-endereco', 'section-contatos'];
+            sections.forEach(id => {
+                const el = document.getElementById(id);
+                if (lock) el.classList.add('sig-fieldset-bloqueado');
+                else el.classList.remove('sig-fieldset-bloqueado');
+            });
+            document.getElementById('forn-completo-ie').disabled = lock;
+        }
+
+        function setTipoFornecedor(tipo) {
+            document.getElementById('forn-completo-tipo').value = tipo;
+
+            // UI Toggle
+            const btnJ = document.getElementById('btn-tipo-j');
+            const btnF = document.getElementById('btn-tipo-f');
+
+            if (tipo === 'J') {
+                btnJ.classList.add('active');
+                btnF.classList.remove('active');
+            } else {
+                btnF.classList.add('active');
+                btnJ.classList.remove('active');
+            }
+
+            ajustarMascaraDocumento();
+        }
+
+        function ajustarMascaraDocumento() {
+            const tipo = document.getElementById('forn-completo-tipo').value;
+            const input = document.getElementById('forn-completo-documento');
+            input.value = '';
+            input.placeholder = tipo === 'J' ? '00.000.000/0000-00' : '000.000.000-00';
+            bloquearCampos(true);
+        }
+
+        function formatarDocumento(input) {
+            let v = input.value.replace(/\D/g, '');
+            const tipo = document.getElementById('forn-completo-tipo').value;
+
+            if (tipo === 'J') {
+                if (v.length > 14) v = v.slice(0, 14);
+                if (v.length > 12) v = v.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2}).*/, '$1.$2.$3/$4-$5');
+                else if (v.length > 8) v = v.replace(/^(\d{2})(\d{3})(\d{3})(\d{4}).*/, '$1.$2.$3/$4');
+                else if (v.length > 5) v = v.replace(/^(\d{2})(\d{3})(\d{3}).*/, '$1.$2.$3');
+                else if (v.length > 2) v = v.replace(/^(\d{2})(\d{3}).*/, '$1.$2');
+            } else {
+                if (v.length > 11) v = v.slice(0, 11);
+                if (v.length > 9) v = v.replace(/^(\d{3})(\d{3})(\d{3})(\d{2}).*/, '$1.$2.$3-$4');
+                else if (v.length > 6) v = v.replace(/^(\d{3})(\d{3})(\d{3}).*/, '$1.$2.$3');
+                else if (v.length > 3) v = v.replace(/^(\d{3})(\d{3}).*/, '$1.$2');
+            }
+            input.value = v;
+
+            // Se atingir o tamanho, abre campos (mesmo sem consulta, caso seja CPF)
+            if ((tipo === 'J' && v.replace(/\D/g, '').length === 14) ||
+                (tipo === 'F' && v.replace(/\D/g, '').length === 11)) {
+                // No caso de CPF, apenas liberamos
+                if (tipo === 'F') bloquearCampos(false);
+            }
+        }
+
+        function formatarTelefone(input) {
+            let v = input.value.replace(/\D/g, '');
+            if (v.length > 11) v = v.slice(0, 11);
+            if (v.length > 10) v = v.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
+            else if (v.length > 6) v = v.replace(/^(\d{2})(\d{4})(\d{4}).*/, '($1) $2-$3');
+            else if (v.length > 2) v = v.replace(/^(\d{2})(\d+).*/, '($1) $2');
+            input.value = v;
+        }
+
+        function limparCamposFornecedor() {
+            document.querySelectorAll('#modal-fornecedor-rapido input').forEach(input => input.value = '');
+            document.getElementById('forn-logo-preview').classList.add('hidden');
+            document.getElementById('forn-logo-placeholder').classList.remove('hidden');
+            document.getElementById('lista-contatos-fornecedor').innerHTML = '';
+            document.getElementById('forn-completo-tipo').value = 'J';
+            ajustarMascaraDocumento();
+        }
+
+        function previewLogoFornecedor(input) {
+            const preview = document.getElementById('forn-logo-preview');
+            const placeholder = document.getElementById('forn-logo-placeholder');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.classList.remove('hidden');
+                    placeholder.classList.add('hidden');
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        async function consultarCNPJ() {
+            const doc = document.getElementById('forn-completo-documento').value.replace(/\D/g, '');
+            const tipo = document.getElementById('forn-completo-tipo').value;
+
+            if (tipo === 'F') {
+                alert("Consulta automática disponível apenas para CNPJ. Preencha os dados manualmente.");
+                bloquearCampos(false);
+                return;
+            }
+
+            if (doc.length < 14) {
+                alert("Por favor, digite um CNPJ completo.");
+                return;
+            }
+
+            setLoading(true);
+            try {
+                const response = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${doc}`);
+                if (!response.ok) throw new Error("CNPJ não encontrado.");
+
+                const data = await response.json();
+
+                bloquearCampos(false);
+                document.getElementById('forn-completo-razao').value = data.razao_social;
+                document.getElementById('forn-completo-fantasia').value = data.nome_fantasia || data.razao_social;
+                document.getElementById('forn-completo-cep').value = data.cep;
+                document.getElementById('forn-completo-endereco').value = data.logradouro;
+                document.getElementById('forn-completo-numero').value = data.numero;
+                document.getElementById('forn-completo-bairro').value = data.bairro;
+                document.getElementById('forn-completo-cidade').value = data.municipio;
+                document.getElementById('forn-completo-uf').value = data.uf;
+
+                if (data.ddd_telefone_1) {
+                    adicionarContatoManual('PRINCIPAL (FEDERAL)', '', data.ddd_telefone_1, 'GERAL');
+                }
+            } catch (err) {
+                alert("Erro: " + err.message);
+                bloquearCampos(false); // Libera mesmo se der erro para cadastro manual
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        function adicionarContato() {
+            const nome = document.getElementById('contato-nome').value;
+            const tel = document.getElementById('contato-tel').value;
+            const dept = document.getElementById('contato-dept').value;
+
+            if (!nome || !tel) return;
+
+            adicionarContatoManual(nome, '', tel, dept);
+
+            document.getElementById('contato-nome').value = '';
+            document.getElementById('contato-tel').value = '';
+            document.getElementById('contato-dept').value = '';
+        }
+
+        function adicionarContatoManual(nome, email, tel, dept) {
+            const tbody = document.getElementById('lista-contatos-fornecedor');
+            const tr = document.createElement('tr');
+            tr.className = 'group hover:bg-slate-50';
+            tr.innerHTML = `
+                <td class="font-bold uppercase text-[9px]">${nome}</td>
+                <td class="text-center font-mono text-[9px]">${tel}</td>
+                <td class="text-center text-[8px] font-black uppercase text-slate-500">${dept}</td>
+                <td class="text-center"><span class="material-symbols-outlined text-[14px] text-red-500 cursor-pointer opacity-0 group-hover:opacity-100" onclick="this.closest('tr').remove()">delete</span></td>
+            `;
+            tbody.appendChild(tr);
+        }
+
+        function salvarFornecedorRapido() {
+            setLoading(true);
+            const nome = document.getElementById('forn-completo-fantasia').value || document.getElementById('forn-completo-razao').value;
+            const id = document.getElementById('forn-completo-id').value;
+
+            if (!nome) {
+                alert("Preencha a Razão Social ou Nome Fantasia.");
+                setLoading(false);
+                return;
+            }
+
+            setTimeout(() => {
+                setLoading(false);
+                fecharCadastroRapidoFornecedor();
+                selecionarFornecedor({
+                    id: id,
+                    nome: nome.toUpperCase(),
+                    documento: document.getElementById('forn-completo-documento').value || '00.000.000/0001-00'
+                });
+                proximoIdSistema++;
+            }, 800);
+        }
+
+        // LÓGICA DE PESQUISA DE FORNECEDOR (JANELA)
+        const mockFornecedores = [
+            { id: '0001', nome: 'DISTRIBUIDORA AUTOMOTIVA S.A.', documento: '00.345.987/0001-22' },
+            { id: '0012', nome: 'COFAP FABRICACAO LTDA', documento: '12.444.555/0001-99' },
+            { id: '0045', nome: 'METAL LEVE COMPONENTES', documento: '45.123.321/0001-33' },
+            { id: '0089', nome: 'NAKATA IND. AUTOMOTIVA', documento: '89.666.777/0001-44' },
+            { id: '0125', nome: 'BOSCH SERVICE BRASIL', documento: '05.999.888/0001-11' }
+        ];
+
+        // LÓGICA DE ITENS
+        const mockProdutos = [
+            { id: '001259', cod_fab: 'AL-548', descricao: 'AMORTECEDOR DIANTEIRO DIREITO - TURBOGÁS', marca: 'COFAP', un: 'UN', valor: '192,00' },
+            { id: '889-AB', cod_fab: '889-AB', descricao: 'AMORTECEDOR DIANTEIRO COFAP TURBOGAS', marca: 'COFAP', un: 'PC', valor: '245,00' }
+        ];
+
+        function buscarProdutoPorCodigo(cod) {
+            const p = mockProdutos.find(item => item.id === cod);
+            if (p) {
+                receberProdutoSelecionado(p);
+            }
+        }
+
+        function abrirPesquisaProdutosPedido() {
+            document.getElementById('modal-pesquisa-produtos').classList.remove('hidden');
+            document.getElementById('modal-pesquisa-produtos').classList.add('flex');
+        }
+
+        function fecharPesquisaProdutos() {
+            document.getElementById('modal-pesquisa-produtos').classList.add('hidden');
+            document.getElementById('modal-pesquisa-produtos').classList.remove('flex');
+        }
+
+        // Função chamada pelo Iframe da pesquisa de produtos
+        window.receberProdutoSelecionado = function (p) {
+            document.getElementById('item-codigo').value = p.id;
+            document.getElementById('item-descricao').value = p.descricao;
+            document.getElementById('item-un').value = p.un;
+            document.getElementById('item-valor').value = p.valor;
+
+            // Calcula subtotal inicial (1 unidade)
+            document.getElementById('item-qtd').value = "1,00";
+            document.getElementById('item-subtotal').value = p.valor;
+
+            fecharPesquisaProdutos();
+            document.getElementById('item-qtd').focus();
+            document.getElementById('item-qtd').select();
+        };
+
+        function adicionarItemPedido() {
+            const cod = document.getElementById('item-codigo').value;
+            const desc = document.getElementById('item-descricao').value || "PRODUTO TESTE";
+            const un = document.getElementById('item-un').value || "UN";
+            const qtd = document.getElementById('item-qtd').value || "1,00";
+            const valor = document.getElementById('item-valor').value || "0,00";
+            const total = document.getElementById('item-subtotal').value || "0,00";
+
+            if (!cod) return;
+
+            const tbody = document.getElementById('lista-itens-pedido');
+            const seq = tbody.rows.length + 1;
+            const tr = document.createElement('tr');
+            tr.className = 'hover:bg-slate-50 cursor-default';
+            tr.innerHTML = `
+                <td class="text-center font-mono opacity-50">${seq.toString().padStart(2, '0')}</td>
+                <td class="text-center font-mono">${cod}</td>
+                <td class="font-bold uppercase">${desc}</td>
+                <td class="text-center">${un}</td>
+                <td class="text-center font-black">${qtd}</td>
+                <td class="text-right font-mono text-emerald-700">R$ ${valor}</td>
+                <td class="text-right font-mono font-black text-blue-800">R$ ${total}</td>
+                <td class="text-center"><span class="material-symbols-outlined text-red-500 !text-sm cursor-pointer" onclick="this.closest('tr').remove()">delete</span></td>
+            `;
+            tbody.appendChild(tr);
+
+            // Limpa campos
+            document.getElementById('item-codigo').value = '';
+            document.getElementById('item-descricao').value = '';
+            document.getElementById('item-un').value = '';
+            document.getElementById('item-qtd').value = '';
+            document.getElementById('item-valor').value = '';
+            document.getElementById('item-subtotal').value = '';
+            document.getElementById('item-codigo').focus();
+        }
+
+        function abrirPesquisaFornecedor() {
+            document.getElementById('modal-pesquisa-fornecedor').classList.remove('hidden');
+            document.getElementById('modal-pesquisa-fornecedor').classList.add('flex');
+            document.getElementById('forn-pesquisa-filtro').value = '';
+            document.getElementById('forn-pesquisa-filtro').focus();
+            renderListaTabelaFornecedor(mockFornecedores);
+        }
+
+        function fecharPesquisaFornecedor() {
+            document.getElementById('modal-pesquisa-fornecedor').classList.add('hidden');
+            document.getElementById('modal-pesquisa-fornecedor').classList.remove('flex');
+        }
+
+        function transicaoPesquisaParaNovo() {
+            const filtro = document.getElementById('forn-pesquisa-filtro').value;
+            fecharPesquisaFornecedor();
+            abrirCadastroRapidoFornecedor();
+            if (filtro) {
+                document.getElementById('forn-completo-fantasia').value = filtro.toUpperCase();
+            }
+        }
+
+        function filtrarPesquisaFornecedor(query) {
+            const filtrados = mockFornecedores.filter(f =>
+                f.nome.toUpperCase().includes(query.toUpperCase()) ||
+                f.documento.includes(query) ||
+                f.id.includes(query)
+            );
+            renderListaTabelaFornecedor(filtrados);
+        }
+
+        function renderListaTabelaFornecedor(lista) {
+            const tbody = document.getElementById('lista-pesquisa-fornecedor');
+            const total = document.getElementById('forn-total-registros');
+            tbody.innerHTML = '';
+
+            lista.forEach(f => {
+                const tr = document.createElement('tr');
+                tr.className = 'group hover:bg-blue-50 cursor-pointer transition-colors';
+                tr.innerHTML = `
+                    <td class="text-center font-mono text-slate-400 border-r border-slate-100">${f.id}</td>
+                    <td class="font-bold uppercase text-slate-700">${f.nome}</td>
+                    <td class="text-slate-500 font-mono text-center">${f.documento}</td>
+                `;
+                tr.onclick = () => selecionarFornecedor(f);
+                tbody.appendChild(tr);
+            });
+            total.innerText = `${lista.length} REGISTROS ENCONTRADOS`;
+        }
+
+        function selecionarFornecedor(f) {
+            document.getElementById('forn-codigo').value = f.id;
+            document.getElementById('forn-razao').value = f.nome;
+            document.getElementById('forn-documento').value = f.documento;
+            fecharPesquisaFornecedor();
+
+            // Highlight visual no código
+            const inputCodigo = document.getElementById('forn-codigo');
+            inputCodigo.classList.add('ring-2', 'ring-emerald-400', 'bg-emerald-50');
+            setTimeout(() => {
+                inputCodigo.classList.remove('ring-2', 'ring-emerald-400', 'bg-emerald-50');
+            }, 800);
+        }
+
+        // ATALHOS TECLADO ATUALIZADOS
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'F1') {
+                e.preventDefault();
+                abrirPesquisaFornecedor();
+            }
+            if (e.key === 'F2') { e.preventDefault(); mudarAba('F2'); }
+            if (e.key === 'F3') { e.preventDefault(); mudarAba('F3'); }
+
+            if (e.key === 'F4') {
+                const modalPesquisa = document.getElementById('modal-pesquisa-fornecedor');
+                if (!modalPesquisa.classList.contains('hidden')) {
+                    e.preventDefault();
+                    transicaoPesquisaParaNovo();
+                }
+            }
+
+            if (e.key === 'F10') {
+                const modalForn = document.getElementById('modal-fornecedor-rapido');
+                if (!modalForn.classList.contains('hidden')) {
+                    e.preventDefault();
+                    salvarFornecedorRapido();
+                }
+            }
+
+            if (e.key === 'F5') {
+                const modalForn = document.getElementById('modal-fornecedor-rapido');
+                if (!modalForn.classList.contains('hidden')) {
+                    e.preventDefault();
+                    salvarFornecedorRapido();
+                    return;
+                }
+
+                const abaF3 = document.getElementById('view-editor-rascunho'); // Changed from aba-F3 to view-editor-rascunho
+                if (!abaF3.classList.contains('hidden')) {
+                    e.preventDefault();
+                    setLoading(true);
+                    setTimeout(() => setLoading(false), 2000);
+                }
+            }
+
+            if (e.key === 'Escape') {
+                const modalProd = document.getElementById('modal-pesquisa-produtos');
+                if (!modalProd.classList.contains('hidden')) {
+                    fecharPesquisaProdutos();
+                    return;
+                }
+                const modalForn = document.getElementById('modal-fornecedor-rapido');
+                if (!modalForn.classList.contains('hidden')) {
+                    fecharCadastroRapidoFornecedor();
+                    return;
+                }
+                const modalPesq = document.getElementById('modal-pesquisa-fornecedor');
+                if (!modalPesq.classList.contains('hidden')) {
+                    fecharPesquisaFornecedor();
+                    return;
+                }
+                window.close();
+            }
+        });
+
+        // LÓGICA DE DETALHES DO PEDIDO
+        const mockHistoricoPedidos = [
+            {
+                id: '000125',
+                data: '10/03/2026',
+                fornecedor: 'DISTRIBUIDORA AUTOMOTIVA S.A.',
+                doc: '00.345.987/0001-22',
+                total: '12.450,00',
+                status: 'Pendente',
+                entrega: '15/03/2026',
+                itens: [
+                    { cod: '001259', desc: 'AMORTECEDOR DIANTEIRO DIREITO - TURBOGÁS', un: 'UN', qtd: '10,00', valor: '192,00', total: '1.920,00' },
+                    { cod: 'KB-885', desc: 'KIT BATENTE AMORTECEDOR DIANTEIRO', un: 'JG', qtd: '05,00', valor: '45,00', total: '225,00' }
+                ]
+            },
+            {
+                id: '000128',
+                data: '09/03/2026',
+                fornecedor: 'COFAP FABRICACAO LTDA',
+                doc: '12.444.555/0001-99',
+                total: '4.200,00',
+                status: 'Concluído',
+                entrega: '12/03/2026',
+                itens: [
+                    { cod: 'B-470', desc: 'BUCHA BANDEJA DIANTEIRA (MAIOR)', un: 'PC', qtd: '20,00', valor: '22,50', total: '450,00' },
+                    { cod: 'P-123', desc: 'PIVO SUSPENSAO DIREITO', un: 'UN', qtd: '04,00', valor: '68,00', total: '272,00' }
+                ]
+            }
+        ];
+
+        function exibirDetalhesPedido(index) {
+            const pedido = mockHistoricoPedidos[index];
+            if (!pedido) return;
+
+            // Highlight visual na linha clicada (Alto Contraste)
+            const rows = document.querySelectorAll('#lista-pedidos-f2 tr');
+            rows.forEach(r => r.classList.remove('sig-row-selected'));
+            rows[index].classList.add('sig-row-selected');
+
+            // Preenche painel
+            document.getElementById('detalhe-pedido-label').innerText = `#${pedido.id}`;
+            document.getElementById('detalhe-fornecedor-nome').innerText = pedido.fornecedor;
+            document.getElementById('detalhe-fornecedor-doc').innerText = pedido.doc;
+
+            // Preenche tabela de itens do detalhe
+            const tbody = document.getElementById('detalhe-itens-tabela');
+            tbody.innerHTML = '';
+
+            pedido.itens.forEach((it, idx) => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 border-b border-slate-100';
+                tr.innerHTML = `
+                    <td class="text-center font-mono opacity-50 text-[10px]">${(idx + 1).toString().padStart(2, '0')}</td>
+                    <td class="text-center font-mono text-[10px]">${it.cod}</td>
+                    <td class="font-bold uppercase text-[10px] text-slate-700">${it.desc}</td>
+                    <td class="text-center text-[10px]">${it.un}</td>
+                    <td class="text-center font-black text-[10px]">${it.qtd}</td>
+                    <td class="text-right font-mono text-emerald-700 text-[10px]">R$ ${it.valor}</td>
+                    <td class="text-right font-mono font-black text-blue-800 text-[10px]">R$ ${it.total}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // --- SISTEMA MULTI-PEDIDOS (RASCUNHOS EM ABAS) ---
+        let rascunhoAtivoId = 0; // 0 Significa a Aba HOME (Listagem de Pedidos)
+        let rascunhoSeq = 2;
+        let mockRascunhos = [
+            {
+                id: 0,
+                numeroFormat: 'PEDIDOS',
+                dataOuNome: 'Histórico Completo',
+                fornecedorNome: 'Visualizar',
+                fornecedorCodigo: '',
+                totalItens: 0,
+                ativo: true,
+                isHome: true
+            },
+            {
+                id: 1,
+                numeroFormat: '#000125',
+                dataOuNome: '10/03/2026',
+                fornecedorNome: 'DISTRIB. AUTOMOTIVA S.A.',
+                fornecedorCodigo: '0001',
+                totalItens: 2,
+                ativo: false
+            },
+            {
+                id: 2,
+                numeroFormat: 'NOVO #02',
+                dataOuNome: '10/03/2026',
+                fornecedorNome: 'Sem fornecedor...',
+                fornecedorCodigo: '',
+                totalItens: 0,
+                ativo: false
+            }
+        ];
+
+        function renderizarAbasRascunhos() {
+            const container = document.getElementById('container-abas-rascunhos');
+            container.innerHTML = '';
+
+            mockRascunhos.forEach(rascunho => {
+                const isActive = rascunho.id === rascunhoAtivoId;
+
+                const baseClasses = isActive
+                    ? `bg-white border text-sig-blue border-slate-300 border-b-transparent rounded-t-md px-4 py-2 flex items-center gap-2 cursor-pointer relative shadow-[0_-2px_4px_rgba(0,0,0,0.02)] pt-3 pb-2 z-10 min-w-40 shrink-0 font-bold opacity-100 transition-all`
+                    : `bg-slate-200 border border-slate-300 border-b-slate-300 rounded-t-md px-4 py-2 flex items-center gap-2 cursor-pointer hover:bg-slate-100 text-slate-500 shadow-none z-0 min-w-40 shrink-0 transition-colors`;
+
+                const iconVariant = rascunho.isHome ? 'home' : (isActive ? 'shopping_cart' : 'draft');
+                const textColorClasses = isActive ? 'text-[11px] uppercase tracking-wider truncate' : 'text-[11px] uppercase font-bold tracking-wider truncate';
+                const subTextColorClasses = isActive ? 'text-[9px] text-slate-500 font-normal truncate' : 'text-[9px] text-slate-400 font-normal truncate';
+
+                const divTab = document.createElement('div');
+                divTab.className = baseClasses + (rascunho.isHome ? ' mr-3 ml-1' : ''); // Dá o respiro entre o Home e os rascunhos
+
+                divTab.innerHTML = `
+                    <span class="material-symbols-outlined text-sm" onclick="selecionarRascunho(${rascunho.id})">${iconVariant}</span>
+                    <div class="flex flex-col overflow-hidden w-full" onclick="selecionarRascunho(${rascunho.id})">
+                        <span class="${textColorClasses}">${rascunho.numeroFormat}</span>
+                        <span class="${subTextColorClasses}">${rascunho.isHome ? rascunho.dataOuNome : rascunho.fornecedorNome}</span>
+                    </div>
+                    ${rascunho.isHome ? '<div class="absolute -right-[7px] top-1/2 -translate-y-1/2 w-px h-[60%] bg-slate-300 rounded-full cursor-default"></div>' : ''}
+                `;
+
+                if (!isActive && !rascunho.isHome) {
+                    const btnClose = document.createElement('span');
+                    btnClose.className = "material-symbols-outlined text-sm opacity-50 hover:text-red-500 transition-colors ml-auto";
+                    btnClose.innerText = "close";
+                    btnClose.title = "Fechar Rascunho";
+                    btnClose.onclick = (e) => {
+                        e.stopPropagation();
+                        fecharRascunho(rascunho.id);
+                    };
+                    divTab.appendChild(btnClose);
+                }
+
+                container.appendChild(divTab);
+            });
+
+            // Botao Adicionar nova aba (Rascunho)
+            const btnAdd = document.createElement('button');
+            btnAdd.className = "bg-slate-200 border border-slate-300 rounded-t-md w-10 py-2 flex items-center justify-center cursor-pointer hover:bg-slate-100 text-slate-500 hover:text-sig-blue font-bold ml-1 transition-colors group";
+            btnAdd.onclick = criarNovoRascunho;
+            btnAdd.innerHTML = `<span class="material-symbols-outlined text-base group-hover:scale-110 transition-transform">add</span>`;
+
+            container.appendChild(btnAdd);
+
+            atualizarWorkspaceRascunhoAtivo();
+        }
+
+        function criarNovoRascunho() {
+            rascunhoSeq++;
+            const novoId = rascunhoSeq;
+            mockRascunhos.push({
+                id: novoId,
+                numeroFormat: `NOVO #${novoId.toString().padStart(2, '0')}`,
+                dataOuNome: new Date().toLocaleDateString('pt-BR'),
+                fornecedorNome: 'Sem fornecedor...',
+                fornecedorCodigo: '',
+                totalItens: 0,
+                ativo: false
+            });
+            selecionarRascunho(novoId);
+        }
+
+        function selecionarRascunho(id) {
+            rascunhoAtivoId = id;
+            mockRascunhos.forEach(r => r.ativo = (r.id === id));
+            renderizarAbasRascunhos();
+        }
+
+        function fecharRascunho(id) {
+            // Regra: Sempre deixaremos a Home viva.
+            if (id === 0) return;
+
+            if (confirm("Deseja fechar esta aba? Dados não salvos serão perdidos.")) {
+                mockRascunhos = mockRascunhos.filter(r => r.id !== id);
+                if (rascunhoAtivoId === id) {
+                    // Seleciona a HOME quando fecha a tab ativa. Se fechar a 1, vai pra 0 (Home).
+                    selecionarRascunho(0);
+                } else {
+                    renderizarAbasRascunhos();
+                }
+            }
+        }
+
+        function atualizarWorkspaceRascunhoAtivo() {
+            const rascunho = mockRascunhos.find(r => r.id === rascunhoAtivoId);
+            if (!rascunho) return;
+
+            const viewLista = document.getElementById('view-lista-pedidos');
+            const viewEditor = document.getElementById('view-editor-rascunho');
+            const rodapeEditor = document.getElementById('rodape-acoes-editor');
+
+            // Troca de Telas (Home x Editor)
+            if (rascunho.isHome) {
+                viewLista.classList.remove('hidden');
+                viewEditor.classList.add('hidden');
+                rodapeEditor.classList.add('hidden');
+            } else {
+                viewLista.classList.add('hidden');
+                viewEditor.classList.remove('hidden');
+                rodapeEditor.classList.remove('hidden');
+
+                // Atualiza campos do Editor
+                document.getElementById('rascunho-header-numero').innerText = rascunho.numeroFormat.replace('PED: #', '').replace('NOVO #', '');
+                document.getElementById('rascunho-header-data').innerText = rascunho.dataOuNome;
+                document.getElementById('forn-codigo').value = rascunho.fornecedorCodigo;
+                document.getElementById('forn-razao').value = rascunho.fornecedorNome !== 'Sem fornecedor...' ? rascunho.fornecedorNome : '';
+
+                // Simula troca de grade (MOCK limpa os itens se for um pedido novo)
+                const tbodyItens = document.getElementById('lista-itens-pedido');
+                if (rascunho.totalItens === 0) {
+                    tbodyItens.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-slate-400 font-bold uppercase track-wider text-[10px]">INICIE BUSCA DE PRODUTOS PARA ESTE PEDIDO...</td></tr>`;
+                    document.getElementById('item-subtotal').parentElement.parentElement.parentElement.nextElementSibling.querySelector('span:nth-child(2)').innerText = "R$ 0,00"; // Total Zero
+                } else {
+                    // Restaura mock padrao para testes apenas
+                    tbodyItens.innerHTML = `<tr class="hover:bg-slate-50 cursor-default">
+                                    <td class="text-center font-mono opacity-50">01</td>
+                                    <td class="text-center font-mono">001259</td>
+                                    <td class="font-bold uppercase">AMORTECEDOR DIANTEIRO DIREITO - TURBOGÁS</td>
+                                    <td class="text-center">UN</td>
+                                    <td class="text-center font-black">10,00</td>
+                                    <td class="text-right font-mono text-emerald-700">R$ 192,00</td>
+                                    <td class="text-right font-mono font-black text-blue-800">R$ 1.920,00</td>
+                                    <td class="text-center"><span class="material-symbols-outlined text-red-500 !text-sm cursor-pointer" onclick="this.closest('tr').remove()">delete</span></td>
+                                </tr>`;
+                }
+            }
+        }
+
+        // Initialize Call
+        document.addEventListener('DOMContentLoaded', () => {
+            renderizarAbasRascunhos();
+        });
+    </script>
+</body>
+
+</html>

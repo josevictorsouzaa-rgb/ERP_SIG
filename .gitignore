@@ -1,0 +1,32 @@
+# Wails & Build
+build/
+frontend/dist/
+frontend/node_modules/
+node_modules/
+bin/
+
+# Executáveis (Muito pesados para o GitHub)
+*.exe
+*.dll
+*.so
+*.dylib
+erp-v*.exe
+SIG_V*.exe
+
+# Go
+vendor/
+*.test
+*.prof
+
+# Temp & IDEs
+.vscode/
+.idea/
+.DS_Store
+*.tmp
+*.bak
+*.log
+
+# Antigravity/Agent Internals
+.agent/
+.gemini/
+.brain/

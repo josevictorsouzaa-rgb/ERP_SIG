@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>SIG BLUEPRINT - SISTEMA DE DESIGN</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'sig-blue': '#0056b3',
+                        'sig-red': '#ef4444',
+                        'sig-green': '#10b981',
+                        'sig-orange': '#f59e0b',
+                        'sig-dark': '#1e293b'
+                    }
+                }
+            }
+        }
+    </script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="../css/sig-ui.css">
+    <style>
+        body {
+            padding: 60px;
+            background-color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+            color: #334155;
+        }
+
+        .blueprint-section {
+            background: white;
+            padding: 40px;
+            border-radius: 4px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 40px;
+        }
+
+        .section-label {
+            display: block;
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+            letter-spacing: 0.1em;
+            border-left: 4px solid var(--sig-blue);
+            padding-left: 15px;
+        }
+
+        .component-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: flex-end;
+            padding: 20px;
+            background: #fafafa;
+            border: 1px dashed #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .color-card {
+            width: 120px;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+
+        .color-swatch {
+            height: 60px;
+            width: 100%;
+        }
+
+        .color-info {
+            padding: 8px;
+            background: white;
+        }
+
+        .color-name {
+            font-size: 9px;
+            font-weight: 900;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+
+        .color-hex {
+            font-size: 11px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1 class="text-4xl font-[900] text-slate-800 mb-2 uppercase tracking-tighter">SIG <span
+            class="text-sig-blue">BLUEPRINT</span></h1>
+    <p class="text-slate-400 font-bold text-xs uppercase tracking-[0.2em] mb-12 italic">Guia de Estilo e Identidade
+        Visual do Sistema v2.0 - Retro Modern</p>
+
+    <!-- SEÇÃO: PALETA DE CORES -->
+    <div class="blueprint-section">
+        <span class="section-label">Paleta de Cores Oficial</span>
+        <div class="flex flex-col gap-8">
+            <!-- Identidade Visual (Branding) -->
+            <div class="mb-12">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Identidade Visual da
+                    Marca</p>
+
+                <!-- Banner da Marca (Réplica da Imagem) -->
+                <div class="sig-logo-banner mb-6 shadow-md rounded-t">
+                    <span class="sig-logo-brand">SIG</span>
+                    <span class="sig-logo-separator">|</span>
+                    <span class="sig-logo-tagline">SISTEMA CORE ERP</span>
+                </div>
+
+                <!-- Paleta de Cores da Marca -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="flex items-center gap-4 p-4 bg-white border border-slate-200 rounded">
+                        <div class="w-12 h-12 rounded shadow-inner" style="background-color: var(--sig-brand-cyan);">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-slate-800">Ciano Vibrante (Brand Main)</p>
+                            <p class="text-[10px] text-slate-500 font-mono">#00E5FF</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4 p-4 bg-white border border-slate-200 rounded">
+                        <div class="w-12 h-12 rounded shadow-inner" style="background-color: var(--sig-brand-dark);">
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-slate-800">Azul Marinho Profundo (Brand Background)</p>
+                            <p class="text-[10px] text-slate-500 font-mono">#001B2B</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cores e Tipografia -->
+            <div>
+                <p class="text-[10px] font-black text-slate-400 mb-4 uppercase tracking-wider">Principais e Destaque</p>
+                <div class="flex flex-wrap gap-4">
+                    <div class="color-card">
+                        <div class="color-swatch" style="background-color: var(--sig-blue);"></div>
+                        <div class="color-info">
+                            <p class="color-name">Sober Blue</p>
+                            <p class="color-hex">#1E40AF</p>
+                        </div>
+                    </div>
+                    <div class="color-card">
+                        <div class="color-swatch" style="background-color: var(--sig-brand-cyan);"></div>
+                        <div class="color-info">
+                            <p class="color-name">Brand Cyan</p>
+                            <p class="color-hex">#00E5FF</p>
+                        </div>
+                    </div>
+                    <div class="color-card">
+                        <div class="color-swatch" style="background-color: var(--sig-brand-dark);"></div>
+                        <div class="color-info">
+                            <p class="color-name">Brand Dark</p>
+                            <p class="color-hex">#001B2B</p>
+                        </div>
+                    </div>
+                    <div class="color-card">
+                        <div class="color-swatch" style="background-color: var(--sig-red);"></div>
+                        <div class="color-info">
+                            <p class="color-name">SIG Red</p>
+                            <p class="color-hex">#EF4444</p>
+                        </div>
+                    </div>
+                    <div class="color-card">
+                        <div class="color-swatch" style="background-color: var(--sig-green);"></div>
+                        <div class="color-info">
+                            <p class="color-name">SIG Green</p>
+                            <p class="color-hex">#10B981</p>
+                        </div>
+                    </div>
+                    <div class="color-card">
+                        <div class="color-swatch" style="background-color: var(--sig-orange);"></div>
+                        <div class="color-info">
+                            <p class="color-name">SIG Orange</p>
+                            <p class="color-hex">#F59E0B</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tons de Cinza (Neutros / Retro) -->
+            <div>
+                <p class="text-[10px] font-black text-slate-400 mb-4 uppercase tracking-wider">Cinzas Operacionais
+                    (Slate)</p>
+                <div class="flex flex-wrap gap-4">
+                    <div class="color-card">
+                        <div class="color-swatch bg-[#f8fafc]"></div>
+                        <div class="color-info">
+                            <p class="color-name">Slate 50</p>
+                            <p class="color-hex">#F8FAFC</p>
+                        </div>
+                    </div>
+                    <div class="color-card">
+                        <div class="color-swatch bg-[#f1f5f9]"></div>
+                        <div class="color-info">
+                            <p class="color-name">Slate 100</p>
+                            <p class="color-hex">#F1F5F9</p>
+                        </div>
+                    </div>
+                    <div class="color-card">
+                        <div class="color-swatch bg-[#e2e8f0]"></div>
+                        <div class="color-info">
+                            <p class="color-name">Slate 200</p>
+                            <p class="color-hex">#E2E8F0</p>
+                        </div>
+                    </div>
+                    <div class="color-card">
+                        <div class="color-swatch bg-[#cbd5e1]"></div>
+                        <div class="color-info">
+                            <p class="color-name">Slate 300</p>
+                            <p class="color-hex">#CBD5E1</p>
+                        </div>
+                    </div>
+                    <div class="color-card">
+                        <div class="color-swatch bg-[#94a3b8]"></div>
+                        <div class="color-info">
+                            <p class="color-name">Slate 400</p>
+                            <p class="color-hex">#94A3B8</p>
+                        </div>
+                    </div>
+                    <div class="color-card">
+                        <div class="color-swatch bg-[#334155]"></div>
+                        <div class="color-info">
+                            <p class="color-name">Slate 700</p>
+                            <p class="color-hex">#334155</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- SEÇÃO: BOTÕES OPERACIONAIS -->
+    <div class="blueprint-section">
+        <span class="section-label">Sistema de Botões Operacionais (Bevel & Depth)</span>
+        <div class="flex flex-col gap-10">
+            <!-- Padrão Delphi-Style -->
+            <div class="mb-12">
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-6">Matriz de Botões (Estados
+                    e Variações)</p>
+
+                <div class="grid grid-cols-1 gap-8">
+                    <!-- Linha 1: Gravar -->
+                    <div class="flex items-center gap-6">
+                        <div class="w-32 text-[10px] font-bold text-slate-400">GRAVAR (SOLID/OUT/DIS)</div>
+                        <button class="sig-btn sig-btn-primary">
+                            <span class="material-symbols-outlined !text-[18px]">save</span> GRAVAR
+                        </button>
+                        <button class="sig-btn sig-btn-outline primary">
+                            <span class="material-symbols-outlined !text-[18px]">save</span> GRAVAR
+                        </button>
+                        <button class="sig-btn sig-btn-primary" disabled>
+                            <span class="material-symbols-outlined !text-[18px]">save</span> GRAVAR
+                        </button>
+                    </div>
+
+                    <!-- Linha 2: Novo -->
+                    <div class="flex items-center gap-6">
+                        <div class="w-32 text-[10px] font-bold text-slate-400">NOVO ITEM</div>
+                        <button class="sig-btn sig-btn-success">
+                            <span class="material-symbols-outlined !text-[18px]">add_circle</span> NOVO ITEM
+                        </button>
+                        <button class="sig-btn sig-btn-outline success">
+                            <span class="material-symbols-outlined !text-[18px]">add_circle</span> NOVO ITEM
+                        </button>
+                        <button class="sig-btn sig-btn-success" disabled>
+                            <span class="material-symbols-outlined !text-[18px]">add_circle</span> NOVO ITEM
+                        </button>
+                    </div>
+
+                    <!-- Linha 3: Excluir -->
+                    <div class="flex items-center gap-6">
+                        <div class="w-32 text-[10px] font-bold text-slate-400">EXCLUIR</div>
+                        <button class="sig-btn sig-btn-danger">
+                            <span class="material-symbols-outlined !text-[18px]">delete</span> EXCLUIR
+                        </button>
+                        <button class="sig-btn sig-btn-outline danger">
+                            <span class="material-symbols-outlined !text-[18px]">delete</span> EXCLUIR
+                        </button>
+                        <button class="sig-btn sig-btn-danger" disabled>
+                            <span class="material-symbols-outlined !text-[18px]">delete</span> EXCLUIR
+                        </button>
+                    </div>
+
+                    <!-- Linha 4: Voltar -->
+                    <div class="flex items-center gap-6">
+                        <div class="w-32 text-[10px] font-bold text-slate-400">VOLTAR</div>
+                        <button class="sig-btn sig-btn-neutral">
+                            <span class="material-symbols-outlined !text-[18px]">arrow_back</span> VOLTAR
+                        </button>
+                        <button class="sig-btn sig-btn-outline">
+                            <span class="material-symbols-outlined !text-[18px]">arrow_back</span> VOLTAR
+                        </button>
+                        <button class="sig-btn sig-btn-neutral" disabled>
+                            <span class="material-symbols-outlined !text-[18px]">arrow_back</span> VOLTAR
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toolbar / Barra de Ferramentas -->
+            <div class="flex flex-col gap-4">
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Toolbars Corporativas
+                <div class="mb-12">
+                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Toolbar Corporativa
+                        Compacta
+                        (Padrão Operacional)</p>
+                    <div class="sig-toolbar">
+                        <button class="sig-btn-icon" title="Gravar (F10)"><span
+                                class="material-symbols-outlined">save</span></button>
+                        <button class="sig-btn-icon" title="Novo (F2)"><span
+                                class="material-symbols-outlined">add</span></button>
+                        <button class="sig-btn-icon" title="Editar"><span
+                                class="material-symbols-outlined">edit</span></button>
+                        <button class="sig-btn-icon" title="Excluir"><span
+                                class="material-symbols-outlined">delete</span></button>
+                        <div class="sig-divider"></div>
+                        <button class="sig-btn-icon" title="Pesquisar"><span
+                                class="material-symbols-outlined">search</span></button>
+                        <button class="sig-btn-icon" title="Imprimir"><span
+                                class="material-symbols-outlined">print</span></button>
+                        <div class="sig-divider"></div>
+                        <button class="sig-btn-icon" title="Primeiro"><span
+                                class="material-symbols-outlined">first_page</span></button>
+                        <button class="sig-btn-icon" title="Anterior"><span
+                                class="material-symbols-outlined">navigate_before</span></button>
+                        <button class="sig-btn-icon" title="Próximo"><span
+                                class="material-symbols-outlined">navigate_next</span></button>
+                        <button class="sig-btn-icon" title="Último"><span
+                                class="material-symbols-outlined">last_page</span></button>
+                        <div class="sig-divider"></div>
+                        <button class="sig-btn-icon" title="Configurações"><span
+                                class="material-symbols-outlined">settings</span></button>
+                        <button class="sig-btn-icon" title="Ajuda"><span
+                                class="material-symbols-outlined">help</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEÇÃO: COMPONENTES RETRO MODERNOS -->
+        <div class="blueprint-section">
+            <span class="section-label">Estruturas de Tela Modernas</span>
+
+            <!-- SEÇÃO: STATUSBAR -->
+            <div class="mb-8">
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Status Bar / Rodapé
+                    Informativo</p>
+                <div class="sig-statusbar border !border-slate-300">
+                    <div class="sig-statusbar-left">
+                        <span class="sig-statusbar-label">Terminal:</span>
+                        <span class="sig-statusbar-value">01 (SIG-CORE)</span>
+                    </div>
+                    <div class="sig-statusbar-right">
+                        <div class="sig-statusbar-item">
+                            <span class="sig-statusbar-label">Usuário:</span>
+                            <span class="sig-statusbar-value">Admin</span>
+                        </div>
+                        <div class="sig-statusbar-item">
+                            <span class="sig-statusbar-value">06/03/2026, 10:45:12</span>
+                        </div>
+                        <div class="sig-statusbar-item">
+                            <span class="sig-statusbar-label">Banco:</span>
+                            <span class="sig-statusbar-value success">PostgreSQL</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sombras e Elevação (Rebalanceado) -->
+            <div class="grid grid-cols-2 gap-10">
+                <div class="p-6 bg-white border border-slate-200 shadow-sm rounded">
+                    <p class="sig-text-mini mb-3">Elevação 1 (Sutil)</p>
+                    <p class="text-xs text-slate-500">Ideal para seções internas e cards de listagem simples.</p>
+                </div>
+                <div class="p-6 bg-white border border-slate-200 shadow-xl rounded">
+                    <p class="sig-text-mini mb-3">Elevação 2 (Foco)</p>
+                    <p class="text-xs text-slate-500">Ideal para modais e janelas de destaque (Popups).</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEÇÃO: NAVEGAÇÃO E FLUXO -->
+        <div class="blueprint-section">
+            <span class="section-label">Navegação e Estrutura de Fluxo</span>
+
+            <!-- Breadcrumbs -->
+            <div class="mb-8">
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Breadcrumbs (Localização)
+                </p>
+                <div class="sig-breadcrumbs">
+                    <span class="sig-breadcrumb-item">CADASTROS</span>
+                    <span class="sig-breadcrumb-sep">/</span>
+                    <span class="sig-breadcrumb-item">PRODUTOS</span>
+                    <span class="sig-breadcrumb-sep">/</span>
+                    <span class="sig-breadcrumb-current">AJUSTE DE ESTOQUE</span>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="mb-12">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Abas Operacionais
+                    (PageControl Style)</p>
+                <div class="sig-tabs">
+                    <div class="sig-tab ativa">DADOS GERAIS</div>
+                    <div class="sig-tab">PREÇOS E CUSTOS</div>
+                    <div class="sig-tab">FORNECEDORES</div>
+                    <div class="sig-tab">HISTÓRICO</div>
+                </div>
+                <div class="p-6 bg-white border border-t-0 border-slate-200">
+                    <p class="text-xs text-slate-500 italic">Conteúdo da aba ativa em um container sólido.</p>
+                </div>
+            </div>
+
+            <!-- Menu Lateral (Padrão Único SIG) -->
+            <div class="mb-12">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Menu Lateral (Design
+                    Padrão SIG)</p>
+                <div class="flex gap-12">
+
+                    <!-- Exemplo do Menu Oficial -->
+                    <div class="flex flex-col gap-2">
+                        <p class="text-[9px] font-bold text-slate-400 text-center uppercase">Visualização Padrão</p>
+                        <aside class="sig-sidebar !h-[450px] shadow-lg">
+                            <div class="sig-sidebar-header">
+                                <span>PARAMETROS</span>
+                            </div>
+                            <nav class="sig-sidebar-menu flex-1 bg-white">
+                                <div class="sig-menu-item ativa">
+                                    <span>Empresas</span>
+                                    <span class="sig-shortcut">F2</span>
+                                </div>
+                                <div class="sig-menu-item">
+                                    <span>Políticas</span>
+                                    <span class="sig-shortcut">F3</span>
+                                </div>
+                                <div class="sig-menu-item">
+                                    <span>Documentos</span>
+                                    <span class="sig-shortcut">F4</span>
+                                </div>
+                            </nav>
+                        </aside>
+                    </div>
+
+                    <!-- Especificações Técnicas -->
+                    <div class="flex-1 bg-slate-50 border border-slate-200 p-6 rounded">
+                        <h4 class="sig-text-h4 mb-4">Especificações do Padrão</h4>
+                        <ul class="space-y-3 text-sm text-slate-600">
+                            <li class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                                <strong>Largura:</strong> Fixa em 240px.
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                                <strong>Cabeçalho:</strong> Cor #e5e7eb (Cinza suave) com texto em negrito.
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                                <strong>Item Ativo:</strong> Borda esquerda azul (4px), fundo #f1f5f9 e texto azul.
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                                <strong>Atalhos:</strong> Componente <code>.sig-shortcut</code> alinhado à direita.
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Layout Multi-Painel (Aplicação Prática) -->
+        <div class="mb-12">
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Aplicação Real do Design</p>
+            <div class="sig-app-container !h-[500px] border border-slate-200">
+                <!-- Sidebar Padrão -->
+                <aside class="sig-sidebar !w-[240px]">
+                    <div class="sig-sidebar-header">
+                        <span>PARAMETROS</span>
+                    </div>
+                    <nav class="sig-sidebar-menu flex-1 bg-white">
+                        <div class="sig-menu-item ativa">
+                            <span>Empresas</span>
+                            <span class="sig-shortcut">F2</span>
+                        </div>
+                        <div class="sig-menu-item">
+                            <span>Relatórios</span>
+                            <span class="sig-shortcut">F3</span>
+                        </div>
+                    </nav>
+                </aside>
+
+                <!-- Container de Conteúdo com Divisão Horizontal -->
+                <div class="flex-1 flex flex-col h-full">
+                    <!-- Conteúdo Topo -->
+                    <div class="flex-1 sig-main-content border-b-2 border-slate-200 bg-white">
+                        <div class="flex justify-between items-start mb-4">
+                            <h2 class="sig-text-h4">Dados da Nota Fiscal</h2>
+                            <span class="sig-badge sig-badge-info">DRAFT</span>
+                        </div>
+                        <div class="sig-skeleton h-24 w-full"></div>
+                    </div>
+                    <!-- Conteúdo Base (Ex: Itens, Log, Detalhes) -->
+                    <div class="h-[180px] sig-main-content bg-slate-50">
+                        <h2 class="text-[9px] font-black text-slate-400 uppercase mb-3 text-slate-400">Itens / Detalhes
+                            do Documento</h2>
+                        <div class="sig-skeleton h-12 w-full mb-2"></div>
+                        <div class="sig-skeleton h-12 w-full"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SEÇÃO 1: FUNDAÇÕES E TIPOGRAFIA -->
+    <div class="blueprint-section">
+        <span class="section-label">01. Fundações e Tipografia (Escala Corporativa)</span>
+        <div class="grid grid-cols-2 gap-12">
+            <div>
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-4">Hierarquia de Títulos
+                </p>
+                <h1 class="sig-text-h1 mb-2">Título H1 - Principal</h1>
+                <h2 class="sig-text-h2 mb-2">Título H2 - Seção</h2>
+                <h3 class="sig-text-h3 mb-2">Título H3 - Subseção</h3>
+                <h4 class="sig-text-h4 mb-2">Título H4 - Grupo</h4>
+                <h5 class="sig-text-h5 mb-2">Título H5 - Label Forte</h5>
+                <h6 class="sig-text-h6">Título H6 - Meta Informação</h6>
+            </div>
+            <div>
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-4">Parágrafos e Links
+                </p>
+                <p class="sig-text-body mb-4">
+                    Este é um parágrafo padrão do sistema. Ele usa a fonte <b>Inter</b> para máxima legibilidade em
+                    telas de alta densidade.
+                    <a href="#" class="sig-link">Este é um link clicado</a>.
+                </p>
+                <p class="sig-text-legend mb-4">Legenda de sistema para observações menores e metadados.</p>
+
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-4">Skeletons
+                    (Carregamento)</p>
+                <div class="flex flex-col gap-2">
+                    <div class="sig-skeleton h-4 w-full"></div>
+                    <div class="sig-skeleton h-4 w-3/4"></div>
+                    <div class="sig-skeleton h-8 w-1/4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- SEÇÃO: FORMULÁRIOS EXPANDIDOS -->
+    <div class="blueprint-section">
+        <span class="section-label">Campos de Formulário e Seleção</span>
+        <div class="grid grid-cols-3 gap-8 mb-8">
+            <div class="sig-form-group">
+                <label class="sig-label">Razão Social</label>
+                <input type="text" class="sig-input" placeholder="Digite algo...">
+            </div>
+            <div class="sig-form-group">
+                <label class="sig-label">Selecione o Tipo</label>
+                <select class="sig-input cursor-pointer">
+                    <option value="">Escolha...</option>
+                    <option value="1">Pessoa Física</option>
+                    <option value="2">Pessoa Jurídica</option>
+                </select>
+            </div>
+            <div class="sig-form-group">
+                <label class="sig-label">Valor (Monetário)</label>
+                <input type="text" class="sig-input text-right sig-text-mono" value="R$ 0,00">
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-8">
+            <div class="sig-form-group">
+                <label class="sig-label">Pesquisa de Cliente (F2)</label>
+                <div class="sig-input-group">
+                    <input type="text" class="sig-input" placeholder="Pesquisar...">
+                    <span class="material-symbols-outlined sig-input-icon">search</span>
+                </div>
+            </div>
+            <div>
+                <label class="sig-label">Seleções Rápidas (Check/Radio/Switch)</label>
+                <div class="flex gap-6 mt-2">
+                    <label class="sig-check-group">
+                        <input type="checkbox" class="sig-check-input" checked>
+                        <div class="sig-checkbox"></div>
+                        Ativo
+                    </label>
+                    <label class="sig-check-group">
+                        <input type="radio" name="demo-radio" class="sig-check-input" checked>
+                        <div class="sig-radio"></div>
+                        Opção A
+                    </label>
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" id="sw1" class="sig-check-input">
+                        <label for="sw1" class="sig-switch"></label>
+                        <span class="sig-text-mini">Modo Noturno</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SEÇÃO: FEEDBACK E CARREGAMENTO -->
+    <div class="blueprint-section">
+        <span class="section-label">Feedback, Status e Carregamento</span>
+        <div class="grid grid-cols-2 gap-12">
+            <div>
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Progresso e Loaders
+                </p>
+                <div class="flex flex-col gap-6">
+                    <div class="sig-progress-bg">
+                        <div class="sig-progress-bar" style="width: 65%;"></div>
+                        <span class="sig-progress-text">65% PROCESSADO</span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="sig-spinner"></div>
+                        <span class="sig-text-mini">Processando dados...</span>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Paginação de Tabelas
+                </p>
+                <div class="sig-pagination">
+                    <div class="sig-page-btn"><span class="material-symbols-outlined">chevron_left</span></div>
+                    <div class="sig-page-btn ativa">1</div>
+                    <div class="sig-page-btn">2</div>
+                    <div class="sig-page-btn">3</div>
+                    <div class="sig-page-btn">...</div>
+                    <div class="sig-page-btn">25</div>
+                    <div class="sig-page-btn"><span class="material-symbols-outlined">chevron_right</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- SEÇÃO: TABELAS -->
+    <div class="blueprint-section">
+        <span class="section-label">Tabelas de Dados Operacionais (Variações de Densidade)</span>
+
+        <!-- LARGE (Padrão) -->
+        <h3 class="text-xs font-black text-slate-500 mb-2 uppercase tracking-wider">Densidade Grande (Padrão) <span
+                class="text-slate-400 font-normal lowercase tracking-normal">.sig-table</span></h3>
+        <div class="overflow-hidden border border-slate-200 rounded-sm mb-8">
+            <table class="sig-table">
+                <thead>
+                    <tr>
+                        <th class="sig-text-center w-12">ID</th>
+                        <th>DESCRIÇÃO</th>
+                        <th class="text-right">VALOR BRUTO</th>
+                        <th class="sig-text-center">STATUS</th>
+                        <th class="sig-text-center w-24">AÇÕES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="sig-text-center sig-text-mono text-slate-400">001</td>
+                        <td>PRODUTO COM PREÇO MONO</td>
+                        <td class="text-right sig-text-mono">R$ 1.500,00</td>
+                        <td class="sig-text-center"><span class="sig-badge-primary">ATIVO</span></td>
+                        <td class="sig-text-center">
+                            <button class="sig-btn-icon" title="Editar"><span
+                                    class="material-symbols-outlined text-[18px]">edit</span></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- MEDIUM -->
+        <h3 class="text-xs font-black text-slate-500 mb-2 uppercase tracking-wider">Densidade Média <span
+                class="text-slate-400 font-normal lowercase tracking-normal">.sig-table .sig-table-md</span></h3>
+        <div class="overflow-hidden border border-slate-200 rounded-sm mb-8">
+            <table class="sig-table sig-table-md">
+                <thead>
+                    <tr>
+                        <th class="sig-text-center w-12">ID</th>
+                        <th>DESCRIÇÃO</th>
+                        <th class="text-right">VALOR BRUTO</th>
+                        <th class="sig-text-center">STATUS</th>
+                        <th class="sig-text-center w-24">AÇÕES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="sig-text-center sig-text-mono text-slate-400">002</td>
+                        <td>PRODUTO MÉDIO</td>
+                        <td class="text-right sig-text-mono">R$ 800,00</td>
+                        <td class="sig-text-center"><span class="sig-badge-warning"
+                                style="font-size: 9px; padding: 2px 6px;">PENDENTE</span></td>
+                        <td class="sig-text-center">
+                            <button class="sig-btn-icon" title="Editar"><span
+                                    class="material-symbols-outlined text-[16px]">edit</span></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- SMALL (Compacta) -->
+        <h3 class="text-xs font-black text-slate-500 mb-2 uppercase tracking-wider">Densidade Pequena (Alta Carga) <span
+                class="text-slate-400 font-normal lowercase tracking-normal">.sig-table .sig-table-sm</span></h3>
+        <div class="overflow-hidden border border-slate-200 rounded-sm mb-4">
+            <table class="sig-table sig-table-sm">
+                <thead>
+                    <tr>
+                        <th class="sig-text-center w-12">ID</th>
+                        <th>DESCRIÇÃO</th>
+                        <th class="text-right">VALOR BRUTO</th>
+                        <th class="sig-text-center">STATUS</th>
+                        <th class="sig-text-center w-20">AÇÕES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="sig-text-center sig-text-mono text-slate-400">003</td>
+                        <td>PRODUTO COMPACTO PARA ALTA PRECISÃO E LISTAGENS</td>
+                        <td class="text-right sig-text-mono">R$ 15,50</td>
+                        <td class="sig-text-center"><span class="sig-badge-success"
+                                style="font-size: 8px; padding: 1px 4px;">OK</span></td>
+                        <td class="sig-text-center">
+                            <button class="sig-btn-icon" title="Editar" style="width:16px; height:16px;"><span
+                                    class="material-symbols-outlined text-[14px]">edit</span></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="sig-text-center sig-text-mono text-slate-400">004</td>
+                        <td>SISTEMA DE LUBRIFICAÇÃO (ITENS EM LOTE)</td>
+                        <td class="text-right sig-text-mono">R$ 220,00</td>
+                        <td class="sig-text-center"><span class="sig-badge-success"
+                                style="font-size: 8px; padding: 1px 4px;">OK</span></td>
+                        <td class="sig-text-center">
+                            <button class="sig-btn-icon" title="Editar" style="width:16px; height:16px;"><span
+                                    class="material-symbols-outlined text-[14px]">edit</span></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- SEÇÃO: TABELAS ANINHADAS (TREE TABLE) -->
+    <div class="blueprint-section">
+        <span class="section-label">Tabelas Aninhadas (Tree/Expandable)</span>
+        <div class="bg-slate-50 border border-slate-200 p-6 rounded-sm mb-6">
+            <p class="text-xs text-slate-500 mb-2">Estrutura utilizada para Agrupamentos, Master-Detail, Categorias e
+                Subcategorias.</p>
+            <p class="text-[10px] text-slate-400 font-mono">Classes Chave: bg-slate-100/50 (Linha Pai), setas de
+                indentação (↳), opacity-hover nos botões.</p>
+        </div>
+
+        <div class="overflow-hidden border border-slate-200 rounded-sm">
+            <table class="sig-table w-full">
+                <thead class="bg-white shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
+                    <tr>
+                        <th class="w-20">ID / PAI</th>
+                        <th>ESTRUTURA HIERÁRQUICA</th>
+                        <th class="w-32 sig-text-center">AÇÕES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- LINHA PAI (MASTER) -->
+                    <tr class="group bg-slate-50 border-y border-slate-200 cursor-pointer hover:bg-[#eff6ff] transition-colors shadow-[inset_4px_0_0_#1e40af]"
+                        onclick="toggleTree('sys-001', this)">
+                        <td class="font-mono text-[#1e40af] text-xs sig-text-center font-bold">001</td>
+                        <td class="font-bold text-slate-800 text-sm tracking-wide">
+                            <div class="flex items-center gap-2 uppercase">
+                                <span
+                                    class="material-symbols-outlined text-[#1e40af] text-[20px] transition-transform duration-200"
+                                    id="icon-sys-001">keyboard_arrow_down</span>
+                                SISTEMA MOTOR
+                            </div>
+                        </td>
+                        <td class="sig-text-center">
+                            <div
+                                class="flex justify-center gap-2 opacity-50 group-hover:opacity-100 transition-opacity">
+                                <button class="sig-btn-icon text-[#1e40af] hover:bg-blue-100"
+                                    title="+ Nova Subcategoria" onclick="event.stopPropagation()">
+                                    <span class="material-symbols-outlined text-[18px]">add_circle</span>
+                                </button>
+                                <button class="sig-btn-icon sig-text-red hover:bg-red-50" title="Apagar Categoria"
+                                    onclick="event.stopPropagation()">
+                                    <span class="material-symbols-outlined text-[18px]">delete</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- LINHAS FILHAS (Iniciam visíveis ou ocultas. Aqui iniciam visíveis) -->
+                    <tr
+                        class="group bg-white hover:bg-[#eff6ff] tree-child-sys-001 transition-all border-b border-slate-50/50">
+                        <td class="sig-text-center">
+                            <div
+                                class="flex items-center justify-end pr-3 gap-1.5 opacity-50 group-hover:opacity-100 transition-opacity text-[#1e40af]">
+                                <span class="text-[10px]">↳</span>
+                                <span class="font-mono text-[10px] font-bold">142</span>
+                            </div>
+                        </td>
+                        <td
+                            class="uppercase font-semibold text-slate-600 group-hover:text-[#1e40af] text-[11px] transition-colors">
+                            <div
+                                class="flex items-center gap-2 pl-6 border-l-2 border-slate-200 group-hover:border-[#1e40af] py-1 transition-colors">
+                                VELAS DE IGNIÇÃO
+                            </div>
+                        </td>
+                        <td class="sig-text-center">
+                            <div class="flex justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button class="sig-btn-icon text-slate-400 hover:text-[#1e40af] hover:bg-blue-50"
+                                    title="Editar Subcategoria">
+                                    <span class="material-symbols-outlined text-[16px]">edit</span>
+                                </button>
+                                <button class="sig-btn-icon sig-text-red hover:bg-red-50" title="Remover Subcategoria">
+                                    <span class="material-symbols-outlined text-[16px]">close</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr
+                        class="group bg-white hover:bg-[#eff6ff] tree-child-sys-001 transition-all border-b border-slate-50/50">
+                        <td class="sig-text-center">
+                            <div
+                                class="flex items-center justify-end pr-3 gap-1.5 opacity-50 group-hover:opacity-100 transition-opacity text-[#1e40af]">
+                                <span class="text-[10px]">↳</span>
+                                <span class="font-mono text-[10px] font-bold">143</span>
+                            </div>
+                        </td>
+                        <td
+                            class="uppercase font-semibold text-slate-600 group-hover:text-[#1e40af] text-[11px] transition-colors">
+                            <div
+                                class="flex items-center gap-2 pl-6 border-l-2 border-slate-200 group-hover:border-[#1e40af] py-1 transition-colors">
+                                CORREIAS DENTADAS
+                            </div>
+                        </td>
+                        <td class="sig-text-center">
+                            <div class="flex justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button class="sig-btn-icon text-slate-400 hover:text-[#1e40af] hover:bg-blue-50"
+                                    title="Editar Subcategoria">
+                                    <span class="material-symbols-outlined text-[16px]">edit</span>
+                                </button>
+                                <button class="sig-btn-icon sig-text-red hover:bg-red-50" title="Remover Subcategoria">
+                                    <span class="material-symbols-outlined text-[16px]">close</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- SEÇÃO: COMPONENTES OPERACIONAIS DE ALTA DENSIDADE -->
+    <div class="blueprint-section">
+        <span class="section-label">Componentes de Alta Densidade (Layout Desktop/Delphi)</span>
+        <div class="grid grid-cols-2 gap-12">
+            <div>
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Fieldsets Customizados
+                </p>
+                <div class="sig-fieldset mb-4">
+                    <span class="sig-legend">Identificação do Item</span>
+                    <p class="text-[11px] text-slate-500 italic mt-2">Os fieldsets operacionais têm pouca margem, linha
+                        de borda sutil e título sobreposto.</p>
+                </div>
+
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3 mt-6">Inputs de Alta
+                    Densidade</p>
+                <div class="sig-fieldset">
+                    <span class="sig-legend">Dados de Contato</span>
+                    <div class="flex gap-2 mt-2">
+                        <div class="flex-1">
+                            <label class="sig-label-dense">Nome Completo</label>
+                            <input type="text" class="sig-input-dense w-full uppercase" value="FULANO DE TAL">
+                        </div>
+                        <div class="w-24">
+                            <label class="sig-label-dense">Telefone</label>
+                            <input type="text" class="sig-input-dense w-full text-center" value="(11) 9999-9999">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Monetário e Totalizadores
+                </p>
+                <div class="flex flex-col gap-3">
+                    <div class="sig-fieldset">
+                        <span class="sig-legend">Input de Preços</span>
+                        <div class="mt-2">
+                            <label class="sig-label-dense">Preço Final R$</label>
+                            <input type="text" class="sig-input-dense w-full sig-price-input" value="1.250,00">
+                        </div>
+                    </div>
+
+                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 mt-3">Caixas
+                        Informativas (Placas)</p>
+                    <div class="sig-box-green px-3 py-2 flex items-center justify-between shadow-sm rounded-sm">
+                        <span class="flex items-center gap-1 font-black text-sm tracking-widest"><span
+                                class="material-symbols-outlined">check_box</span> DISPONÍVEL:</span>
+                        <span class="text-2xl font-black font-mono">18</span>
+                    </div>
+
+                    <div class="sig-box-yellow p-1.5 flex items-center gap-2 shadow-sm rounded-sm mt-1">
+                        <span class="text-[10px] font-bold uppercase ml-1">Localização:</span>
+                        <input type="text"
+                            class="flex-1 bg-transparent border-none text-[11px] font-bold text-slate-700 focus:ring-0 p-0"
+                            value="RUA A-04 / BOX 12-B">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SEÇÃO: EXIBIÇÃO AVANÇADA -->
+    <div class="blueprint-section">
+        <span class="section-label">Exibição de Informação e Estados</span>
+        <div class="grid grid-cols-2 gap-12">
+            <div>
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Badges e Avatares</p>
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="sig-avatar">JD</div>
+                    <div class="sig-avatar bg-slate-700">A</div>
+                    <div class="flex gap-2">
+                        <span class="sig-badge sig-badge-success">Pago</span>
+                        <span class="sig-badge sig-badge-error">Atrasado</span>
+                        <span class="sig-badge sig-badge-warning">Pendente</span>
+                        <span class="sig-badge sig-badge-info">Enviado</span>
+                    </div>
+                </div>
+
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Accordions (FAQ /
+                    Detalhes)</p>
+                <div class="sig-accordion ativa">
+                    <div class="sig-accordion-header">
+                        Informações Adicionais (Expandido)
+                        <span class="material-symbols-outlined">expand_less</span>
+                    </div>
+                    <div class="sig-accordion-content">
+                        Conteúdo detalhado do item, ideal para informações que não precisam estar visíveis o tempo
+                        todo.
+                    </div>
+                </div>
+                <div class="sig-accordion">
+                    <div class="sig-accordion-header">
+                        Observações de Entrega
+                        <span class="material-symbols-outlined">expand_more</span>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Steppers (Fluxo de
+                    Etapas)</p>
+                <div class="sig-stepper">
+                    <div class="sig-step ativa">
+                        <div class="sig-step-circle">1</div>
+                        <span class="sig-text-mini">Cliente</span>
+                    </div>
+                    <div class="sig-step ativa">
+                        <div class="sig-step-circle">2</div>
+                        <span class="sig-text-mini">Produtos</span>
+                    </div>
+                    <div class="sig-step">
+                        <div class="sig-step-circle">3</div>
+                        <span class="sig-text-mini">Pagamento</span>
+                    </div>
+                </div>
+
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3 mt-4">Área de Upload
+                </p>
+                <div class="sig-upload-area">
+                    <span class="material-symbols-outlined text-slate-400 text-3xl mb-2">cloud_upload</span>
+                    <p class="sig-text-body">Arraste arquivos ou clique para upload</p>
+                    <p class="sig-text-mini text-slate-400">PDF, JPG ou PNG (Max. 5MB)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SEÇÃO: ESTADOS VAZIOS E OVERLAYS -->
+    <div class="blueprint-section">
+        <span class="section-label">Sobreposição e Estados de Interface</span>
+        <div class="grid grid-cols-2 gap-12">
+            <div>
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Empty State (Lista
+                    Vazia)</p>
+                <div class="sig-empty-state border border-dashed border-slate-200 rounded">
+                    <span class="material-symbols-outlined sig-empty-icon">inventory_2</span>
+                    <p class="sig-text-h4">Nenhum registro encontrado</p>
+                    <p class="sig-text-body">Tente ajustar seus filtros de pesquisa.</p>
+                    <button class="sig-btn sig-btn-primary mt-2">Limpar Filtros</button>
+                </div>
+            </div>
+            <div>
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">Visualização de
+                    Drawer e Popovers</p>
+                <div class="flex flex-col gap-4">
+                    <button class="sig-btn" onclick="alert('Demo: Drawer deslizaria da direita para a esquerda')">
+                        <span class="material-symbols-outlined">side_navigation</span>
+                        Abrir Painel Lateral (Drawer)
+                    </button>
+
+                    <div class="p-4 bg-slate-800 text-white rounded shadow-xl w-64 relative">
+                        <p class="text-[10px] font-bold mb-1">Popovers de Ajuda</p>
+                        <p class="text-[11px] opacity-80">Este é um exemplo de popover de contexto para menus de
+                            perfil ou notificações.</p>
+                        <div class="absolute -top-2 left-4 w-4 h-4 bg-slate-800 rotate-45"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST DEMO (Posicionamento fixo) -->
+    <div class="sig-toast">
+        <span class="material-symbols-outlined text-green-400">check_circle</span>
+        <span>Registro salvo com sucesso!</span>
+    </div>
+
+    <!-- MÓDULO HUB (DASHBOARD INICIAL) -->
+    <div class="blueprint-section !bg-slate-200">
+        <span class="section-label">HUB Dashboard (Menu Inicial do Sistema)</span>
+
+        <div class="sig-hub-container shadow-2xl overflow-hidden rounded-lg border border-slate-300 mb-12">
+            <!-- Hub Header -->
+            <header class="sig-hub-header">
+                <div class="flex items-center gap-3">
+                    <span class="sig-logo-brand !text-xl">SIG</span>
+                    <span class="sig-logo-separator">|</span>
+                    <span class="sig-logo-tagline !text-[9px]">SISTEMA CORE ERP</span>
+                </div>
+
+                <div class="sig-hub-actions">
+                    <span class="material-symbols-outlined">search</span>
+                    <span class="material-symbols-outlined">grid_view</span>
+                    <span class="material-symbols-outlined">verified_user</span>
+                    <span class="material-symbols-outlined">settings</span>
+                    <span class="material-symbols-outlined">notifications</span>
+
+                    <div class="sig-hub-user">
+                        <div class="sig-hub-user-info">
+                            <p class="sig-hub-user-name">THALES</p>
+                            <p class="sig-hub-user-role">ADMINISTRADOR</p>
+                        </div>
+                        <div class="sig-hub-avatar">T</div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Hub Content -->
+            <main class="sig-hub-content bg-[#f8fafc] !h-[600px] relative">
+                <!-- MAIS ACESSADOS -->
+                <section>
+                    <h2 class="sig-hub-section-title">MAIS ACESSADOS</h2>
+                    <div class="sig-hub-grid">
+                        <div class="sig-hub-tile tile-blue">
+                            <span class="material-symbols-outlined">shopping_cart</span>
+                            <span>Vendas</span>
+                        </div>
+                        <div class="sig-hub-tile tile-slate">
+                            <span class="material-symbols-outlined">settings</span>
+                            <span>Parâmetros</span>
+                        </div>
+                        <div class="sig-hub-tile tile-green">
+                            <span class="material-symbols-outlined">description</span>
+                            <span>Leitura X</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- OPERACIONAL -->
+                <section class="mt-8">
+                    <h2 class="sig-hub-section-title">OPERACIONAL</h2>
+                    <div class="sig-hub-grid">
+                        <div class="sig-hub-tile tile-dark-blue !w-[350px]">
+                            <span class="material-symbols-outlined">payments</span>
+                            <span>Vendas</span>
+                        </div>
+                        <div class="sig-hub-tile tile-orange !w-[350px]">
+                            <span class="material-symbols-outlined">history</span>
+                            <span>Troca/Devolução</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- FISCAL & UTILITÁRIOS -->
+                <div class="flex gap-20 mt-8">
+                    <section class="flex-1">
+                        <h2 class="sig-hub-section-title">FISCAL</h2>
+                        <div class="sig-hub-grid">
+                            <div class="sig-hub-tile tile-green">
+                                <span class="material-symbols-outlined">receipt_long</span>
+                                <span>Menu Fiscal</span>
+                            </div>
+                            <div class="sig-hub-tile tile-lime">
+                                <span class="material-symbols-outlined">equalizer</span>
+                                <span>Emitir Redução Z</span>
+                            </div>
+                        </div>
+                    </section>
+                    <section class="flex-1">
+                        <h2 class="sig-hub-section-title">UTILITÁRIOS</h2>
+                        <div class="sig-hub-grid">
+                            <div class="sig-hub-tile tile-slate">
+                                <span class="material-symbols-outlined">cloud_upload</span>
+                                <span>Cópia Segurança</span>
+                            </div>
+                            <div class="sig-hub-tile tile-deeper-blue">
+                                <span class="material-symbols-outlined">admin_panel_settings</span>
+                                <span>Parâmetros</span>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Botão Sair -->
+                <button class="sig-btn-exit !absolute bottom-10 right-10">
+                    <span class="material-symbols-outlined">logout</span>
+                    SAIR
+                </button>
+            </main>
+
+            <!-- Hub Footer -->
+            <footer class="sig-hub-footer">
+                <div>SIG CORE - Terminal 01</div>
+                <div>
+                    Usuário: Admin | 06/03/2026, 12:43:05 | Banco: <strong>PostgreSQL</strong>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- TEMPLATES DE IMPLEMENTAÇÃO (DNA PARA NOVAS TELAS) -->
+    <div class="blueprint-section">
+        <span class="section-label">Como criar uma Tela Nova (DNA do Sistema)</span>
+        <div class="bg-slate-900 rounded p-6 overflow-hidden">
+            <p class="text-xs text-slate-400 mb-4 font-mono">// Use este Boilerplate para garantir que a tela 'orne' com
+                o restante do SIG</p>
+            <pre class="text-[11px] text-blue-300 font-mono leading-relaxed">
+&lt;!-- DNA SIG: MANTENHA ESTA ESTRUTURA PARA TODA NOVA TELA --&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;!-- 1. SEMPRE Importe o sig-ui.css --&gt;
+    &lt;link rel="stylesheet" href="../assets/css/sig-ui.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;!-- 2. Header Branding --&gt;
+    &lt;header class="sig-hub-header"&gt;
+        &lt;div class="flex items-center gap-3"&gt;
+            &lt;span class="sig-logo-brand"&gt;SIG&lt;/span&gt;
+            &lt;span class="sig-logo-separator"&gt;|&lt;/span&gt;
+            &lt;span class="sig-logo-tagline"&gt;NOME DO MÓDULO&lt;/span&gt;
+        &lt;/div&gt;
+    &lt;/header&gt;
+
+    &lt;div class="sig-app-container"&gt;
+        &lt;!-- 3. Sidebar Padrão (Conforme Blueprint) --&gt;
+        &lt;aside class="sig-sidebar"&gt;
+            &lt;div class="sig-sidebar-header"&gt;
+                &lt;span&gt;NAVEGAÇÃO&lt;/span&gt;
+            &lt;/div&gt;
+            &lt;nav class="sig-sidebar-menu"&gt;
+                &lt;div class="sig-menu-item ativa"&gt;
+                    &lt;span&gt;Item Principal&lt;/span&gt;
+                    &lt;span class="sig-shortcut"&gt;F2&lt;/span&gt;
+                &lt;/div&gt;
+            &lt;/nav&gt;
+        &lt;/aside&gt;
+
+        &lt;!-- 4. Área de Conteúdo Sóbria --&gt;
+        &lt;main class="sig-main-content"&gt;
+             &lt;!-- Seu conteúdo aqui --&gt;
+        &lt;/main&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+            </pre>
+        </div>
+    </div>
+
+    <script>
+        function toggleTree(parentId, el) {
+            const rows = document.querySelectorAll('.tree-child-' + parentId);
+            const icon = document.getElementById('icon-' + parentId);
+
+            let isHidden = false;
+            if (rows.length > 0) {
+                isHidden = rows[0].style.display === 'none';
+            }
+
+            rows.forEach(row => {
+                row.style.display = isHidden ? 'table-row' : 'none';
+            });
+
+            if (isHidden) {
+                icon.style.transform = 'rotate(0deg)';
+                el.classList.add('bg-slate-50');
+            } else {
+                icon.style.transform = 'rotate(-90deg)';
+                el.classList.remove('bg-slate-50');
+            }
+        }
+    </script>
+</body>
+
+</html>

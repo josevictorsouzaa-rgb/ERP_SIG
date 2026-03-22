@@ -1,0 +1,1655 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>SIG - PARÂMETROS</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'sig-blue': '#1e40af',
+                        'sig-blue-dark': '#1e3a8a',
+                        'sig-brand-cyan': '#00e5ff',
+                        'sig-brand-dark': '#001b2b',
+                        'sig-border': '#cbd5e1',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="../../assets/css/sig-ui.css">
+    <style>
+        /* ESTILIZAÇÃO PROFISSIONAL PARA DATAS (FIM DO LOOK NAVEGADOR) */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            filter: invert(0.5);
+            opacity: 0.6;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator:hover {
+            opacity: 1;
+        }
+
+        /* Garantir que containers não-editáveis não recebam foco */
+        [tabindex="-1"]:focus {
+            outline: none !important;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400&display=swap"
+        rel="stylesheet" />
+</head>
+
+<body class="bg-[#f8fafc] font-sans text-slate-700 h-screen flex flex-col overflow-hidden relative">
+
+
+
+
+    <!-- MODAL EMPRESA: DESIGN PREMIUM INDUSTRIAL -->
+    <div id="modal-empresa" class="sig-modal-overlay">
+        <div class="bg-white w-[850px] rounded-md shadow-2xl overflow-hidden border border-slate-400">
+            <!-- CABEÇALHO CLÁSSICO BLUE -->
+            <div class="bg-white p-3 px-6 flex justify-between items-center border-b border-slate-200">
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-sig-blue text-xl">domain_add</span>
+                    <h3 class="text-sig-blue font-bold text-[12px] uppercase tracking-wider">Cadastro de Unidade Operacional / Empresa</h3>
+                </div>
+                <button onclick="fecharModalEmpresa()" class="sig-btn-close !w-8 !h-8">
+                    <span class="material-symbols-outlined !text-lg">close</span>
+                </button>
+            </div>
+
+            <div class="p-8 bg-white max-h-[75vh] overflow-y-auto">
+                <form id="form-empresa" class="grid grid-cols-12 gap-x-8 gap-y-6">
+                    <input type="hidden" id="empresa-id">
+                    <input type="hidden" id="empresa-tipo" value="JURÍDICA">
+                    
+                    <!-- COLUNA ESQUERDA: LOGO E IDENTIFICAÇÃO -->
+                    <div class="col-span-4 space-y-6">
+                        <!-- BOX LOGO -->
+                        <div class="border border-slate-200 rounded p-4 bg-slate-50/30 flex flex-col items-center justify-center min-h-[160px] border-dashed">
+                            <span class="material-symbols-outlined text-slate-300 text-5xl mb-2">add_a_photo</span>
+                            <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Carregar Logotipo Oficial</span>
+                        </div>
+
+                        <!-- SEÇÃO IDENTIFICAÇÃO -->
+                        <div class="p-4 border border-blue-100 bg-blue-50/20 rounded space-y-4">
+                            <div class="flex items-center gap-2 border-b border-blue-100 pb-2 mb-2">
+                                <span class="material-symbols-outlined text-blue-500 text-xs text-[14px]">id_card</span>
+                                <h4 class="text-[10px] font-black text-blue-600 uppercase tracking-widest">Identificação Fiscal</h4>
+                            </div>
+
+                            <div>
+                                <label class="sig-label">Tipo de Empresa</label>
+                                <div class="flex rounded overflow-hidden border border-slate-300">
+                                    <button type="button" id="btn-tipo-juridica" onclick="mudarTipoEmpresa('JURÍDICA')" class="flex-1 py-1.5 text-[10px] font-black uppercase bg-blue-600 text-white transition-all">Jurídica</button>
+                                    <button type="button" id="btn-tipo-fisica" onclick="mudarTipoEmpresa('FÍSICA')" class="flex-1 py-1.5 text-[10px] font-black uppercase bg-white text-slate-400 hover:bg-slate-50 transition-all">Física</button>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="col-span-1">
+                                    <label class="sig-label">ID Sistema</label>
+                                    <input type="text" id="display-id" class="sig-input !bg-slate-100 text-center font-mono opacity-60" readonly value="0001">
+                                </div>
+                                <div class="col-span-1">
+                                    <label class="sig-label">Insc. Est. (IE)</label>
+                                    <input type="text" id="ie" class="sig-input text-[10px]" placeholder="Isento">
+                                </div>
+                            </div>
+
+                            <div class="relative">
+                                <label class="sig-label" id="label-doc">CNPJ / CPF *</label>
+                                <div class="flex gap-1">
+                                    <input type="text" id="cnpj" class="sig-input font-bold border-blue-200 focus:border-blue-500" placeholder="00.000.000/0000-00">
+                                    <button type="button" class="bg-sig-blue text-white px-2 rounded hover:bg-sig-blue-dark shadow-sm">
+                                        <span class="material-symbols-outlined text-sm">search</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COLUNA DIREITA: NOMES E LOCALIZAÇÃO -->
+                    <div class="col-span-8 space-y-6">
+                        <!-- BOX NOMES -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="col-span-2 p-4 border border-slate-200 rounded">
+                                <div class="flex items-center gap-2 border-b border-slate-100 pb-2 mb-4">
+                                    <span class="material-symbols-outlined text-slate-400 text-[14px]">branding_watermark</span>
+                                    <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nomes e Marcas</h4>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="sig-label">Nome Fantasia (Comercial) *</label>
+                                        <input type="text" id="fantasia" class="sig-input uppercase" placeholder="EX: AUTO PEÇAS DO JOÃO">
+                                    </div>
+                                    <div>
+                                        <label class="sig-label">Razão Social (Oficial)</label>
+                                        <input type="text" id="razao-social" class="sig-input uppercase" placeholder="EX: JOÃO DA SILVA AUTO PEÇAS LTDA">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- BOX LOCALIZAÇÃO -->
+                        <div class="p-4 border border-slate-200 rounded space-y-4">
+                            <div class="flex items-center gap-2 border-b border-slate-100 pb-2 mb-2">
+                                <span class="material-symbols-outlined text-slate-400 text-[14px]">location_on</span>
+                                <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Localização & Logística</h4>
+                            </div>
+
+                            <div class="grid grid-cols-12 gap-x-4 gap-y-4">
+                                <div class="col-span-3">
+                                    <label class="sig-label">CEP</label>
+                                    <input type="text" id="cep" class="sig-input font-mono" placeholder="00000-000">
+                                </div>
+                                <div class="col-span-6">
+                                    <label class="sig-label">Logradouro / Rua</label>
+                                    <input type="text" id="logradouro" class="sig-input uppercase">
+                                </div>
+                                <div class="col-span-3">
+                                    <label class="sig-label">Número</label>
+                                    <input type="text" id="numero" class="sig-input uppercase" placeholder="S/N">
+                                </div>
+
+                                <div class="col-span-5">
+                                    <label class="sig-label">Bairro</label>
+                                    <input type="text" id="bairro" class="sig-input uppercase">
+                                </div>
+                                <div class="col-span-5">
+                                    <label class="sig-label">Cidade</label>
+                                    <input type="text" id="cidade" class="sig-input uppercase">
+                                </div>
+                                <div class="col-span-2">
+                                    <label class="sig-label">UF</label>
+                                    <input type="text" id="uf" class="sig-input uppercase text-center" maxlength="2">
+                                </div>
+                                <div class="col-span-6">
+                                    <label class="sig-label">Telefone Principal</label>
+                                    <input type="text" id="telefone" class="sig-input" placeholder="(00) 0000-0000">
+                                </div>
+                                <div class="col-span-6">
+                                    <label class="sig-label">Regime Tributário</label>
+                                    <select id="regime" class="sig-input cursor-pointer font-bold text-slate-600">
+                                        <option value="SIMPLES NACIONAL">SIMPLES NACIONAL</option>
+                                        <option value="LUCRO PRESUMIDO">LUCRO PRESUMIDO</option>
+                                        <option value="LUCRO REAL">LUCRO REAL</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SEÇÃO: CANAIS DE ATENDIMENTO -->
+                        <div class="p-4 border border-emerald-100 bg-emerald-50/10 rounded space-y-3">
+                            <div class="flex items-center gap-2 border-b border-emerald-100 pb-2 mb-2">
+                                <span class="material-symbols-outlined text-emerald-500 text-[14px]">contact_phone</span>
+                                <h4 class="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Canais de Atendimento / Contatos</h4>
+                            </div>
+
+                            <div class="flex gap-2">
+                                <input type="text" id="contato-nome" class="sig-input !h-8 !text-[10px]" placeholder="NOME DO CONTATO">
+                                <input type="text" id="contato-tel" class="sig-input !h-8 !text-[10px]" placeholder="(00) 00000-0000">
+                                <input type="text" id="contato-dept" class="sig-input !h-8 !text-[10px]" placeholder="DEPTO / FINANCEIRO">
+                                <button type="button" onclick="adicionarContatoEmpresa()" class="bg-emerald-500 text-white px-3 rounded hover:bg-emerald-600 shadow-sm transition-all">
+                                    <span class="material-symbols-outlined text-sm">add</span>
+                                </button>
+                            </div>
+
+                            <div class="max-h-[120px] overflow-y-auto border border-slate-100 rounded bg-white">
+                                <table class="w-full text-[10px] uppercase font-bold text-slate-500">
+                                    <thead class="bg-slate-50 border-b border-slate-100 sticky top-0">
+                                        <tr class="text-left">
+                                            <th class="p-2">Nome</th>
+                                            <th class="p-2">Telefone</th>
+                                            <th class="p-2">Departamento</th>
+                                            <th class="p-2 w-10 text-center">...</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="lista-contatos-empresa">
+                                        <!-- Injetado via JS -->
+                                        <tr>
+                                            <td colspan="4" class="p-4 text-center text-slate-300 font-medium italic">Nenhum canal adicional cadastrado</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- FOOTER COM AJUDA -->
+            <div class="px-8 py-4 bg-slate-50 border-t border-slate-200 flex justify-between items-center">
+                <div class="flex items-center gap-2 text-slate-400">
+                    <span class="material-symbols-outlined text-sm">info</span>
+                    <span class="text-[9px] font-bold uppercase tracking-widest text-[#1e40af] opacity-80">Utilize campos em destaque azul para busca automática</span>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="fecharModalEmpresa()" class="sig-btn text-slate-500 hover:bg-white border border-transparent hover:border-slate-200 transition-all uppercase !text-[10px] font-black px-6">Cancelar (ESC)</button>
+                    <button id="btn-salvar-modal" onclick="salvarEmpresa()" class="sig-btn sig-btn-primary bg-sig-blue hover:bg-sig-blue-dark flex items-center gap-2 min-w-[200px] justify-center shadow-lg transition-all scale-100 hover:scale-[1.02]">
+                        <span id="spinner-salvar" class="hidden animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+                        <span id="texto-salvar" class="uppercase font-black tracking-wider text-[11px]">Gravar Empresa (F10)</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL GENÉRICO SIMPLES (MARCAS/CATEGORIAS) -->
+    <div id="modal-generico" class="sig-modal-overlay hidden">
+        <div class="bg-white w-[400px] rounded-md shadow-2xl overflow-hidden border border-slate-400">
+            <div class="bg-slate-50 p-2 px-4 flex justify-between items-center border-b border-slate-300">
+                <span id="titulo-modal-generico"
+                    class="text-slate-700 font-bold text-[11px] uppercase tracking-wider">Cadastro</span>
+                <button onclick="fecharModalGenerico()" class="sig-btn-close !w-7 !h-7"><span
+                        class="material-symbols-outlined !text-base">close</span></button>
+            </div>
+            <div class="p-6">
+                <input type="hidden" id="gen-id">
+                <input type="hidden" id="gen-tipo">
+                <label class="sig-label">Nome Oficial</label>
+                <input type="text" id="gen-nome" class="sig-input uppercase" placeholder="DIGITE O NOME">
+                
+                <div id="gen-box-margem" class="mt-4 hidden">
+                    <label class="sig-label">Margem Padrão (%)</label>
+                    <input type="number" id="gen-margem" class="sig-input font-bold text-blue-600" step="0.01" placeholder="0.00">
+                </div>
+            </div>
+            <div class="p-3 bg-slate-50 border-t border-slate-200 flex justify-end gap-2 px-6">
+                <button onclick="fecharModalGenerico()"
+                    class="sig-btn text-slate-500 hover:bg-slate-200">Cancelar</button>
+                <button id="btn-salvar-gen" class="sig-btn sig-btn-primary min-w-[120px]">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL SUBCATEGORIA -->
+    <div id="modal-subcategoria" class="sig-modal-overlay hidden">
+        <div class="bg-white w-[500px] rounded-md shadow-2xl overflow-hidden border border-slate-400">
+            <div class="bg-slate-50 p-2 px-4 flex justify-between items-center border-b border-slate-300">
+                <span class="text-slate-700 font-bold text-[11px] uppercase tracking-wider">Cadastro de
+                    Subcategoria</span>
+                <button onclick="fecharModalSubcategoria()" class="sig-btn-close !w-7 !h-7"><span
+                        class="material-symbols-outlined !text-base">close</span></button>
+            </div>
+            <div class="p-6 space-y-4">
+                <input type="hidden" id="sub-id">
+                <div>
+                    <label class="sig-label">Vincular a Categoria (Pai) Obrigatório</label>
+                    <select id="sub-categoria-id"
+                        class="sig-input bg-white cursor-pointer uppercase font-bold text-slate-700">
+                        <option value="">Selecione a categoria master...</option>
+                        <!-- Injetado via JS -->
+                    </select>
+                </div>
+                <div>
+                    <label class="sig-label">Nome da Subcategoria</label>
+                    <input type="text" id="sub-nome" class="sig-input uppercase" placeholder="EX: VELAS DE IGNIÇÃO">
+                </div>
+            </div>
+            <div class="p-3 bg-slate-50 border-t border-slate-200 flex justify-end gap-2 px-6">
+                <button onclick="fecharModalSubcategoria()"
+                    class="sig-btn text-slate-500 hover:bg-slate-200">Cancelar</button>
+                <button onclick="salvarBdSubcategoria()" class="sig-btn sig-btn-primary min-w-[120px]">Gravar
+                    Vínculo</button>
+            </div>
+        </div>
+    </div>
+    <!-- MODAL USUÁRIO -->
+    <div id="modal-usuario" class="sig-modal-overlay hidden">
+        <div class="bg-white w-[850px] rounded-md shadow-2xl overflow-hidden border border-slate-400">
+            <div class="bg-slate-50 p-2 px-4 flex justify-between items-center border-b border-slate-300">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-slate-500 text-sm">person</span>
+                    <h3 class="text-slate-700 font-bold text-[11px] uppercase tracking-wider">Cadastro Completo de
+                        Operador / Usuário</h3>
+                </div>
+                <button onclick="fecharModalUsuario()" class="sig-btn-close !w-7 !h-7">
+                    <span class="material-symbols-outlined !text-base">close</span>
+                </button>
+            </div>
+
+            <div class="p-6">
+                <form id="form-usuario" class="space-y-6">
+
+                    <!-- SEÇÃO: DADOS PESSOAIS -->
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-2 pb-2 border-b border-slate-100" tabindex="-1">
+                            <span class="material-symbols-outlined text-blue-500 text-sm" tabindex="-1">badge</span>
+                            <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest" tabindex="-1">
+                                Dados Pessoais &
+                                Documentação</h4>
+                        </div>
+
+                        <div class="grid grid-cols-12 gap-x-4 gap-y-4">
+                            <div class="col-span-6">
+                                <label class="sig-label">Nome</label>
+                                <input type="text" id="usr-nome" class="sig-input uppercase" required>
+                            </div>
+                            <div class="col-span-6">
+                                <label class="sig-label">Sobrenome / Complemento</label>
+                                <input type="text" id="usr-sobrenome" class="sig-input uppercase">
+                            </div>
+
+                            <div class="col-span-4">
+                                <label class="sig-label">CPF</label>
+                                <input type="text" id="usr-cpf" class="sig-input font-mono"
+                                    placeholder="000.000.000-00">
+                            </div>
+                            <div class="col-span-4 hidden">
+                                <label class="sig-label">RG / Identidade</label>
+                                <input type="text" id="usr-rg" class="sig-input font-mono" placeholder="00.000.000-0">
+                            </div>
+                            <div class="col-span-4">
+                                <label class="sig-label">Data de Nascimento</label>
+                                <input type="date" id="usr-data-nascimento" class="sig-input">
+                            </div>
+
+                            <!-- Endereço Agrupado -->
+                            <div class="col-span-3">
+                                <label class="sig-label flex justify-between items-center" tabindex="-1">CEP <button
+                                        type="button" onclick="consultarCEP()" tabindex="-1"
+                                        class="text-[9px] text-blue-500 font-black hover:underline">BUSCAR</button></label>
+                                <input type="text" id="usr-cep" class="sig-input font-mono" placeholder="00000-000">
+                            </div>
+                            <div class="col-span-6">
+                                <label class="sig-label" tabindex="-1">Logradouro / Rua</label>
+                                <input type="text" id="usr-logradouro" class="sig-input uppercase">
+                            </div>
+                            <div class="col-span-3">
+                                <label class="sig-label" tabindex="-1">Nº</label>
+                                <input type="text" id="usr-numero" class="sig-input uppercase">
+                            </div>
+
+                            <div class="col-span-3">
+                                <label class="sig-label">Bairro</label>
+                                <input type="text" id="usr-bairro" class="sig-input uppercase">
+                            </div>
+                            <div class="col-span-4">
+                                <label class="sig-label">Complemento</label>
+                                <input type="text" id="usr-complemento" class="sig-input uppercase">
+                            </div>
+                            <div class="col-span-4">
+                                <label class="sig-label">Cidade</label>
+                                <input type="text" id="usr-cidade" class="sig-input uppercase">
+                            </div>
+                            <div class="col-span-1">
+                                <label class="sig-label">UF</label>
+                                <input type="text" id="usr-uf" class="sig-input uppercase" maxlength="2">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SEÇÃO: SISTEMA -->
+                    <div class="space-y-4 bg-slate-50 p-5 rounded-sm border border-slate-200">
+                        <div class="flex items-center gap-2 pb-2 border-b border-slate-200" tabindex="-1">
+                            <span class="material-symbols-outlined text-amber-500 text-sm"
+                                tabindex="-1">settings_account_box</span>
+                            <h4 class="text-[10px] font-black text-slate-500 uppercase tracking-widest" tabindex="-1">
+                                Configurações de
+                                Acesso & Contrato</h4>
+                        </div>
+
+                        <div class="grid grid-cols-12 gap-x-4 gap-y-4">
+                            <div class="col-span-2">
+                                <label class="sig-label" tabindex="-1">ID Sistema</label>
+                                <input type="text" id="usr-id"
+                                    class="sig-input bg-slate-100 font-mono text-center border-slate-300" readonly
+                                    tabindex="-1" placeholder="AUTO">
+                            </div>
+                            <div class="col-span-5">
+                                <label class="sig-label">Login de Acesso</label>
+                                <input type="text" id="usr-login"
+                                    class="sig-input bg-white lowercase font-bold text-blue-600 border-slate-300"
+                                    required>
+                            </div>
+                            <div class="col-span-5">
+                                <label class="sig-label">Função / Cargo</label>
+                                <select id="usr-funcao"
+                                    class="sig-input bg-white cursor-pointer uppercase font-bold text-slate-700 border-slate-300">
+                                    <option value="0">Selecione...</option>
+                                </select>
+                            </div>
+
+                            <div class="col-span-4">
+                                <label class="sig-label">Data Admissão</label>
+                                <input type="date" id="usr-data-admissao" class="sig-input bg-white border-slate-300">
+                            </div>
+
+                            <div id="usr-box-senha" class="col-span-4 p-2 bg-white border border-blue-100 rounded-sm">
+                                <label class="sig-label text-blue-700 !mb-1">Senha Inicial</label>
+                                <input type="text" id="usr-senha" class="sig-input !h-8 !bg-blue-50/30 border-blue-100"
+                                    value="lubel">
+                            </div>
+
+                            <div class="col-span-4 flex items-center justify-center pt-5">
+                                <div
+                                    class="flex items-center gap-2 bg-white border border-slate-200 px-4 py-2 rounded-sm w-full">
+                                    <input type="checkbox" id="usr-ativo" checked
+                                        class="w-4 h-4 rounded border-slate-300 text-blue-600">
+                                    <label for="usr-ativo" tabindex="-1"
+                                        class="text-[10px] font-black text-slate-600 uppercase tracking-wide cursor-pointer">Usuário
+                                        Ativo</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="p-3 bg-slate-50 border-t border-slate-200 flex justify-end gap-2 px-6">
+                <button onclick="fecharModalUsuario()"
+                    class="sig-btn text-slate-500 hover:bg-slate-200">Cancelar</button>
+                <button onclick="salvarBdUsuario()" class="sig-btn sig-btn-primary min-w-[180px]">Gravar Cadastro
+                    (F10)</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex flex-1 overflow-hidden bg-white w-full">
+        <!-- SIDEBAR -->
+        <aside class="sig-sidebar">
+            <div class="sig-sidebar-header">
+                <span>PARAMETROS <span class="text-[8px] text-[#00e5ff] font-black">V2</span></span>
+            </div>
+            <nav class="sig-sidebar-menu flex-1 bg-white">
+                <div id="btn-empresa" onclick="mostrarAba('empresa')" class="sig-menu-item ativa">
+                    <span>Empresas</span>
+                    <span class="sig-shortcut">F2</span>
+                </div>
+                <div id="btn-produtos" onclick="mostrarAba('produtos')" class="sig-menu-item">
+                    <span>Produtos</span>
+                    <span class="sig-shortcut">F3</span>
+                </div>
+                <div id="btn-politicas" onclick="mostrarAba('politicas')" class="sig-menu-item">
+                    <span>Políticas</span>
+                    <span class="sig-shortcut">F4</span>
+                </div>
+                <div id="btn-usuarios" onclick="mostrarAba('usuarios')" class="sig-menu-item">
+                    <span>Usuários</span>
+                    <span class="sig-shortcut">F5</span>
+                </div>
+                <div id="btn-funcoes" onclick="mostrarAba('funcoes')" class="sig-menu-item">
+                    <span>Funções</span>
+                    <span class="sig-shortcut">F6</span>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- AREA PRINCIPAL -->
+        <main class="flex-1 flex flex-col overflow-hidden px-6 py-3 bg-white w-full">
+            <div id="aba-empresa" class="sig-secao ativa flex flex-col h-full overflow-y-auto pr-2">
+                <div class="mb-10 flex items-end justify-between border-b border-slate-100 pb-5">
+                    <div>
+                        <h2 class="sig-header-classic">Gerenciamento de Empresas</h2>
+                        <p
+                            class="text-[10px] text-slate-400 font-bold uppercase mt-1 tracking-widest italic opacity-70">
+                            Estrutura organizacional</p>
+                    </div>
+                    <button onclick="abrirModalEmpresa()"
+                        class="sig-btn sig-btn-primary shadow-sm flex items-center gap-2">
+                        <span class="text-xs">+</span> Nova Empresa
+                    </button>
+                </div>
+                <div class="flex-1 overflow-y-auto border border-slate-200 rounded-sm bg-white">
+                    <table class="sig-table sig-table-sm">
+                        <thead class="sticky top-0 bg-white shadow-sm z-10">
+                            <tr>
+                                <th class="sig-text-center w-12">ID</th>
+                                <th>Razão Social</th>
+                                <th>CNPJ</th>
+                                <th>Cidade / Endereço</th>
+                                <th>Telefone</th>
+                                <th class="sig-text-center w-24">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="corpo-tabela-empresas">
+                            <!-- Carregado via JS -->
+                        </tbody>
+                    </table>
+                    <div id="status-lista"
+                        class="py-10 text-center text-slate-300 text-[10px] font-black uppercase tracking-widest bg-white">
+                        Sincronizando com banco...
+                    </div>
+                </div>
+            </div>
+            <!-- SEÇÃO DE PRODUTOS -->
+            <div id="aba-produtos" class="sig-secao hidden w-full flex flex-col h-full overflow-hidden">
+                <div class="mb-4 flex items-end justify-between shrink-0">
+                    <div>
+                        <h2 class="sig-header-classic">Parâmetros de Produtos</h2>
+                    </div>
+                </div>
+
+                <!-- NAVEGAÇÃO INTERNA DE PRODUTOS -->
+                <div class="sig-tabs shrink-0 -mb-[1px] relative z-10">
+                    <div id="btn-sub-marcas" onclick="mudarSubAba('marcas')" class="sig-tab ativa">MARCAS</div>
+                    <div id="btn-sub-categorias" onclick="mudarSubAba('categorias')" class="sig-tab">CATEGORIAS /
+                        SUBCATEGORIAS</div>
+                </div>
+
+                <!-- BLOCOS (ABAS ISOLADAS) -->
+                <div
+                    class="flex flex-col flex-1 overflow-hidden min-h-0 bg-white border border-t-0 border-slate-200 rounded-b-sm">
+
+                    <!-- ABA 1: MARCAS -->
+                    <div id="sub-marcas" class="flex-1 flex flex-col overflow-hidden hidden">
+                        <div
+                            class="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center shrink-0">
+                            <div>
+                                <span class="font-bold text-[12px] uppercase tracking-wider text-slate-700">Marcas
+                                    Registradas</span>
+                                <p class="text-[10px] text-slate-400 mt-0.5">Fabricantes dos componentes</p>
+                            </div>
+                            <button onclick="abrirModalGenerico('Marca', salvarBdMarca)"
+                                class="sig-btn sig-btn-primary shadow-sm flex items-center gap-2">
+                                <span class="text-xs">+</span> Nova Marca
+                            </button>
+                        </div>
+                        <div class="p-3 border-b border-slate-100 bg-white shrink-0">
+                            <input type="text" id="busca-marcas" placeholder="Pesquisar Marcas..."
+                                class="sig-input w-full text-sm"
+                                onkeyup="filtrarTabela('busca-marcas', 'corpo-tabela-marcas')">
+                        </div>
+                        <div class="flex-1 overflow-y-auto">
+                            <table class="sig-table sig-table-sm w-full">
+                                <thead class="sticky top-0 bg-white shadow-sm z-10">
+                                    <tr>
+                                        <th class="w-16">ID</th>
+                                        <th>Nome da Marca</th>
+                                        <th class="w-24 sig-text-center">Margem (%)</th>
+                                        <th class="w-24 sig-text-center">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="corpo-tabela-marcas"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- ABA 2: CATEGORIAS (ÁRVORE) -->
+                    <div id="sub-categorias" class="flex-1 flex flex-col overflow-hidden hidden">
+                        <div
+                            class="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center shrink-0">
+                            <div>
+                                <span
+                                    class="font-bold text-[12px] uppercase tracking-wider text-slate-700">Gerenciamento
+                                    de categorias e subcategorias</span>
+                            </div>
+                            <button onclick="abrirModalGenerico('Categoria', salvarBdCategoria)"
+                                class="sig-btn sig-btn-primary shadow-sm flex items-center gap-2">
+                                <span class="text-xs">+</span> Nova Categoria Master
+                            </button>
+                        </div>
+                        <div class="p-3 border-b border-slate-100 bg-white shrink-0">
+                            <input type="text" id="busca-categorias" placeholder="Pesquisar Árvore..."
+                                class="sig-input w-full text-sm"
+                                onkeyup="filtrarTabela('busca-categorias', 'corpo-tabela-categorias')">
+                        </div>
+                        <div class="flex-1 overflow-y-auto">
+                            <table class="sig-table sig-table-sm w-full">
+                                <thead class="sticky top-0 bg-white shadow-sm z-10">
+                                    <tr>
+                                        <th class="w-16">ID / PAI</th>
+                                        <th>Estrutura do Sistema</th>
+                                        <th class="w-24 sig-text-center">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="corpo-tabela-categorias"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- SEÇÃO DE POLÍTICAS -->
+            <div id="aba-politicas" class="sig-secao hidden w-full">
+                <div class="mb-10 flex items-end justify-between border-b border-slate-100 pb-5">
+                    <div>
+                        <h2 class="sig-header-classic">Políticas Comerciais</h2>
+                        <p
+                            class="text-[10px] text-slate-400 font-bold uppercase mt-1 tracking-widest italic opacity-70">
+                            Regras e Diretrizes</p>
+                    </div>
+                </div>
+                <div
+                    class="overflow-hidden border border-slate-200 rounded-sm p-10 flex items-center justify-center bg-slate-50">
+                    <p class="text-slate-400 text-xs font-bold tracking-wider uppercase">Área em construção</p>
+                </div>
+            </div>
+
+            <!-- SEÇÃO DE USUÁRIOS -->
+            <div id="aba-usuarios" class="sig-secao hidden flex flex-col h-full overflow-hidden">
+                <div class="mb-6 flex items-end justify-between border-b border-slate-100 pb-4 shrink-0">
+                    <div>
+                        <h2 class="sig-header-classic">Gestão de Acessos <span class="text-blue-500 text-xs">(NÚCLEO
+                                V2)</span></h2>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase mt-1 tracking-widest opacity-70">
+                            Controle de usuários e permissões do núcleo</p>
+                    </div>
+                    <button onclick="abrirModalUsuario()"
+                        class="sig-btn sig-btn-primary shadow-sm flex items-center gap-2">
+                        <span class="text-xs">+</span> Criar Novo Operador
+                    </button>
+                </div>
+                <div class="flex-1 overflow-y-auto border border-slate-200 rounded-sm bg-white">
+                    <table class="sig-table sig-table-sm w-full">
+                        <thead class="sticky top-0 bg-white z-10 shadow-sm">
+                            <tr>
+                                <th class="w-16 sig-text-center">ID</th>
+                                <th>Operador / Nome Completo</th>
+                                <th>CPF</th>
+                                <th>Função de Acesso</th>
+                                <th>Login</th>
+                                <th class="sig-text-center">Status</th>
+                                <th class="w-32 sig-text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="corpo-tabela-usuarios">
+                        </tbody>
+                    </table>
+                    <div id="status-usuarios"
+                        class="py-10 text-center text-slate-300 text-[10px] font-black uppercase tracking-widest">
+                        Carregando banco de usuários...
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEÇÃO DE FUNÇÕES -->
+            <div id="aba-funcoes" class="sig-secao hidden flex flex-col h-full overflow-hidden">
+                <div class="mb-6 flex items-end justify-between border-b border-slate-100 pb-4 shrink-0">
+                    <div>
+                        <h2 class="sig-header-classic">Cargos e Funções</h2>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase mt-1 tracking-widest opacity-70">
+                            Definição de hierarquia e permissões base</p>
+                    </div>
+                    <button onclick="abrirModalFuncao()"
+                        class="sig-btn sig-btn-primary shadow-sm flex items-center gap-2">
+                        <span class="text-xs">+</span> Nova Função
+                    </button>
+                </div>
+                <div class="flex-1 overflow-y-auto border border-slate-200 rounded-sm bg-white">
+                    <table class="sig-table sig-table-sm w-full">
+                        <thead class="sticky top-0 bg-white shadow-sm z-10">
+                            <tr>
+                                <th class="w-20 sig-text-center">ID</th>
+                                <th>Nome da Função</th>
+                                <th class="w-32 sig-text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="corpo-tabela-funcoes"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- STATUS BAR / RODAPÉ PADRÃO SIG -->
+    <footer class="bg-slate-200 border-t border-slate-300 shrink-0 z-50">
+        <div class="sig-progress-bar-container">
+            <div id="footer-progress" class="sig-progress-bar-fill" style="width: 0%;"></div>
+        </div>
+        <div
+            class="flex flex-wrap items-center justify-between px-4 py-1 text-[10px] text-slate-600 font-bold uppercase tracking-tight">
+            <div class="flex items-center space-x-4">
+                <span class="flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">terminal</span>
+                    TERMINAL: 01 (PARAMETROS)
+                </span>
+                <span class="text-slate-400">|</span>
+                <span>F2 EMPRESAS</span>
+                <span>F3 PRODUTOS</span>
+                <span>F5 USUARIOS</span>
+            </div>
+            <div class="flex items-center space-x-4 divide-x divide-slate-400">
+                <div class="px-3">Usuário: Admin</div>
+                <div class="px-3" id="data-hora-footer">--/--/---- --:--:--</div>
+                <div class="px-3">Banco: <span class="text-emerald-600 font-extrabold">PostgreSQL</span></div>
+                <div class="px-3 text-slate-400 font-medium lowercase">v2.0.14</div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // MÁSCARAS
+        document.getElementById('cnpj').addEventListener('input', function (e) {
+            let x = e.target.value.replace(/\D/g, '').match(/(\d{0,2})(\d{0,3})(\d{0,3})(\d{0,4})(\d{0,2})/);
+            e.target.value = !x[2] ? x[1] : x[1] + '.' + x[2] + '.' + x[3] + '/' + x[4] + (x[5] ? '-' + x[5] : '');
+        });
+
+        document.getElementById('telefone').addEventListener('input', function (e) {
+            let x = e.target.value.replace(/\D/g, '').match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
+            e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
+        });
+
+        document.getElementById('contato-tel').addEventListener('input', function (e) {
+            let x = e.target.value.replace(/\D/g, '').match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
+            e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
+        });
+
+        const contatosSessao = [];
+        function adicionarContatoEmpresa() {
+            const nome = document.getElementById('contato-nome').value.toUpperCase();
+            const tel = document.getElementById('contato-tel').value;
+            const dept = document.getElementById('contato-dept').value.toUpperCase();
+            
+            if(!nome || !tel) return alert("PREENCHA NOME E TELEFONE");
+            
+            contatosSessao.push({nome, tel, dept});
+            renderizarContatosEmpresa();
+            
+            document.getElementById('contato-nome').value = '';
+            document.getElementById('contato-tel').value = '';
+            document.getElementById('contato-dept').value = '';
+        }
+
+        function removerContatoEmpresa(index) {
+            contatosSessao.splice(index, 1);
+            renderizarContatosEmpresa();
+        }
+
+        function renderizarContatosEmpresa() {
+            const corpo = document.getElementById('lista-contatos-empresa');
+            if(contatosSessao.length === 0) {
+                corpo.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-300 font-medium italic">Nenhum canal adicional cadastrado</td></tr>';
+                return;
+            }
+            corpo.innerHTML = contatosSessao.map((c, i) => `
+                <tr class="border-b border-slate-50 hover:bg-slate-50">
+                    <td class="p-2">${c.nome}</td>
+                    <td class="p-2 font-mono">${c.tel}</td>
+                    <td class="p-2">${c.dept}</td>
+                    <td class="text-center">
+                        <button onclick="removerContatoEmpresa(${i})" class="text-red-400 hover:text-red-600 px-2 transition-all">
+                            <span class="material-symbols-outlined text-sm">delete</span>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        document.getElementById('cep').addEventListener('input', function (e) {
+            let x = e.target.value.replace(/\D/g, '').match(/(\d{0,5})(\d{0,3})/);
+            e.target.value = !x[2] ? x[1] : x[1] + '-' + x[2];
+            if (e.target.value.length === 9) consultarCEPEmpresa();
+        });
+
+        function mudarTipoEmpresa(tipo) {
+            document.getElementById('empresa-tipo').value = tipo;
+            const btnJ = document.getElementById('btn-tipo-juridica');
+            const btnF = document.getElementById('btn-tipo-fisica');
+            
+            if(tipo === 'JURÍDICA') {
+                btnJ.className = "flex-1 py-1.5 text-[10px] font-black uppercase bg-blue-600 text-white transition-all";
+                btnF.className = "flex-1 py-1.5 text-[10px] font-black uppercase bg-white text-slate-400 hover:bg-slate-50 transition-all";
+                document.getElementById('label-doc').innerText = "CNPJ *";
+                document.getElementById('cnpj').placeholder = "00.000.000/0000-00";
+            } else {
+                btnF.className = "flex-1 py-1.5 text-[10px] font-black uppercase bg-blue-600 text-white transition-all";
+                btnJ.className = "flex-1 py-1.5 text-[10px] font-black uppercase bg-white text-slate-400 hover:bg-slate-50 transition-all";
+                document.getElementById('label-doc').innerText = "CPF *";
+                document.getElementById('cnpj').placeholder = "000.000.000-00";
+            }
+        }
+
+        async function consultarCEPEmpresa() {
+            const cep = document.getElementById('cep').value.replace(/\D/g, '');
+            if (cep.length !== 8) return;
+            try {
+                const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                const data = await response.json();
+                if (!data.erro) {
+                    document.getElementById('logradouro').value = data.logradouro.toUpperCase();
+                    document.getElementById('bairro').value = data.bairro.toUpperCase();
+                    document.getElementById('cidade').value = data.localidade.toUpperCase();
+                    document.getElementById('uf').value = data.uf.toUpperCase();
+                    document.getElementById('numero').focus();
+                }
+            } catch (e) { console.error("Erro CEP Empresa", e); }
+        }
+
+        document.getElementById('usr-cpf').addEventListener('input', function (e) {
+            let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,3})(\d{0,2})/);
+            e.target.value = !x[2] ? x[1] : x[1] + '.' + x[2] + (x[3] ? '.' + x[3] : '') + (x[4] ? '-' + x[4] : '');
+        });
+
+        document.getElementById('usr-rg').addEventListener('input', function (e) {
+            let x = e.target.value.replace(/\D/g, '').match(/(\d{0,2})(\d{0,3})(\d{0,3})(\d{0,1})/);
+            e.target.value = !x[2] ? x[1] : x[1] + '.' + x[2] + (x[3] ? '.' + x[3] : '') + (x[4] ? '-' + x[4] : '');
+        });
+
+        document.getElementById('usr-cep').addEventListener('input', function (e) {
+            let x = e.target.value.replace(/\D/g, '').match(/(\d{0,5})(\d{0,3})/);
+            e.target.value = !x[2] ? x[1] : x[1] + '-' + x[2];
+            if (e.target.value.length === 9) consultarCEP();
+        });
+
+        async function consultarCEP() {
+            const cep = document.getElementById('usr-cep').value.replace(/\D/g, '');
+            if (cep.length !== 8) return;
+
+            try {
+                const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                const data = await response.json();
+                if (!data.erro) {
+                    document.getElementById('usr-logradouro').value = data.logradouro.toUpperCase();
+                    document.getElementById('usr-bairro').value = data.bairro.toUpperCase();
+                    document.getElementById('usr-cidade').value = data.localidade.toUpperCase();
+                    document.getElementById('usr-uf').value = data.uf.toUpperCase();
+                    document.getElementById('usr-numero').focus();
+                }
+            } catch (e) { console.error("Erro CEP", e); }
+        }
+
+        function mostrarAba(nome) {
+            document.querySelectorAll('.sig-secao').forEach(s => {
+                s.classList.remove('ativa');
+                s.classList.add('hidden'); // Ensure we map to the display toggle if using tailwind + sig-secao logic
+            });
+            document.querySelectorAll('.sig-menu-item').forEach(a => a.classList.remove('ativa'));
+
+            const aba = document.getElementById('aba-' + nome);
+            if (aba) {
+                aba.classList.add('ativa');
+                aba.classList.remove('hidden');
+            }
+
+            const btn = document.getElementById('btn-' + nome);
+            if (btn) btn.classList.add('ativa');
+
+            if (nome === 'empresa') atualizarLista();
+            if (nome === 'usuarios') {
+                carregarFuncoesSelect();
+                atualizarListaUsuarios();
+            }
+            if (nome === 'funcoes') atualizarListaFuncoes();
+            if (nome === 'produtos') {
+                carregarMundoProdutos(); // Rotina pesada
+                mudarSubAba('marcas'); // Abre a primeira sub-aba
+            }
+        }
+
+        // =========================================================
+        // REATIVIDADE EM TEMPO REAL (EVENT BUS)
+        // =========================================================
+        if (window.runtime || (window.parent && window.parent.runtime)) {
+            const runtime = window.runtime || window.parent.runtime;
+            runtime.EventsOn("db_event", (payload) => {
+                console.log("📡 EVENTO RECEBIDO:", payload);
+
+                // Mapeamento de Payload -> Função de Refresh
+                // Isso garante que se uma máquina salvar uma marca, a outra atualize a lista na hora.
+                if (payload === "marcas_changed") {
+                    carregarMundoProdutos();
+                }
+                if (payload === "usuarios_changed") {
+                    atualizarListaUsuarios();
+                }
+                if (payload === "empresas_changed") {
+                    atualizarLista();
+                }
+            });
+        }
+
+        function mudarSubAba(nome) {
+            // Esconde todas as sub-abas
+            document.querySelectorAll('[id^="sub-"]').forEach(el => {
+                if (el.id === 'sub-marcas' || el.id === 'sub-categorias') {
+                    el.classList.remove('flex');
+                    el.classList.add('hidden');
+                }
+            });
+
+            // Reseta todos os botões (estilo PageControl)
+            document.querySelectorAll('[id^="btn-sub-"]').forEach(el => {
+                el.classList.remove('ativa');
+            });
+
+            // Mostra a aba correta e pinta o botão
+            document.getElementById('sub-' + nome).classList.remove('hidden');
+            document.getElementById('sub-' + nome).classList.add('flex');
+
+            const btn = document.getElementById('btn-sub-' + nome);
+            btn.classList.add('ativa');
+        }
+
+        // Aba movida pelo novo layout 3 colunas
+
+        async function atualizarLista() {
+            const corpo = document.getElementById('corpo-tabela-empresas');
+            const status = document.getElementById('status-lista');
+
+            try {
+                // Chama o Go, detectando se está dentro do iframe nativo
+                const goEngine = window.parent.go || window.go;
+                const empresas = await goEngine.main.App.BuscarEmpresas();
+
+                if (!empresas || empresas.length === 0) {
+                    corpo.innerHTML = '';
+                    status.style.display = 'block';
+                    status.innerText = 'Sem registros encontrados.';
+                    return;
+                }
+
+                status.style.display = 'none';
+                let html = "";
+                // Ordenar por ID Ascendente
+                empresas.sort((a, b) => a.id - b.id);
+                empresas.forEach((e) => {
+                    html += `
+                        <tr class="group">
+                            <td class="font-mono text-slate-400 sig-text-center">${e.id}</td>
+                            <td>
+                                <div class="flex items-center gap-2">
+                                    <span class="uppercase">${e.razao_social}</span>
+                                    ${e.is_matriz ? '<span class="sig-badge-primary ml-2 shadow-sm">MATRIZ</span>' : ''}
+                                </div>
+                            </td>
+                            <td class="font-mono text-[10px]">${e.cnpj}</td>
+                            <td class="truncate max-w-[200px] uppercase text-slate-400">
+                                <span class="text-blue-600 font-bold">${e.cidade}</span> - ${e.logradouro || '---'}
+                            </td>
+                            <td class="font-bold text-slate-500">${e.telefone || '---'}</td>
+                            <td class="sig-text-center">
+                                <div class="flex justify-center gap-1">
+                                    <button onclick='editarEmpresa(${JSON.stringify(e)})' class="sig-btn-icon hover:text-[#0056b3]">
+                                        <span class="material-symbols-outlined text-[18px]">edit</span>
+                                    </button>
+                                    ${!e.is_matriz ? `
+                                    <button onclick="confirmarExclusao(${e.id})" class="sig-btn-icon sig-text-red">
+                                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                                    </button>` : '<div class="w-8"></div>'}
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+                corpo.innerHTML = html;
+            } catch (err) {
+                status.style.display = 'block';
+                status.innerText = 'Erro ao carregar banco de dados.';
+                console.error(err);
+            }
+        }
+
+        // --- CONTROLE DE JANELA NATIVA ---
+        function fecharJanelaNativa() {
+            // Fecha a janela atual do Wails (com fallback para iframe superior)
+            const runtimeEngine = window.parent.runtime || window.runtime;
+            runtimeEngine.Quit();
+        }
+
+        function abrirModalEmpresa() {
+            document.getElementById('form-empresa').reset();
+            document.getElementById('empresa-id').value = '';
+            document.getElementById('display-id').value = 'AUTO';
+            contatosSessao.length = 0; // Limpa contatos da sessão
+            renderizarContatosEmpresa();
+            mudarTipoEmpresa('JURÍDICA');
+            document.getElementById('modal-empresa').style.display = 'flex';
+            setParentCloseVisibility(false); // Esconde o botão pai ao abrir o forms
+        }
+
+        function fecharModalEmpresa() {
+            document.getElementById('modal-empresa').style.display = 'none';
+            setParentCloseVisibility(true); // Mostra o botão pai ao fechar o forms
+        }
+
+        async function salvarEmpresa() {
+            const btn = document.getElementById('btn-salvar-modal');
+            const spinner = document.getElementById('spinner-salvar');
+            const texto = document.getElementById('texto-salvar');
+
+            const empresa = {
+                id: parseInt(document.getElementById('empresa-id').value) || 0,
+                razao_social: document.getElementById('razao-social').value,
+                fantasia: document.getElementById('fantasia').value,
+                cnpj: document.getElementById('cnpj').value,
+                inscricao_estadual: document.getElementById('ie').value,
+                regime_tributario: document.getElementById('regime').value,
+                logradouro: document.getElementById('logradouro').value,
+                numero: document.getElementById('numero').value,
+                bairro: document.getElementById('bairro').value,
+                cidade: document.getElementById('cidade').value,
+                uf: document.getElementById('uf').value,
+                cep: document.getElementById('cep').value,
+                telefone: document.getElementById('telefone').value,
+                tipo: document.getElementById('empresa-tipo').value,
+                is_matriz: false
+            };
+
+            // Limpeza e Validação Básica
+            empresa.razao_social = empresa.razao_social.trim().toUpperCase();
+
+            // Validação Dinâmica baseada no Tipo
+            const docLimpo = empresa.cnpj.replace(/\D/g, '');
+            const minDoc = empresa.tipo === 'JURÍDICA' ? 14 : 11;
+
+            if (!empresa.razao_social || !empresa.fantasia || docLimpo.length < minDoc) {
+                alert("AVISO: DADOS INCOMPLETOS.\nPreencha Nome Fantasia, Razão Social e " + (empresa.tipo === 'JURÍDICA' ? 'CNPJ' : 'CPF') + " corretamente.");
+                return;
+            }
+
+            btn.disabled = true;
+            spinner.classList.remove('hidden');
+            texto.innerText = 'Processando...';
+
+            try {
+                // Chama diretamente o Go
+                const goEngine = window.parent.go || window.go;
+                const resultado = await goEngine.main.App.GravarEmpresa(empresa);
+                if (resultado === "OK") {
+                    fecharModalEmpresa();
+                    atualizarLista();
+                } else {
+                    alert("ERRO NO BANCO DE DADOS:\n" + resultado);
+                }
+            } catch (err) {
+                alert("FALHA CRÍTICA NA PONTE:\n" + err);
+            } finally {
+                btn.disabled = false;
+                spinner.classList.add('hidden');
+                texto.innerText = 'Confirmar e Gravar (F10)';
+            }
+        }
+
+        function editarEmpresa(e) {
+            document.getElementById('empresa-id').value = e.id;
+            document.getElementById('display-id').value = e.id.toString().padStart(4, '0');
+            document.getElementById('razao-social').value = e.razao_social;
+            document.getElementById('fantasia').value = e.fantasia || '';
+            document.getElementById('cnpj').value = e.cnpj;
+            document.getElementById('ie').value = e.inscricao_estadual;
+            document.getElementById('regime').value = e.regime_tributario;
+            document.getElementById('logradouro').value = e.logradouro;
+            document.getElementById('numero').value = e.numero || '';
+            document.getElementById('bairro').value = e.bairro || '';
+            document.getElementById('cidade').value = e.cidade || '';
+            document.getElementById('uf').value = e.uf || '';
+            document.getElementById('cep').value = e.cep || '';
+            document.getElementById('telefone').value = e.telefone;
+            mudarTipoEmpresa(e.tipo || 'JURÍDICA');
+            
+            document.getElementById('modal-empresa').style.display = 'flex';
+            setParentCloseVisibility(false);
+        }
+
+        async function confirmarExclusao(id) {
+            if (confirm("CONFIRMAR EXCLUSÃO DEFINITIVA?")) {
+                const goEngine = window.parent.go || window.go;
+                const ok = await goEngine.main.App.DeletarEmpresa(id);
+                if (ok) atualizarLista();
+            }
+        }
+
+        window.onload = () => {
+            atualizarLista();
+            carregarMundoProdutos(); // Carrega os selects no fundo
+        };
+
+        // =========================================================
+        // MOTOR PRODUTOS (MARCAS, CATEGORIAS E SUBCATEGORIAS)
+        // =========================================================
+        let categoriasEmDisco = [];
+
+        async function carregarMundoProdutos() {
+            carregarListaGenerica('Marcas', 'corpo-tabela-marcas', async () => window.parent.go.main.App.ListarMarcas(), deletarBdMarca);
+            carregarArvoreCategorias(); // Motor Árvore Substitui antigo fetcher duplo
+        }
+
+        // --- RENDERIZADORES ---
+        async function carregarArvoreCategorias() {
+            const corpo = document.getElementById('corpo-tabela-categorias');
+            try {
+                const goEngine = window.parent.go || window.go;
+
+                const [cats, subs] = await Promise.all([
+                    goEngine.main.App.ListarCategorias(),
+                    goEngine.main.App.ListarSubcategorias()
+                ]);
+
+                const categorias = cats || [];
+                const subcategorias = subs || [];
+
+                categorias.sort((a, b) => a.id - b.id);
+                subcategorias.sort((a, b) => a.id - b.id);
+
+                categoriasEmDisco = categorias;
+
+                let html = "";
+                if (categorias && categorias.length > 0) {
+                    categorias.forEach(cat => {
+                        html += `
+                        <tr class="group bg-white border-y border-slate-200 cursor-pointer hover:bg-[#eff6ff] transition-colors shadow-[inset_4px_0_0_#1e40af]" onclick="toggleTree('sys-${cat.id}', this)">
+                            <td class="font-mono text-[#1e40af] text-xs sig-text-center font-bold">${cat.id}</td>
+                            <td class="font-bold text-slate-800 text-sm tracking-wide">
+                                <div class="flex items-center gap-2 uppercase">
+                                   <span class="material-symbols-outlined text-[#1e40af] text-[20px] transition-transform duration-200" style="transform: rotate(-90deg);" id="icon-sys-${cat.id}">keyboard_arrow_down</span>
+                                   ${cat.nome}
+                                </div>
+                            </td>
+                            <td class="sig-text-center">
+                                <div class="flex justify-center gap-2 opacity-50 group-hover:opacity-100 transition-opacity">
+                                    <button onclick="abrirModalNovaSubcategoria(${cat.id}); event.stopPropagation();" class="sig-btn-icon text-[#1e40af] hover:bg-blue-100" title="+ ADICIONAR FILHA PARA ${cat.nome}">
+                                        <span class="material-symbols-outlined text-[18px]">add_circle</span>
+                                    </button>
+                                    <button onclick="deletarBdCategoria(${cat.id}, '${cat.nome}'); event.stopPropagation();" class="sig-btn-icon sig-text-red hover:bg-red-50" title="Apagar ${cat.nome} e todas as suas filhas">
+                                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>`;
+
+                        const filhas = subcategorias ? subcategorias.filter(sub => sub.categoria_id === cat.id) : [];
+                        if (filhas.length > 0) {
+                            filhas.forEach(sub => {
+                                html += `
+                                <tr style="display: none;" class="group bg-white hover:bg-[#eff6ff] tree-child-sys-${cat.id} transition-all border-b border-slate-50/50">
+                                    <td class="sig-text-center">
+                                        <div class="flex items-center justify-end pr-3 gap-1.5 opacity-50 group-hover:opacity-100 transition-opacity text-[#1e40af]">
+                                            <span class="text-[10px]">↳</span>
+                                            <span class="font-mono text-[10px] font-bold">${sub.id}</span>
+                                        </div>
+                                    </td>
+                                    <td class="uppercase font-semibold text-slate-600 group-hover:text-[#1e40af] text-[11px] transition-colors">
+                                        <div class="flex items-center gap-2 pl-6 border-l-2 border-slate-200 group-hover:border-[#1e40af] py-1 transition-colors">
+                                           ${sub.nome}
+                                        </div>
+                                    </td>
+                                    <td class="sig-text-center">
+                                        <div class="flex justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button onclick="deletarBdSubcategoria(${sub.id}, '${sub.nome}')" class="sig-btn-icon sig-text-red hover:bg-red-50" title="Remover ${sub.nome}">
+                                                <span class="material-symbols-outlined text-[16px]">close</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>`;
+                            });
+                        } else {
+                            html += `
+                                <tr style="display: none;" class="bg-white tree-child-sys-${cat.id}">
+                                    <td></td>
+                                    <td colspan="2" class="text-slate-300 text-[10px] pl-10 py-2 italic font-medium">Sem subcategorias aqui. Adicione uma no botão + do pai.</td>
+                                </tr>`;
+                        }
+                    });
+                } else {
+                    html = `<tr><td colspan="3" class="text-center py-6 text-slate-400 text-xs tracking-widest uppercase">NENHUM SISTEMA CADASTRADO YET</td></tr>`;
+                }
+                corpo.innerHTML = html;
+            } catch (e) { console.error("Erro render arvore:", e); }
+        }
+        async function carregarListaGenerica(titulo, idCorpo, fetcher, deletadorName) {
+            const corpo = document.getElementById(idCorpo);
+            try {
+                const lista = await fetcher();
+                let html = "";
+                if (lista && lista.length > 0) {
+                    lista.forEach(item => {
+                        html += `
+                        <tr class="group hover:bg-slate-50">
+                            <td class="font-mono text-slate-400 text-xs">${item.id}</td>
+                            <td class="uppercase font-bold text-slate-700 text-sm">${item.nome}</td>
+                            ${titulo === 'Marcas' ? `<td class="sig-text-center font-bold text-blue-600 text-sm">${(item.margem || 0).toFixed(2)}%</td>` : ''}
+                            <td class="sig-text-center">
+                                <div class="flex justify-center gap-2 opacity-20 group-hover:opacity-100 transition-opacity">
+                                    <button onclick="editarGenerico('${titulo}', ${JSON.stringify(item)})" class="sig-btn-icon text-blue-500">
+                                        <span class="material-symbols-outlined text-[18px]">edit</span>
+                                    </button>
+                                    <button onclick="${deletadorName}(${item.id}, '${item.nome}')" class="sig-btn-icon sig-text-red">
+                                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>`;
+                    });
+                } else {
+                    html = `<tr><td colspan="4" class="text-center py-6 text-slate-400 text-xs tracking-widest uppercase">NENHUM REGISTRO ENCONTRADO</td></tr>`;
+                }
+                corpo.innerHTML = html;
+                return lista || []; // Retorna para cache
+            } catch (e) { console.error("Erro render", e); return []; }
+        }
+
+
+
+        // --- CRUD MARCAS & CATEGORIAS (GENÉRICOS) ---
+        function abrirModalGenerico(tipo, saveFunction) {
+            document.getElementById('modal-generico').style.display = 'flex';
+            document.getElementById('titulo-modal-generico').innerText = 'Nova ' + tipo;
+            document.getElementById('gen-tipo').value = tipo;
+            document.getElementById('gen-id').value = '';
+            document.getElementById('gen-nome').value = '';
+            
+            const boxMargem = document.getElementById('gen-box-margem');
+            if (tipo === 'Marca') {
+                boxMargem.classList.remove('hidden');
+                document.getElementById('gen-margem').value = '0.00';
+            } else {
+                boxMargem.classList.add('hidden');
+            }
+
+            // Ajusta ponteiro
+            const btn = document.getElementById('btn-salvar-gen');
+            btn.onclick = saveFunction;
+            setParentCloseVisibility(false);
+        }
+
+        function editarGenerico(tipo, item) {
+            abrirModalGenerico(tipo, tipo === 'Marca' ? salvarBdMarca : salvarBdCategoria);
+            document.getElementById('titulo-modal-generico').innerText = 'Editar ' + tipo;
+            document.getElementById('gen-id').value = item.id;
+            document.getElementById('gen-nome').value = item.nome;
+            if (tipo === 'Marca') {
+                document.getElementById('gen-margem').value = item.margem || 0;
+            }
+        }
+
+        function fecharModalGenerico() {
+            document.getElementById('modal-generico').style.display = 'none';
+            setParentCloseVisibility(true);
+        }
+
+        async function salvarBdMarca() {
+            const nome = document.getElementById('gen-nome').value.trim().toUpperCase();
+            const margem = parseFloat(document.getElementById('gen-margem').value) || 0;
+            if (!nome) return alert("Nome inválido!");
+            const goEngine = window.parent.go || window.go;
+            const res = await goEngine.main.App.SalvarMarca(nome, margem);
+            if (res === 'OK') { fecharModalGenerico(); carregarMundoProdutos(); } else { alert(res); }
+        }
+
+        function deletarBdMarca(id, nome) {
+            if (confirm(`EXCLUIR DEFINITIVAMENTE A MARCA: ${nome}?`)) {
+                const goEngine = window.parent.go || window.go;
+                goEngine.main.App.ExcluirMarca(id).then(r => carregarMundoProdutos());
+            }
+        }
+
+        async function salvarBdCategoria() {
+            const nome = document.getElementById('gen-nome').value.trim().toUpperCase();
+            if (!nome) return alert("Nome inválido!");
+            const goEngine = window.parent.go || window.go;
+            const res = await goEngine.main.App.SalvarCategoria(nome);
+            if (res === 'OK') { fecharModalGenerico(); carregarMundoProdutos(); } else { alert(res); }
+        }
+
+        function deletarBdCategoria(id, nome) {
+            if (confirm(`EXCLUIR A CATEGORIA MASTER ${nome}? \nATENÇÃO: ISSO APAGARÁ TODAS AS SUBCATEGORIAS VINCULADAS A ELA.`)) {
+                const goEngine = window.parent.go || window.go;
+                goEngine.main.App.ExcluirCategoria(id).then(r => carregarMundoProdutos());
+            }
+        }
+
+        // --- CRUD SUBCATEGORIAS (ÁRVORE FILHA) ---
+        function abrirModalNovaSubcategoria(idCatPaiExata) {
+            document.getElementById('modal-subcategoria').style.display = 'flex';
+            document.getElementById('sub-nome').value = '';
+
+            // Popula Select Forçando e Garantindo Foco na Categoria Pai Exata Clicada
+            const sel = document.getElementById('sub-categoria-id');
+            sel.innerHTML = '<option value="">SELECIONE A MASTER...</option>';
+            categoriasEmDisco.forEach(c => {
+                sel.innerHTML += `<option value="${c.id}" ${c.id === idCatPaiExata ? 'selected' : ''}>${c.nome}</option>`;
+            });
+
+            // Foca perfeitamente no nome
+            setTimeout(() => document.getElementById('sub-nome').focus(), 100);
+
+            setParentCloseVisibility(false);
+        }
+
+        function fecharModalSubcategoria() {
+            document.getElementById('modal-subcategoria').style.display = 'none';
+            setParentCloseVisibility(true);
+        }
+
+        async function salvarBdSubcategoria() {
+            const idCat = parseInt(document.getElementById('sub-categoria-id').value);
+            const nome = document.getElementById('sub-nome').value.trim().toUpperCase();
+            if (!idCat || !nome) return alert("PREENCHA A CATEGORIA E O NOME");
+
+            const goEngine = window.parent.go || window.go;
+            const res = await goEngine.main.App.SalvarSubcategoria(idCat, nome);
+            if (res === 'OK') { fecharModalSubcategoria(); carregarMundoProdutos(); } else { alert(res); }
+        }
+
+        function deletarBdSubcategoria(id, nome) {
+            if (confirm(`EXCLUIR SUBCATEGORIA: ${nome}?`)) {
+                const goEngine = window.parent.go || window.go;
+                goEngine.main.App.ExcluirSubcategoria(id).then(r => carregarMundoProdutos());
+            }
+        }
+
+        // Search engine na tabela visual diretamente (Client-side ultra-rápido)
+        function filtrarTabela(inputId, tbodyId) {
+            const filter = document.getElementById(inputId).value.toUpperCase();
+            const trs = document.getElementById(tbodyId).getElementsByTagName('tr');
+            for (let i = 0; i < trs.length; i++) {
+                const txt = trs[i].textContent || trs[i].innerText;
+                trs[i].style.display = txt.toUpperCase().indexOf(filter) > -1 ? "" : "none";
+            }
+        }
+
+        // Feature: Árvore Expansível
+        function toggleTree(parentId, el) {
+            const rows = document.querySelectorAll('.tree-child-' + parentId);
+            const icon = document.getElementById('icon-' + parentId);
+
+            let isHidden = false;
+            if (rows.length > 0) {
+                isHidden = rows[0].style.display === 'none';
+            }
+
+            rows.forEach(row => {
+                row.style.display = isHidden ? 'table-row' : 'none';
+            });
+
+            if (isHidden) {
+                icon.style.transform = 'rotate(0deg)';
+                el.classList.add('bg-slate-50');
+            } else {
+                icon.style.transform = 'rotate(-90deg)';
+                el.classList.remove('bg-slate-50');
+            }
+        }
+
+        // =========================================================
+        // MÓDULO DE USUÁRIOS
+        // =========================================================
+
+        async function atualizarListaUsuarios() {
+            const corpo = document.getElementById('corpo-tabela-usuarios');
+            const status = document.getElementById('status-usuarios');
+            try {
+                const goEngine = window.parent.go || window.go;
+                const usuarios = await goEngine.main.App.ListarUsuarios();
+
+                if (!usuarios || usuarios.length === 0) {
+                    corpo.innerHTML = '';
+                    status.style.display = 'block';
+                    status.innerText = 'SEM OPERADORES CADASTRADOS.';
+                    return;
+                }
+
+                status.style.display = 'none';
+                let html = "";
+                // Ordenar por ID Ascendente
+                usuarios.sort((a, b) => a.id - b.id);
+                usuarios.forEach(u => {
+                    html += `
+                        <tr class="group">
+                            <td class="font-mono text-slate-400 sig-text-center">${u.id}</td>
+                            <td class="uppercase font-bold text-slate-700">
+                                ${u.nome} ${u.sobrenome || ''}
+                                ${u.precisa_alterar_senha ? '<span class="ml-2 py-0.5 px-2 bg-amber-50 text-amber-500 border border-amber-200 text-[8px] rounded-full">RESSET</span>' : ''}
+                            </td>
+                            <td class="font-mono text-slate-400 text-[11px]">${u.cpf || '---'}</td>
+                            <td class="uppercase font-semibold text-blue-500 text-[11px]">${u.nome_funcao}</td>
+                            <td class="lowercase font-semibold text-slate-500">${u.login}</td>
+                            <td class="sig-text-center">
+                                <span class="w-2 h-2 rounded-full inline-block ${u.ativo ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300'}"></span>
+                            </td>
+                            <td class="sig-text-center">
+                                <div class="flex justify-center gap-1 opacity-20 group-hover:opacity-100 transition-all">
+                                    <button onclick='editarUsuario(${JSON.stringify(u)})' class="sig-btn-icon text-slate-400 hover:text-blue-500" title="Editar Cadastro">
+                                        <span class="material-symbols-outlined text-[18px]">edit</span>
+                                    </button>
+                                    <button onclick="resetarSenhaUsuario(${u.id}, '${u.nome}')" class="sig-btn-icon text-slate-400 hover:text-amber-500" title="Resetar Senha">
+                                        <span class="material-symbols-outlined text-[18px]">lock_reset</span>
+                                    </button>
+                                    <button onclick="deletarUsuario(${u.id}, '${u.nome}')" class="sig-btn-icon text-slate-400 hover:text-red-500" title="Remover Conta">
+                                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+                corpo.innerHTML = html;
+            } catch (err) {
+                status.innerText = 'ERRO NA SINCRONIZAÇÃO.';
+            }
+        }
+
+        async function carregarFuncoesSelect() {
+            try {
+                const goEngine = window.parent.go || window.go;
+                const funcoes = await goEngine.main.App.ListarFuncoes();
+                const sel = document.getElementById('usr-funcao');
+                if (sel) {
+                    sel.innerHTML = '<option value="0">Selecione...</option>';
+                    // Ordenas funções pelo ID sequencial
+                    funcoes.sort((a, b) => a.id - b.id);
+                    funcoes.forEach(f => {
+                        sel.innerHTML += `<option value="${f.id}">${f.id} - ${f.nome}</option>`;
+                    });
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function abrirModalUsuario() {
+            document.getElementById('form-usuario').reset();
+
+            // Busca o próximo ID no Banco para exibir no Cadastro
+            try {
+                const goEngine = window.parent.go || window.go;
+                const nextID = await goEngine.main.App.GetProximoIDUsuario();
+                document.getElementById('usr-id').value = nextID;
+            } catch (e) {
+                document.getElementById('usr-id').value = 'AUTO';
+            }
+
+            document.getElementById('usr-senha').value = 'lubel'; // Força senha padrão
+            document.getElementById('usr-box-senha').style.display = 'block';
+            document.getElementById('modal-usuario').style.display = 'flex';
+            carregarFuncoesSelect();
+            setParentCloseVisibility(false);
+        }
+
+        function fecharModalUsuario() {
+            document.getElementById('modal-usuario').style.display = 'none';
+            setParentCloseVisibility(true);
+        }
+
+        async function salvarBdUsuario() {
+            const u = {
+                id: parseInt(document.getElementById('usr-id').value) || 0,
+                nome: document.getElementById('usr-nome').value.trim().toUpperCase(),
+                sobrenome: document.getElementById('usr-sobrenome').value.trim().toUpperCase(),
+                cpf: document.getElementById('usr-cpf').value.trim(),
+                rg: document.getElementById('usr-rg').value.trim(),
+                data_nascimento: document.getElementById('usr-data-nascimento').value,
+                data_admissao: document.getElementById('usr-data-admissao').value,
+                cep: document.getElementById('usr-cep').value.trim(),
+                logradouro: document.getElementById('usr-logradouro').value.trim().toUpperCase(),
+                numero: document.getElementById('usr-numero').value.trim().toUpperCase(),
+                complemento: document.getElementById('usr-complemento').value.trim().toUpperCase(),
+                bairro: document.getElementById('usr-bairro').value.trim().toUpperCase(),
+                cidade: document.getElementById('usr-cidade').value.trim().toUpperCase(),
+                uf: document.getElementById('usr-uf').value.trim().toUpperCase(),
+                login: document.getElementById('usr-login').value.trim().toLowerCase(),
+                senha: document.getElementById('usr-senha').value,
+                funcao_id: parseInt(document.getElementById('usr-funcao').value) || 0,
+                ativo: document.getElementById('usr-ativo').checked
+            };
+
+            if (!u.nome || !u.login || !u.funcao_id) return alert("NOME, LOGIN E FUNÇÃO SÃO OBRIGATÓRIOS.");
+
+            const goEngine = window.parent.go || window.go;
+            const res = await goEngine.main.App.SalvarUsuario(u);
+            if (res === "OK" || res === "") { // Wails pode retornar vazio para sucesso em alguns binds
+                fecharModalUsuario();
+                atualizarListaUsuarios();
+            } else {
+                alert(res);
+            }
+        }
+
+        function editarUsuario(u) {
+            document.getElementById('usr-id').value = u.id;
+            document.getElementById('usr-nome').value = u.nome;
+            document.getElementById('usr-sobrenome').value = u.sobrenome;
+            document.getElementById('usr-cpf').value = u.cpf;
+            document.getElementById('usr-rg').value = u.rg || '';
+            document.getElementById('usr-data-nascimento').value = u.data_nascimento || '';
+            document.getElementById('usr-data-admissao').value = u.data_admissao || '';
+            document.getElementById('usr-cep').value = u.cep || '';
+            document.getElementById('usr-logradouro').value = u.logradouro || '';
+            document.getElementById('usr-numero').value = u.numero || '';
+            document.getElementById('usr-complemento').value = u.complemento || '';
+            document.getElementById('usr-bairro').value = u.bairro || '';
+            document.getElementById('usr-cidade').value = u.cidade || '';
+            document.getElementById('usr-uf').value = u.uf || '';
+            document.getElementById('usr-login').value = u.login;
+            document.getElementById('usr-ativo').checked = u.ativo;
+
+            carregarFuncoesSelect().then(() => {
+                document.getElementById('usr-funcao').value = u.funcao_id;
+            });
+
+            document.getElementById('usr-box-senha').style.display = 'none';
+            document.getElementById('modal-usuario').style.display = 'flex';
+            setParentCloseVisibility(false);
+        }
+
+        // --- CRUD FUNÇÕES ---
+
+        async function atualizarListaFuncoes() {
+            const corpo = document.getElementById('corpo-tabela-funcoes');
+            try {
+                const goEngine = window.parent.go || window.go;
+                const lista = await goEngine.main.App.ListarFuncoes();
+                let html = "";
+                if (lista && lista.length > 0) {
+                    lista.forEach(f => {
+                        html += `
+                            <tr>
+                                <td class="sig-text-center font-mono text-slate-400">${f.id}</td>
+                                <td class="uppercase font-bold text-slate-700">${f.nome}</td>
+                                <td class="sig-text-center">
+                                    <div class="flex justify-center gap-2">
+                                         <button onclick='editarFuncao(${JSON.stringify(f)})' class="sig-btn-icon text-blue-500"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+                                         <button onclick="deletarFuncao(${f.id}, '${f.nome}')" class="sig-btn-icon text-red-500"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+                                    </div>
+                                </td>
+                            </tr>
+                         `;
+                    });
+                } else {
+                    html = '<tr><td colspan="3" class="text-center py-10 opacity-50">NENHUMA FUNÇÃO CADASTRADA.</td></tr>';
+                }
+                corpo.innerHTML = html;
+            } catch (e) { console.error(e); }
+        }
+
+        function abrirModalFuncao() {
+            document.getElementById('fun-id').value = '';
+            document.getElementById('fun-nome').value = '';
+            document.getElementById('modal-funcao').style.display = 'flex';
+            setParentCloseVisibility(false);
+        }
+
+        function fecharModalFuncao() {
+            document.getElementById('modal-funcao').style.display = 'none';
+            setParentCloseVisibility(true);
+        }
+
+        async function salvarBdFuncao() {
+            const f = {
+                id: parseInt(document.getElementById('fun-id').value) || 0,
+                nome: document.getElementById('fun-nome').value.trim().toUpperCase()
+            };
+            if (!f.nome) return alert("NOME DA FUNÇÃO É OBRIGATÓRIO.");
+
+            const goEngine = window.parent.go || window.go;
+            const res = await goEngine.main.App.SalvarFuncao(f);
+            if (res === "OK") {
+                fecharModalFuncao();
+                atualizarListaFuncoes();
+            } else {
+                alert(res);
+            }
+        }
+
+        function editarFuncao(f) {
+            document.getElementById('fun-id').value = f.id;
+            document.getElementById('fun-nome').value = f.nome;
+            document.getElementById('modal-funcao').style.display = 'flex';
+            setParentCloseVisibility(false);
+        }
+
+        async function deletarFuncao(id, nome) {
+            if (confirm(`DESEJA EXCLUIR A FUNÇÃO: ${nome}?`)) {
+                const goEngine = window.parent.go || window.go;
+                const res = await goEngine.main.App.ExcluirFuncao(id);
+                if (res === "OK") {
+                    atualizarListaFuncoes();
+                } else {
+                    alert(res);
+                }
+            }
+        }
+
+        async function resetarSenhaUsuario(id, nome) {
+            const nova = prompt(`DIGITE A NOVA SENHA PARA ${nome}:`, "lubel");
+            if (nova) {
+                const goEngine = window.parent.go || window.go;
+                const res = await goEngine.main.App.ResetarSenha(id, nova);
+                if (res === "OK") {
+                    alert("SENHA RESETADA! O USUÁRIO DEVERÁ ALTERAR NO PRÓXIMO ACESSO.");
+                    atualizarListaUsuarios();
+                } else {
+                    alert(res);
+                }
+            }
+        }
+
+        async function deletarUsuario(id, nome) {
+            if (confirm(`DESEJA REMOVER DEFINITIVAMENTE O ACESSO DE: ${nome}?`)) {
+                const goEngine = window.parent.go || window.go;
+                const res = await goEngine.main.App.ExcluirUsuario(id);
+                if (res === "OK") atualizarListaUsuarios();
+            }
+        }
+
+        // Atualiza Relógio do Rodapé
+        setInterval(() => {
+            const agora = new Date();
+            const el = document.getElementById('data-hora-footer');
+            if (el) el.innerText = agora.toLocaleString('pt-br');
+        }, 1000);
+
+        // CONTROLE DE CARREGAMENTO (PROGRESS BAR)
+        function setLoading(isLoading) {
+            const bar = document.getElementById('footer-progress');
+            if (!bar) return;
+            if (isLoading) {
+                bar.classList.add('loading');
+                bar.style.width = '30%';
+            } else {
+                bar.classList.remove('loading');
+                bar.style.width = '0%';
+            }
+        }
+
+        // Aciona loading ao trocar de aba (exemplo)
+        const originalMostrarAba = window.mostrarAba;
+        window.mostrarAba = function (nome) {
+            setLoading(true);
+            setTimeout(() => {
+                originalMostrarAba(nome);
+                setLoading(false);
+            }, 300);
+        };
+
+
+    </script>
+</body>
+
+</html>

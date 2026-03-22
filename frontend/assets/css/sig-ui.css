@@ -1,0 +1,1779 @@
+* {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+:root {
+    --sig-blue: #1e40af;
+    /* Azul Sóbrio Principal */
+    --sig-blue-dark: #1e3a8a;
+    /* Azul Profundo para Hub/Destaques */
+    --sig-blue-light: #eff6ff;
+
+    /* Branding Oficial SIG */
+    --sig-brand-cyan: #00e5ff;
+    --sig-brand-dark: #001b2b;
+
+    --sig-border: #cbd5e1;
+    --sig-bg-light: #f8fafc;
+    --sig-sidebar-bg: #ffffff;
+    --sig-text-main: #334155;
+    --sig-text-muted: #64748b;
+    --sig-red: #ef4444;
+    --sig-green: #10b981;
+    --sig-orange: #f59e0b;
+    --sig-dark: #1e293b;
+    --sig-slate-50: #f8fafc;
+    --sig-slate-100: #f1f5f9;
+    --sig-slate-200: #e2e8f0;
+    --sig-slate-300: #cbd5e1;
+    --sig-slate-400: #94a3b8;
+    --sig-slate-500: #64748b;
+    --sig-slate-600: #4b5563;
+    --sig-slate-700: #334155;
+    --sig-slate-800: #1e293b;
+    --sig-slate-900: #0f172a;
+}
+
+/* --- BOTOES --- */
+
+/* BOTAO FECHAR (O que voce aprovou) */
+.sig-btn-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--sig-border);
+    border-radius: 2px;
+    color: var(--sig-text-muted);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.sig-btn-close:hover {
+    color: var(--sig-red);
+    border-color: var(--sig-red);
+    background-color: #fff1f2;
+}
+
+/* --- VARIAÇÕES DE BOTÕES PARA ESCOLHA --- */
+
+/* V1: CLÁSSICO DELPHI (O QUE TEMOS AGORA - RELEVO FORTE) */
+.sig-btn-v1 {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    padding: 0 20px;
+    border-radius: 1px;
+    border: 1px solid #94a3b8;
+    background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+    box-shadow: 1px 1px 0px #64748b;
+    height: 34px;
+    transition: all 0.05s;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sig-btn-v1:active {
+    transform: translate(1px, 1px);
+    box-shadow: none;
+}
+
+.sig-btn-v1.primary {
+    background: linear-gradient(180deg, var(--sig-blue) 0%, var(--sig-blue-dark) 100%);
+    color: white;
+    border-color: var(--sig-blue-dark);
+    box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
+}
+
+/* V2: CORPORATIVO MODERNO (RELEVO SUAVE + GLOSS) */
+.sig-btn-v2 {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 0 20px;
+    border-radius: 2px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    /* Sombra moderna */
+    height: 34px;
+    transition: all 0.2s;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+.sig-btn-v2::after {
+    /* Highlight de brilho */
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.sig-btn-v2:hover {
+    border-color: var(--sig-blue);
+    background: #f8fafc;
+}
+
+.sig-btn-v2:active {
+    background: #f1f5f9;
+    transform: translateY(1px);
+}
+
+.sig-btn-v2.primary {
+    background: var(--sig-blue);
+    color: white;
+    border-color: #004494;
+}
+
+/* V3: INDUSTRIAL MINIMALISTA (FLAT COM PESO NA BASE) */
+.sig-btn-v3 {
+    font-size: 11px;
+    font-weight: 900;
+    text-transform: uppercase;
+    padding: 0 16px;
+    border-radius: 0px;
+    /* Totalmente seco */
+    border: 1px solid #334155;
+    border-bottom: 3px solid #334155;
+    /* Peso visual */
+    background: #ffffff;
+    color: #334155;
+    height: 34px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.1s;
+}
+
+.sig-btn-v3:hover {
+    background: #334155;
+    color: white;
+}
+
+.sig-btn-v3:active {
+    border-bottom-width: 1px;
+    transform: translateY(2px);
+}
+
+.sig-btn-v3.primary {
+    background: #1e293b;
+    color: white;
+    border-color: #000;
+    border-bottom-color: #000;
+}
+
+/* BOTAO PADRAO (ESTILO DELPHI-PREMIUM) */
+.sig-btn {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    padding: 0 20px;
+    border-radius: 1px;
+    border: 1px solid #94a3b8;
+    background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+    color: var(--sig-text-main);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.05s;
+    user-select: none;
+    box-shadow: 1px 1px 0px #64748b;
+    /* Relevo Delphi */
+    height: 34px;
+    position: relative;
+}
+
+.sig-btn:hover {
+    background: #ffffff;
+    border-color: #64748b;
+}
+
+.sig-btn:active {
+    transform: translate(1px, 1px);
+    box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* VARIANTES REFINADAS */
+.sig-btn-primary {
+    background: linear-gradient(180deg, #006edc 0%, #0056b3 100%);
+    color: #ffffff;
+    border-color: #004494;
+    box-shadow: 1px 1px 0px #002d5a;
+}
+
+.sig-btn-primary:hover {
+    background: #006edc;
+}
+
+.sig-btn-success {
+    background: linear-gradient(180deg, #16a34a 0%, #15803d 100%);
+    color: #ffffff;
+    border-color: #166534;
+    box-shadow: 1px 1px 0px #064e3b;
+}
+
+.sig-btn-success:hover {
+    background: #16a34a;
+}
+
+.sig-btn-warning {
+    background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
+    color: #ffffff;
+    border-color: #b45309;
+    box-shadow: 1px 1px 0px #78350f;
+}
+
+.sig-btn-warning:hover {
+    background: #f59e0b;
+}
+
+.sig-btn-danger {
+    background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%);
+    color: #ffffff;
+    border-color: #b91c1c;
+    box-shadow: 1px 1px 0px #7f1d1d;
+}
+
+.sig-btn-danger:hover {
+    background: #ef4444;
+}
+
+.sig-btn-neutral {
+    background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+    color: #475569;
+    border-color: #cbd5e1;
+    box-shadow: 1px 1px 0px #94a3b8;
+}
+
+.sig-btn-neutral:hover {
+    background: #f1f5f9;
+}
+
+/* --- VARIAÇÃO: OUTLINE (CONTORNO) --- */
+.sig-btn-outline {
+    background: transparent;
+    box-shadow: none;
+    /* Mais leve por ser outline */
+}
+
+.sig-btn-outline:hover {
+    background: #f1f5f9;
+}
+
+.sig-btn-outline.primary {
+    color: #0056b3;
+    border-color: #0056b3;
+}
+
+.sig-btn-outline.success {
+    color: #15803d;
+    border-color: #15803d;
+}
+
+.sig-btn-outline.danger {
+    color: #dc2626;
+    border-color: #dc2626;
+}
+
+.sig-btn-outline.warning {
+    color: #d97706;
+    border-color: #d97706;
+}
+
+/* --- ESTADO: DESATIVADO (DISABLED) --- */
+.sig-btn:disabled,
+.sig-btn.disabled {
+    background: #f1f5f9 !important;
+    border-color: #cbd5e1 !important;
+    color: #94a3b8 !important;
+    cursor: not-allowed !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+.sig-btn:disabled span,
+.sig-btn.disabled span {
+    opacity: 0.5;
+}
+
+.sig-btn-icon {
+    background: #ffffff;
+    border: 1px solid var(--sig-border);
+    border-radius: 2px;
+    padding: 6px;
+    cursor: pointer;
+    color: var(--sig-text-muted);
+    transition: all 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sig-btn-icon:hover {
+    color: var(--sig-blue);
+    background: var(--sig-blue-light);
+    border-color: var(--sig-blue);
+}
+
+.sig-btn-icon:active {
+    background: #dbeafe;
+}
+
+.sig-text-red:hover {
+    color: var(--sig-red) !important;
+}
+
+/* --- FORMULARIOS --- */
+
+.sig-form-group {
+    margin-bottom: 1rem;
+}
+
+.sig-label {
+    text-transform: uppercase;
+    font-size: 9px;
+    font-weight: 800;
+    color: var(--sig-text-muted);
+    margin-bottom: 4px;
+    display: block;
+    letter-spacing: 0.05em;
+}
+
+.sig-input {
+    width: 100%;
+    height: 34px;
+    border: 1px solid var(--sig-border);
+    border-radius: 1px;
+    padding: 0 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--sig-text-main);
+    background: #ffffff;
+    outline: none;
+    display: flex;
+    align-items: center;
+}
+
+.sig-input:focus {
+    border-color: var(--sig-blue);
+    background: var(--sig-bg-light);
+}
+
+/* --- TABELAS --- */
+
+.sig-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    background: white;
+}
+
+.sig-table th {
+    background: var(--sig-bg-light);
+    color: var(--sig-text-muted);
+    font-weight: 800;
+    text-transform: uppercase;
+    text-align: left;
+    padding: 10px 15px;
+    border-bottom: 2px solid var(--sig-border);
+    border-right: 1px solid var(--sig-border);
+    letter-spacing: 0.05em;
+}
+
+.sig-table th:last-child {
+    border-right: none;
+}
+
+.sig-table td {
+    padding: 8px 15px;
+    border-bottom: 1px solid #e2e8f0;
+    border-right: 1px solid #e2e8f0;
+    color: var(--sig-text-main);
+    font-weight: 600;
+}
+
+.sig-table td:last-child {
+    border-right: none;
+}
+
+.sig-table tr:nth-child(even) {
+    background-color: var(--sig-bg-light);
+}
+
+/* Tabela Média (Densidade Padrão) */
+.sig-table-md th {
+    padding: 8px 12px;
+}
+
+.sig-table-md td {
+    padding: 4px 12px;
+}
+
+/* Tabela Pequena (Alta Densidade) */
+.sig-table-sm th {
+    padding: 4px 8px;
+    font-size: 10px;
+}
+
+.sig-table-sm td {
+    padding: 2px 8px;
+    font-size: 10px;
+}
+
+.sig-table tr:hover {
+    background: #f1f5f9 !important;
+}
+
+.sig-text-center {
+    text-align: center !important;
+}
+
+/* --- SIDEBAR --- */
+
+/* --- ESTRUTURA DE LAYOUT (SISTEMA INTEGRADO) --- */
+.sig-app-container {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #ffffff;
+    gap: 0 !important;
+    /* Espaçamento ZERO entre Sidebar e Main */
+}
+
+.sig-main-content {
+    flex: 1;
+    overflow-y: auto;
+    background-color: #ffffff;
+    padding: 32px;
+    /* Espaçamento interno apenas para o conteúdo */
+}
+
+.sig-sidebar {
+    width: 240px;
+    background-color: var(--sig-sidebar-bg);
+    border-right: 2px solid var(--sig-border);
+    /* Borda mais espessa para divisão clara */
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    flex-shrink: 0;
+}
+
+.sig-sidebar-header {
+    background-color: #e5e7eb;
+    padding: 10px 16px;
+    border-bottom: 1px solid #d1d5db;
+}
+
+.sig-sidebar-header span {
+    font-size: 11px;
+    font-weight: 900;
+    color: #4b5563;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.sig-sidebar-menu {
+    display: flex;
+    flex-direction: column;
+}
+
+.sig-menu-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #334155;
+    cursor: pointer;
+    border-bottom: 1px solid #f1f5f9;
+    transition: background 0.1s;
+}
+
+.sig-menu-item:hover {
+    background-color: #f8fafc;
+}
+
+.sig-menu-item.ativa {
+    background-color: var(--sig-blue);
+    /* #0056b3 */
+    color: #ffffff;
+    font-weight: 800;
+}
+
+/* Ajuste do atalho quando o item está ativo */
+.sig-menu-item.ativa .sig-shortcut {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+
+
+/* --- PADRÃO SIG: MENU LATERAL OFICIAL --- */
+/* O design abaixo é o padrão único e oficial do sistema, conforme tela de parâmetros. */
+
+.sig-shortcut {
+    font-size: 10px;
+    font-weight: 800;
+    color: #94a3b8;
+    text-align: right;
+    min-width: 20px;
+}
+
+/* --- UTILITARIOS --- */
+
+.sig-badge-primary {
+    font-size: 8px;
+    background-color: var(--sig-blue);
+    color: white;
+    padding: 2px 4px;
+    border-radius: 2px;
+    font-weight: bold;
+    text-transform: uppercase;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.sig-header-classic {
+    font-size: 11px;
+    font-weight: 800;
+    color: #1e293b;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-bottom: 2px solid var(--sig-blue);
+    padding-bottom: 2px;
+    display: inline-block;
+}
+
+/* --- TIPOGRAFIA PADRAO --- */
+.sig-text-h1 {
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: var(--sig-slate-900);
+}
+
+.sig-text-h2 {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--sig-slate-800);
+}
+
+.sig-text-h3 {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--sig-slate-800);
+}
+
+.sig-text-h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--sig-slate-700);
+}
+
+.sig-text-h5 {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--sig-slate-600);
+    text-transform: uppercase;
+}
+
+.sig-text-h6 {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--sig-slate-500);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.sig-text-body {
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--sig-text-main);
+}
+
+.sig-text-legend {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--sig-text-muted);
+}
+
+/* LINKS CORPORATIVOS */
+.sig-link {
+    color: var(--sig-blue);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 12px;
+    border-bottom: 1px solid transparent;
+    transition: all 0.2s;
+}
+
+.sig-link:hover {
+    border-bottom-color: var(--sig-blue);
+    opacity: 0.8;
+}
+
+.sig-link:visited {
+    color: #4338ca;
+    /* Indigo 700 para links visitados */
+}
+
+.sig-text-mini {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.sig-text-mono {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 12px;
+}
+
+/* --- DASHBOARD / CARDS --- */
+.sig-card-dashboard {
+    background: white;
+    padding: 20px;
+    border-radius: 4px;
+    border-bottom: 3px solid var(--sig-blue);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 120px;
+    transition: transform 0.2s;
+}
+
+.sig-card-dashboard:hover {
+    transform: translateY(-2px);
+}
+
+.sig-card-label {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--sig-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.sig-card-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--sig-text-main);
+}
+
+.sig-card-trend {
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.sig-trend-up {
+    color: #10b981;
+}
+
+.sig-trend-down {
+    color: #ef4444;
+}
+
+/* --- ALERTAS / NOTIFICAÇÕES --- */
+.sig-alert {
+    padding: 12px 16px;
+    border-radius: 2px;
+    border-left: 4px solid transparent;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sig-alert-info {
+    background: #eff6ff;
+    color: #1e40af;
+    border-left-color: #3b82f6;
+}
+
+.sig-alert-warning {
+    background: #fffbeb;
+    color: #92400e;
+    border-left-color: #f59e0b;
+}
+
+.sig-alert-error {
+    background: #fef2f2;
+    color: #991b1b;
+    border-left-color: #ef4444;
+}
+
+/* --- COMPONENTES ADICIONAIS --- */
+
+/* TOOLBAR - BARRA DE FERRAMENTAS CORPORATIVA (COMPACTA) */
+.sig-toolbar {
+    background: #f8fafc;
+    border: 1px solid var(--sig-border);
+    padding: 2px;
+    display: flex;
+    gap: 2px;
+    border-radius: 1px;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.sig-toolbar .sig-btn-icon {
+    border: 1px solid transparent;
+    background: transparent;
+    padding: 4px;
+}
+
+.sig-toolbar .sig-btn-icon:hover {
+    background: #e2e8f0;
+    border-color: #cbd5e1;
+    color: #1e293b;
+}
+
+.sig-toolbar .sig-divider {
+    width: 1px;
+    height: 20px;
+    background: #cbd5e1;
+    margin: 0 4px;
+}
+
+/* STATUSBAR - BARRA DE RODAPE (REF: IMAGE) */
+.sig-statusbar {
+    background: #f1f5f9;
+    /* Slate 100 para um fundo limpo */
+    border-top: 1px solid #cbd5e1;
+    padding: 0 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10px;
+    font-family: 'Inter', sans-serif;
+    color: #475569;
+    height: 26px;
+    user-select: none;
+    width: 100%;
+}
+
+.sig-statusbar-left {
+    display: flex;
+    align-items: center;
+}
+
+.sig-statusbar-right {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.sig-statusbar-item {
+    display: flex;
+    align-items: center;
+    padding-left: 12px;
+    margin-left: 12px;
+    border-left: 1px solid #cbd5e1;
+    height: 14px;
+    line-height: normal;
+}
+
+.sig-statusbar-item:first-child {
+    border-left: none;
+    padding-left: 0;
+    margin-left: 0;
+}
+
+.sig-statusbar-label {
+    margin-right: 4px;
+    font-weight: 500;
+}
+
+.sig-statusbar-value {
+    color: #1e293b;
+    font-weight: 700;
+}
+
+.sig-statusbar-value.success {
+    color: #15803d;
+}
+
+.sig-statusbar-value.info {
+    color: #0369a1;
+}
+
+.sig-statusbar-value.error {
+    color: var(--sig-red);
+}
+
+.sig-statusbar-value.warning {
+    color: #b45309;
+}
+
+/* --- COMPONENTES DE NAVEGAÇÃO --- */
+
+/* ABAS (STYLE PAGECONTROL) */
+.sig-tabs {
+    display: flex;
+    border-bottom: 2px solid var(--sig-slate-200);
+    gap: 2px;
+    padding: 0 10px;
+    background: #f8fafc;
+}
+
+.sig-tab {
+    padding: 10px 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--sig-text-muted);
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    margin-bottom: -2px;
+    transition: all 0.1s;
+}
+
+.sig-tab:hover {
+    color: var(--sig-blue);
+    background: #ffffff;
+}
+
+.sig-tab.ativa {
+    color: var(--sig-blue);
+    background: #ffffff;
+    border-color: var(--sig-slate-200);
+    border-bottom: 2px solid #ffffff;
+    position: relative;
+    z-index: 10;
+}
+
+/* BREADCRUMBS */
+.sig-breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--sig-text-muted);
+    margin-bottom: 15px;
+}
+
+.sig-breadcrumb-item {
+    cursor: pointer;
+}
+
+.sig-breadcrumb-item:hover {
+    color: var(--sig-blue);
+}
+
+.sig-breadcrumb-sep {
+    color: var(--sig-slate-300);
+    font-weight: 400;
+}
+
+.sig-breadcrumb-current {
+    color: var(--sig-slate-800);
+}
+
+/* INPUT COM ICONE (SEARCH/F2) */
+.sig-input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.sig-input-group .sig-input {
+    padding-right: 35px;
+}
+
+.sig-input-group .sig-input-icon {
+    position: absolute;
+    right: 10px;
+    font-size: 18px;
+    color: var(--sig-slate-400);
+    cursor: pointer;
+}
+
+.sig-input-group .sig-input-icon:hover {
+    color: var(--sig-blue);
+}
+
+/* SEGMENTED CONTROL (STYLE: DELPHI GROUP BUTTONS) */
+.sig-segmented {
+    display: flex;
+    background: #e2e8f0;
+    padding: 2px;
+    border: 1px solid #cbd5e1;
+    border-radius: 2px;
+    /* Mais quadrado */
+    gap: 1px;
+    width: fit-content;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    /* Efeito afundado (sunken) */
+}
+
+.sig-segment {
+    padding: 4px 14px;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--sig-text-muted);
+    cursor: pointer;
+    border-radius: 1px;
+    transition: all 0.1s;
+    background: transparent;
+}
+
+.sig-segment.ativa {
+    background: #ffffff;
+    color: var(--sig-blue);
+    border: 1px solid #cbd5e1;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
+    /* Efeito elevado (raised) */
+}
+
+/* CHECKBOX & RADIO CUSTOM (RETRO-MODERN) */
+.sig-check-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.sig-checkbox,
+.sig-radio {
+    width: 15px;
+    height: 15px;
+    border: 1px solid #94a3b8;
+    background: #ffffff;
+    box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.1);
+    /* Profundidade interna */
+    border-radius: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.1s;
+}
+
+.sig-radio {
+    border-radius: 50%;
+}
+
+.sig-check-input:checked+.sig-checkbox,
+.sig-check-input:checked+.sig-radio {
+    border-color: var(--sig-blue);
+}
+
+.sig-check-input:checked+.sig-checkbox::after {
+    content: 'check';
+    font-family: 'Material Symbols Outlined';
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--sig-blue);
+}
+
+.sig-check-input:checked+.sig-radio::after {
+    content: '';
+    width: 7px;
+    height: 7px;
+    background: var(--sig-blue);
+    border-radius: 50%;
+}
+
+/* TOGGLE / SWITCH (RETRO-MODERN) */
+.sig-switch {
+    width: 32px;
+    height: 16px;
+    background: #cbd5e1;
+    border: 1px solid #94a3b8;
+    border-radius: 1px;
+    /* Quadrado */
+    position: relative;
+    cursor: pointer;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.sig-switch-input:checked+.sig-switch {
+    background: #dcfce7;
+    border-color: var(--sig-green);
+}
+
+.sig-switch::before {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: white;
+    border: 1px solid #94a3b8;
+    border-radius: 1px;
+    top: 1px;
+    left: 1px;
+    transition: transform 0.1s;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.sig-switch-input:checked+.sig-switch::before {
+    transform: translateX(16px);
+    background: var(--sig-green);
+    border-color: #15803d;
+}
+
+/* PAGINATION */
+.sig-pagination {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.sig-page-btn {
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--sig-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    background: white;
+}
+
+.sig-page-btn.ativa {
+    background: var(--sig-blue);
+    color: white;
+    border-color: var(--sig-blue);
+}
+
+.sig-page-btn:hover:not(.ativa) {
+    background: var(--sig-bg-light);
+}
+
+/* FEEDBACKS (PROGRESS, SPINNER, TOAST) */
+.sig-progress-bg {
+    width: 100%;
+    height: 14px;
+    background: #e2e8f0;
+    border: 1px solid #cbd5e1;
+    border-radius: 1px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.sig-progress-bar {
+    height: 100%;
+    background: linear-gradient(180deg, var(--sig-blue) 0%, #004494 100%);
+    transition: width 0.3s;
+    border-right: 1px solid var(--sig-blue-dark);
+}
+
+.sig-progress-text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    font-size: 9px;
+    font-weight: 900;
+    color: white;
+    line-height: 12px;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+}
+
+.sig-spinner {
+    width: 20px;
+    height: 20px;
+    border: 3px solid var(--sig-slate-200);
+    border-top-color: var(--sig-blue);
+    border-radius: 50%;
+    animation: sig-spin 0.8s linear infinite;
+}
+
+@keyframes sig-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.sig-toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--sig-dark);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+}
+
+/* SKELETON */
+.sig-skeleton {
+    background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+    background-size: 200% 100%;
+    animation: sig-skeleton-loading 1.5s infinite;
+    border-radius: 2px;
+}
+
+@keyframes sig-skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* TOOLTIP */
+[data-sig-tooltip] {
+    position: relative;
+}
+
+[data-sig-tooltip]::before {
+    content: attr(data-sig-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 4px 8px;
+    background: var(--sig-dark);
+    color: white;
+    font-size: 10px;
+    border-radius: 2px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.2s;
+    margin-bottom: 5px;
+}
+
+[data-sig-tooltip]:hover::before {
+    opacity: 1;
+}
+
+/* --- LAYOUT E SEÇÕES --- */
+.sig-secao {
+    display: none;
+}
+
+/* Visibilidade controlada pela remoção do .hidden no JS */
+
+/* --- MODAL PADRÃO SIG --- */
+.sig-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    z-index: 200;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(3.5px);
+}
+
+/* --- COMPONENTES DE EXIBIÇÃO AVANÇADA --- */
+
+/* AVATAR */
+.sig-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--sig-blue);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+/* BADGES VARIANTS */
+.sig-badge {
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 2px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.sig-badge-success {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.sig-badge-error {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.sig-badge-warning {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.sig-badge-info {
+    background: #e0f2fe;
+    color: #0369a1;
+}
+
+/* ACCORDION */
+.sig-accordion {
+    border: 1px solid var(--sig-border);
+    border-radius: 4px;
+    background: white;
+    margin-bottom: 8px;
+    overflow: hidden;
+}
+
+.sig-accordion-header {
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 12px;
+    background: var(--sig-bg-light);
+}
+
+.sig-accordion-header:hover {
+    background: #f1f5f9;
+}
+
+.sig-accordion-content {
+    padding: 16px;
+    border-top: 1px solid var(--sig-border);
+    display: none;
+    /* Exibição controlada via JS ou classe .ativa */
+    font-size: 12px;
+}
+
+.sig-accordion.ativa .sig-accordion-content {
+    display: block;
+}
+
+/* STEPPER */
+.sig-stepper {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    padding: 20px 0;
+}
+
+.sig-stepper::before {
+    content: '';
+    position: absolute;
+    top: 35px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--sig-slate-200);
+    z-index: 1;
+}
+
+.sig-step {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    background: white;
+}
+
+.sig-step-circle {
+    width: 30px;
+    height: 30px;
+    background: white;
+    border: 2px solid var(--sig-slate-300);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--sig-text-muted);
+}
+
+.sig-step.ativa .sig-step-circle {
+    border-color: var(--sig-blue);
+    color: var(--sig-blue);
+    background: var(--sig-blue-light);
+}
+
+/* UPLOAD AREA */
+.sig-upload-area {
+    border: 2px dashed var(--sig-slate-300);
+    border-radius: 6px;
+    padding: 30px;
+    text-align: center;
+    background: var(--sig-bg-light);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.sig-upload-area:hover {
+    border-color: var(--sig-blue);
+    background: white;
+}
+
+/* EMPTY STATE */
+.sig-empty-state {
+    padding: 40px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    color: var(--sig-text-muted);
+}
+
+.sig-empty-icon {
+    font-size: 48px;
+    color: var(--sig-slate-300);
+}
+
+/* DRAWER (MODAL LATERAL) */
+.sig-drawer {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 400px;
+    height: 100vh;
+    background: white;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease;
+    z-index: 300;
+    display: flex;
+    flex-direction: column;
+}
+
+.sig-drawer.ativa {
+    right: 0;
+}
+
+.sig-drawer-header {
+    padding: 16px;
+    background: var(--sig-bg-light);
+    border-bottom: 1px solid var(--sig-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* --- BRANDING / LOGO --- */
+.sig-logo-banner {
+    background-color: var(--sig-brand-dark);
+    height: 40px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    border-bottom: 2px solid var(--sig-brand-cyan);
+}
+
+.sig-logo-brand {
+    font-weight: 900;
+    font-size: 18px;
+    color: var(--sig-brand-cyan);
+    letter-spacing: -0.5px;
+}
+
+.sig-logo-separator {
+    color: #ffffff;
+    margin: 0 8px;
+    opacity: 0.5;
+}
+
+.sig-logo-tagline {
+    color: #e2e8f0;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* --- HUB / DASHBOARD --- */
+.sig-hub-container {
+    background-color: #f1f5f9;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.sig-hub-header {
+    background-color: var(--sig-brand-dark);
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    border-bottom: 2px solid var(--sig-brand-cyan);
+}
+
+.sig-hub-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    color: #fff;
+}
+
+.sig-hub-actions .material-symbols-outlined {
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.sig-hub-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    padding-left: 20px;
+    margin-left: 10px;
+}
+
+.sig-hub-user-info {
+    text-align: right;
+}
+
+.sig-hub-user-name {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #fff;
+}
+
+.sig-hub-user-role {
+    font-size: 9px;
+    opacity: 0.6;
+    text-transform: uppercase;
+    color: #fff;
+}
+
+.sig-hub-avatar {
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 14px;
+    color: #fff;
+}
+
+.sig-hub-content {
+    flex: 1;
+    padding: 40px 60px;
+    overflow-y: auto;
+}
+
+.sig-hub-section-title {
+    font-size: 18px;
+    font-weight: 500;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 24px;
+    margin-top: 40px;
+}
+
+.sig-hub-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.sig-hub-tile {
+    width: 180px;
+    height: 110px;
+    padding: 20px;
+    border-radius: 8px;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: transform 0.1s, filter 0.2s;
+}
+
+.sig-hub-tile:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+.sig-hub-tile .material-symbols-outlined {
+    font-size: 32px;
+}
+
+.sig-hub-tile span:last-child {
+    align-self: flex-end;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+/* Cores dos Tiles (Sincronizadas com o Sistema) */
+.tile-blue {
+    background-color: #3b82f6;
+}
+
+/* Azul Dashboard (Luz) */
+.tile-dark-blue {
+    background-color: var(--sig-blue);
+}
+
+.tile-deeper-blue {
+    background-color: var(--sig-blue-dark);
+}
+
+.tile-orange {
+    background-color: var(--sig-orange);
+}
+
+.tile-green {
+    background-color: var(--sig-green);
+}
+
+.tile-lime {
+    background-color: #84cc16;
+}
+
+.tile-slate {
+    background-color: var(--sig-slate-600);
+}
+
+.tile-indigo {
+    background-color: #3730a3;
+}
+
+.sig-hub-footer {
+    height: 30px;
+    background-color: #e2e8f0;
+    border-top: 1px solid #cbd5e1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    font-size: 10px;
+    color: #64748b;
+}
+
+.sig-hub-footer strong {
+    color: var(--sig-blue);
+}
+
+.sig-btn-exit {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    background-color: #ef4444;
+    color: white;
+    padding: 12px 30px;
+    border-radius: 30px;
+    font-weight: 900;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.4);
+    cursor: pointer;
+    border: none;
+    z-index: 100;
+}
+
+/* COMPONENTES DE ALTA DENSIDADE (Estilo SIG Desktop/Delphi) */
+.sig-fieldset {
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    /* Pouco arredondada */
+    padding: 28px 12px 12px 12px;
+    /* Espaço pro título interno */
+    margin-top: 10px;
+    position: relative;
+    background-color: white;
+    overflow: hidden;
+    /* Faz o título respeitar o arredondamento */
+}
+
+.sig-fieldset-flush {
+    padding: 24px 6px 6px 6px !important;
+    /* Revertido para um espaçamento pequeno em todos os lados */
+}
+
+/* Cores de Seleção Delphi Hardness */
+.sig-table tr.selected,
+.sig-table tr[data-selected="true"] {
+    background-color: #1e3a8a !important;
+    color: #ffffff !important;
+}
+
+.sig-table tr.selected td,
+.sig-table tr[data-selected="true"] td {
+    color: #ffffff !important;
+}
+
+/* Splitter / Resizable UI */
+.sig-splitter-h {
+    height: 6px;
+    background: #cbd5e1;
+    cursor: row-resize;
+    margin: 0 -8px;
+    z-index: 40;
+    transition: background 0.2s;
+    border-top: 1px solid #94a3b8;
+    border-bottom: 1px solid #94a3b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sig-splitter-h::after {
+    content: "";
+    width: 30px;
+    height: 2px;
+    background: #64748b;
+    border-radius: 2px;
+}
+
+.sig-splitter-h:hover {
+    background: #93c5fd;
+}
+
+.sig-legend {
+    font-size: 10px;
+    font-weight: 800;
+    color: #1e3a8a;
+    /* Azul marinho corporativo */
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    background-color: #f8fafc;
+    /* Fundo suave de "cabeçalho" */
+    border-bottom: 1px solid #e2e8f0;
+    /* Separa a barra do conteúdo */
+    padding: 6px 12px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+    /* Garante que o 100% caiba na borda */
+    line-height: 1;
+    z-index: 10;
+}
+
+.sig-input-dense {
+    height: 24px !important;
+    font-size: 11px !important;
+    padding: 0 6px !important;
+    border-radius: 2px !important;
+    border: 1px solid #94a3b8 !important;
+}
+
+.sig-input-dense:focus {
+    border-color: var(--sig-blue) !important;
+    box-shadow: 0 0 0 1px var(--sig-blue) !important;
+    outline: none;
+}
+
+.sig-label-dense {
+    font-size: 10px;
+    font-weight: 700;
+    color: #475569;
+    margin-bottom: 2px;
+    display: block;
+}
+
+.sig-box-green {
+    background-color: #ecfdf5;
+    border: 1px solid #10b981;
+    color: #047857;
+}
+
+.sig-box-yellow {
+    background-color: #fefce8;
+    border: 1px solid #fde047;
+    color: #854d0e;
+}
+
+.sig-price-input {
+    text-align: right;
+    font-weight: 800;
+    color: #1e40af;
+    font-family: monospace;
+}
+
+/* Ajuste fino na sub-tabela densa para fieldsets */
+.sig-fieldset .sig-table-sm th {
+    background-color: #f1f5f9;
+    border-top: 1px solid #cbd5e1;
+}
+
+/* PROGRESS BAR / LOADING INDICATOR */
+.sig-progress-bar-container {
+    height: 4px;
+    background-color: #cbd5e1;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+}
+
+.sig-progress-bar-fill {
+    height: 100%;
+    background-color: #2563eb;
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+@keyframes sig-progress-indeterminate {
+    0% {
+        transform: translateX(-100%);
+        width: 30%;
+    }
+
+    50% {
+        width: 50%;
+    }
+
+    100% {
+        transform: translateX(350%);
+        width: 30%;
+    }
+}
+
+.sig-progress-bar-fill.loading {
+    width: 30%;
+    position: absolute;
+    animation: sig-progress-indeterminate 1.5s infinite ease-in-out;
+}
