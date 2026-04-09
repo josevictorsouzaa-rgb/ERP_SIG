@@ -22,6 +22,16 @@
             }
         }
     </script>
+    <script>
+        // BYPASS MÁGICO DO WAILS: Injeta a API de Backend Go da Raiz (index.html)
+        // para dentro do Iframe, permitindo que este HTML isolado carregue o 
+        // banco de dados via Wails Runtime nativamente!
+        if (!window.go && window.top && window.top.go) {
+            window.go = window.top.go;
+            window.goEngine = window.top.go;
+            window.runtime = window.top.runtime;
+        }
+    </script>
     <link rel="stylesheet" href="../../assets/css/sig-ui.css">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@300..700,0..1&display=swap"
         rel="stylesheet" />
@@ -31,19 +41,11 @@
 
 
 
-    <!-- CABEÇALHO ÚNICO (Substitui Abas) -->
-    <header class="bg-[#f1f5f9] px-6 py-3 border-b border-slate-300 flex justify-between items-center shrink-0">
-        <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-sig-blue text-[24px]">inventory_2</span>
-            <h1 class="text-slate-700 font-bold text-lg uppercase tracking-tight">Central de Produtos</h1>
-        </div>
-        <button onclick="console.log('CLIQUE: Abre Cadastro...'); abrirCadastroProduto()" class="sig-btn sig-btn-primary px-6" data-permissao="PROD_CREATE">
-            <span class="material-symbols-outlined !text-base">add</span> NOVO PRODUTO (F6)
-        </button>
-    </header>
+    <!-- CABEÇALHO ÚNICO (Oculto no Modo Modal por estar sob controle do pai) -->
+    <header class="hidden"></header>
 
     <!-- ÁREA DE TRABALHO -->
-    <main class="flex-1 overflow-hidden bg-slate-200" data-modulo="MOD_PRODUTO">
+    <main class="flex-1 overflow-hidden bg-slate-200">
 
         <!-- VISUALIZAÇÃO DE PESQUISA (Sempre Ativa) -->
         <div id="aba-f2" class="w-full h-full p-2 flex flex-col gap-2 bg-[#f8fafc]">
@@ -55,6 +57,10 @@
                         <span class="material-symbols-outlined !text-[14px]">tune</span>
                         FILTROS DE PESQUISA AVANÇADA
                     </div>
+                    <button class="sig-btn sig-btn-primary px-3 !h-[26px] text-[10px] transform translate-y-[-1px] transition-opacity duration-200 shadow-sm"
+                            onclick="if(window.parent !== window){ window.parent.postMessage({type: 'ABRIR_CADASTRO_PRODUTO'}, '*'); }">
+                        <span class="material-symbols-outlined !text-[14px]">add</span> NOVO PRODUTO (F6)
+                    </button>
                 </div>
                 <!-- PADDING AJUSTADO PARA SER O MAIS COMPACTO E APROVEITAR TELA -->
                 <div class="sig-fieldset-content flex flex-col gap-2 !p-2">
@@ -174,7 +180,7 @@
 
             <!-- BLOCO 2: TABELA DE RESULTADOS MAIN -->
             <div
-                class="flex-1 bg-white border border-slate-300 rounded-sm overflow-hidden flex flex-col min-h-0 relative" data-permissao="PROD_VIEW">
+                class="flex-1 bg-white border border-slate-300 rounded-sm overflow-hidden flex flex-col min-h-0 relative">
                 <div class="overflow-y-auto flex-1 h-full w-full">
                     <table class="sig-table sig-table-md w-full whitespace-nowrap">
                         <thead class="bg-slate-100 sticky top-0 shadow-sm z-10 border-b border-slate-300">
@@ -299,23 +305,10 @@
     </main>
 
     <!-- MENU DE CONTEXTO (Botão Direito) -->
-    <div id="context-menu"
-        class="hidden fixed bg-white border border-slate-300 shadow-xl z-[999] py-1 rounded-sm w-48 animate-in fade-in zoom-in duration-100">
-        <div onclick="if(window.copiarCadastro) window.copiarCadastro()"
-            class="flex items-center gap-3 px-4 py-2 hover:bg-blue-50 cursor-pointer text-slate-700 hover:text-blue-800 transition-colors">
-            <span class="material-symbols-outlined text-blue-600 text-[18px]">content_copy</span>
-            <span class="text-[11px] font-bold uppercase tracking-wide">Copiar Cadastro</span>
-        </div>
-        <div class="border-t border-slate-100 my-1"></div>
-        <div onclick="if(window.abrirCadastroProduto && window.produtoSelecionadoGrid) window.abrirCadastroProduto(true, window.produtoSelecionadoGrid, false)"
-            class="flex items-center gap-3 px-4 py-2 hover:bg-slate-50 cursor-pointer text-slate-700 transition-colors">
-            <span class="material-symbols-outlined text-slate-500 text-[18px]">edit</span>
-            <span class="text-[11px] font-bold uppercase tracking-wide">Editar Registro completo</span>
-        </div>
-    </div>
 
-    <!-- STATUS BAR / RODAPÉ PADRÃO SIG -->
-    <footer class="bg-slate-200 border-t border-slate-300 shrink-0 z-50">
+
+    <!-- STATUS BAR / RODAPÉ PADRÃO SIG (OCULTO EM MODO POPUP) -->
+    <footer class="bg-slate-200 border-t border-slate-300 shrink-0 z-50 hidden">
         <div class="sig-progress-bar-container">
             <div id="footer-progress" class="sig-progress-bar-fill" style="width: 0%;"></div>
         </div>
@@ -324,12 +317,12 @@
             <div class="flex items-center space-x-4">
                 <span class="flex items-center gap-1">
                     <span class="material-symbols-outlined text-[14px]">terminal</span>
-                    TERMINAL: 01 (PRODUTOS)
+                    SELETOR UNIVERSAL DE PRODUTOS
                 </span>
                 <span class="text-slate-400">|</span>
-                <span>F6 NOVO</span>
                 <span>F8 PESQUISAR</span>
-                <span>F5 GRAVAR</span>
+                <span>ENTER CONFIRMAR E SELECIONAR</span>
+                <span>ESC CANCELAR</span>
             </div>
             <div class="flex items-center space-x-4 divide-x divide-slate-400">
                 <div class="px-3">Usuário: Admin</div>
@@ -365,43 +358,6 @@
     </div>
 
     <script>
-        // ==========================================
-        // SISTEMA DE PERMISSIONAMENTO (Consome SIG_AUTH Global)
-        // ==========================================
-        function temModulo(codigo) {
-            return true;
-            if(!window.SIG_AUTH) return false;
-            if(window.SIG_AUTH.modulos && window.SIG_AUTH.modulos['MOD_ADM_TOTAL']) return true;
-            return window.SIG_AUTH.modulos && window.SIG_AUTH.modulos[codigo] === true;
-        }
-
-        function temPermissao(codigo) {
-            return true;
-            if(!window.SIG_AUTH) return false;
-            if(window.SIG_AUTH.modulos && window.SIG_AUTH.modulos['MOD_ADM_TOTAL']) return true;
-            return window.SIG_AUTH.permissoes && window.SIG_AUTH.permissoes[codigo] === true;
-        }
-
-        function aplicarPermissoesNaTela() {
-            // Bloqueio de Módulos
-            document.querySelectorAll('[data-modulo]').forEach(el => {
-                const reqModulo = el.getAttribute('data-modulo');
-                if (!temModulo(reqModulo)) {
-                    el.classList.add('hidden');
-                }
-            });
-
-            // Bloqueio de Permissões
-            document.querySelectorAll('[data-permissao]').forEach(el => {
-                const reqPerm = el.getAttribute('data-permissao');
-                if (!temPermissao(reqPerm)) {
-                    el.classList.add('hidden');
-                }
-            });
-        }
-        // Retirado o listener redundante de DOMContentLoaded
-        // ==========================================
-
         // Atualiza Relógio do Rodapé
         setInterval(() => {
             const agora = new Date();
@@ -532,25 +488,9 @@
                 if (window.fecharCadastroProduto) window.fecharCadastroProduto();
                 fecharContextMenu();
             }
-            if (e.key === 'F6') {
-                e.preventDefault();
-                if (!temPermissao('PROD_CREATE')) {
-                    if(window.Toast) Toast.warning("Você não possui permissão para criar produto.");
-                    return;
-                }
-                if (window.abrirCadastroProduto) window.abrirCadastroProduto();
-            }
             if (e.key === 'F8') {
                 e.preventDefault();
                 pesquisarComFiltros();
-            }
-            if (e.key === 'F5') {
-                if(window.isProdutoReadOnlyGlobal) return;
-                const modalCadastro = document.getElementById('modal-cadastro');
-                if (modalCadastro && !modalCadastro.classList.contains('hidden')) {
-                    e.preventDefault();
-                    if (window.salvarProduto) window.salvarProduto();
-                }
             }
             
             // Navegação de Setas na Tabela de Central de Produtos
@@ -582,14 +522,8 @@
             }
 
             if (e.key === 'Enter') {
-                const ativaTabelaOuNao = document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'SELECT';
-                if (!ativaTabelaOuNao) {
-                    const selected = document.querySelector('#tb-produtos-lista tr.selected');
-                    if (selected && selected.ondblclick) {
-                        e.preventDefault();
-                        selected.ondblclick(); // Abre O F3 do item focado
-                    }
-                }
+                e.preventDefault();
+                confirmarSelecao();
             }
         });
 
@@ -682,11 +616,6 @@
         }
 
         async function pesquisarComFiltros() {
-            if (!temPermissao('PROD_VIEW')) {
-                if(window.Toast) Toast.warning('Você não possui permissão para visualizar produtos.');
-                return;
-            }
-
             const engine = window.goEngine || window.go;
             if (!engine?.main?.App?.PesquisarProdutosAvancado) return;
 
@@ -719,7 +648,6 @@
                 renderCentralGrid(cacheCentral);
             } catch (err) {
                 console.error("Erro na pesquisa: ", err);
-                if(window.Toast) Toast.error(err.message || err || "Acesso negado ou erro ao buscar dados do servidor.", 4000);
             } finally {
                 setLoading(false);
             }
@@ -752,11 +680,6 @@
         }
 
         async function carregarProdutosCentral() {
-            if (!temPermissao('PROD_VIEW')) {
-                if(window.Toast) Toast.warning('Você não possui permissão para visualizar produtos.');
-                return;
-            }
-
             setLoading(true);
             try {
                 const engine = window.goEngine || window.go;
@@ -767,7 +690,6 @@
                 renderCentralGrid(cacheCentral);
             } catch (err) {
                 console.error("Erro ao listar Produtos: ", err);
-                if(window.Toast) Toast.error(err.message || err || "Acesso negado ou erro ao buscar dados do servidor.", 4000);
             } finally {
                 setLoading(false);
             }
@@ -853,9 +775,8 @@
                    carregarPaineis(p);
                 };
                 
-                // Usa dois cliques para abrir o F3 em Modo Somente Leitura
                 tr.ondblclick = () => {
-                    if(window.abrirCadastroProduto) window.abrirCadastroProduto(true, p, true);
+                    confirmarSelecao();
                 };
                 
                 // Formata o ID com Zeros a esquerda
@@ -955,35 +876,27 @@
         }
 
         // Carrega logo que abrir
-        window.addEventListener('DOMContentLoaded', async () => {
-            try {
-                const goEngine = window.parent.go || window.go;
-                if (goEngine) {
-                     // 1. Injeta Permissoes do HUB no Contexto Local
-                     const permString = await goEngine.main.App.GetPermissoesLogado();
-                     const permissoesArray = JSON.parse(permString || "[]");
-                     window.SIG_AUTH = { modulos: {}, permissoes: {} };
-                     permissoesArray.forEach(p => {
-                         if(p.startsWith('MOD_')) window.SIG_AUTH.modulos[p] = true;
-                         else window.SIG_AUTH.permissoes[p] = true;
-                     });
-                     window.SIG_AUTH.modulos['MOD_PRODUTO'] = true; // Permissão Local Mínima Garantida
-                }
-                
-                // 2. Aplica as novas restrições Visuais imediatamente
-                aplicarPermissoesNaTela();
+        setTimeout(() => {
+            carregarFiltrosIniciais();
+            carregarProdutosCentral();
+        }, 300);
 
-                // 3. Processos Operacionais da Tela
-                carregarFiltrosIniciais();
-                carregarProdutosCentral();
-            } catch(e) {
-                console.error("Erro no startup de Tela Produtos: ", e);
-                aplicarPermissoesNaTela(); // Fallback mode
+        function confirmarSelecao() {
+            if(!window.produtoSelecionadoGrid) {
+                alert("Selecione um produto primeiro!");
+                return;
             }
-        });
+            
+            // Retorna ao fluxo original de DOM Message (Iframe Modal Isolado)
+            if(window.parent !== window) {
+                window.parent.postMessage({ type: 'PRODUTO_SELECIONADO', data: window.produtoSelecionadoGrid }, '*');
+            } else if (window.runtime) {
+                // Se rodar direto por erro, avisa e fecha
+                window.runtime.EventsEmit("W_PROD_SELECTED", window.produtoSelecionadoGrid);
+                window.runtime.WindowClose();
+            }
+        }
     </script>
-    <!-- IMPORTANDO O F3 GLOBAL -->
-    <script src="../../componentes/modal_produto.js"></script>
 </body>
 
 </html>

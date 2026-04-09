@@ -369,14 +369,12 @@
         // SISTEMA DE PERMISSIONAMENTO (Consome SIG_AUTH Global)
         // ==========================================
         function temModulo(codigo) {
-            return true;
             if(!window.SIG_AUTH) return false;
             if(window.SIG_AUTH.modulos && window.SIG_AUTH.modulos['MOD_ADM_TOTAL']) return true;
             return window.SIG_AUTH.modulos && window.SIG_AUTH.modulos[codigo] === true;
         }
 
         function temPermissao(codigo) {
-            return true;
             if(!window.SIG_AUTH) return false;
             if(window.SIG_AUTH.modulos && window.SIG_AUTH.modulos['MOD_ADM_TOTAL']) return true;
             return window.SIG_AUTH.permissoes && window.SIG_AUTH.permissoes[codigo] === true;

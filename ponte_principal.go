@@ -4,6 +4,7 @@ import (
 	"context"
 	_ "embed"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
@@ -722,7 +723,15 @@ func (a *App) ObterProximoIdProduto() int {
 
 func (a *App) ListarProdutos() []motor.Produto {
 	if a.banco == nil { return []motor.Produto{} }
-	lista, _ := a.banco.ListarProdutos()
+	lista, err := a.banco.ListarProdutos()
+	if err != nil {
+		fmt.Println("CRITICAL Erro ListarProdutos BD:", err)
+		os.WriteFile("debug_prod.txt", []byte(err.Error()), 0644)
+	}
+	if len(lista) > 0 {
+		import_json, _ := json.MarshalIndent(lista[0], "", "  ")
+		os.WriteFile("debug_json.txt", import_json, 0644)
+	}
 	return lista
 }
 
@@ -846,8 +855,12 @@ func (a *App) PesquisarProdutosAvancado(f motor.FiltrosProdutos) []motor.Produto
 	if a.banco == nil { return []motor.Produto{} }
 	lista, err := a.banco.PesquisarProdutosAvancado(f)
 	if err != nil {
-		fmt.Printf("Erro na pesquisa avançada: %v\n", err)
-		return []motor.Produto{}
+		fmt.Println("CRITICAL Erro Pesquisa BD:", err)
+		os.WriteFile("debug_search.txt", []byte(err.Error()), 0644)
+	}
+	if len(lista) > 0 {
+		import_json, _ := json.MarshalIndent(lista[0], "", "  ")
+		os.WriteFile("debug_search_json.txt", import_json, 0644)
 	}
 	return lista
 }

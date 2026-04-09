@@ -1,24 +1,15 @@
-import os
-import re
 
-exe_path = r'C:\Users\DELL G15\Desktop\Projetos python\ERP_SIG\SIG_V79_SOLUCAO_CNPJ.exe'
-with open(exe_path, 'rb') as f:
+import re
+with open(r'C:\Users\DELL G15\Desktop\Projetos python\ERP_SIG\SIG_V79_SOLUCAO_CNPJ.exe', 'rb') as f:
     data = f.read()
 
-# Ache onde está "NOVO PRODUTO (F6)"
-idx = data.find(b'NOVO PRODUTO (F6)')
-if idx != -1:
-    print('Achou NOVO PRODUTO (F6) em:', idx)
-    chunk = data[max(0, idx-500):idx+500].decode('utf-8', errors='ignore')
-    print(chunk)
-else:
-    print('Nao achou NOVO PRODUTO (F6)')
+matches = list(re.finditer(b'function carregarProdutosCentral', data))
+for idx, m in enumerate(matches):
+    start = data.rfind(b'<!DOCTYPE html>', 0, m.start())
+    if start == -1: start = data.rfind(b'<html', 0, m.start())
+    end = data.find(b'</html>', m.start()) + 7
+    print(f'Match {idx}: Length: {end - start}. Starts at {start}')
+    if end - start > 0 and end - start < 200000:
+        with open(f'C:\\Users\\DELL G15\\Desktop\\Projetos python\\ERP_SIG\\extracted_prod_{idx}.html', 'wb') as out:
+            out.write(data[start:end])
 
-# Busque também o Modal de Produto
-idx = data.find(b'F3 - NOVO PRODUTO')
-if idx != -1:
-    print('Achou Modal de Produto F3 em:', idx)
-    chunk = data[max(0, idx-500):idx+500].decode('utf-8', errors='ignore')
-    print(chunk)
-else:
-    print('Nao achou modal')
