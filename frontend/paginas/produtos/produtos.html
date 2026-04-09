@@ -974,8 +974,10 @@
                 aplicarPermissoesNaTela();
 
                 // 3. Processos Operacionais da Tela
-                carregarFiltrosIniciais();
-                carregarProdutosCentral();
+                setTimeout(() => {
+                    carregarFiltrosIniciais();
+                    carregarProdutosCentral();
+                }, 300);
             } catch(e) {
                 console.error("Erro no startup de Tela Produtos: ", e);
                 aplicarPermissoesNaTela(); // Fallback mode

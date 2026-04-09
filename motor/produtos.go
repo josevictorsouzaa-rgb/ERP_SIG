@@ -2015,14 +2015,14 @@ func (m *MotorBD) ObterVersoesAnosVeiculos(marca, modelo string) ([]string, erro
 func (m *MotorBD) PesquisarProdutosAvancado(f FiltrosProdutos) ([]Produto, error) {
 	sql := `
 		SELECT DISTINCT
-			p.id, p.sku, COALESCE(p.ean, ''), p.descricao_tecnica,
+			p.id, p.sku, COALESCE(p.ean, ''), COALESCE(p.descricao_tecnica, ''),
 			COALESCE(p.marca_id, 0), COALESCE(mrc.nome, '') as marca_nome,
 			COALESCE(p.categoria_id, 0), COALESCE(c.nome, '') as categoria_nome,
 			COALESCE(p.subcategoria_id, 0), COALESCE(s.nome, '') as subcategoria_nome,
 			COALESCE(p.deposito_id, 0),
-			p.custo, p.venda, p.estoque_atual, p.estoque_minimo, COALESCE(p.localizacao, ''),
+			COALESCE(p.custo, 0.0), COALESCE(p.venda, 0.0), COALESCE(p.estoque_atual, 0), COALESCE(p.estoque_minimo, 0), COALESCE(p.localizacao, ''),
 			COALESCE(p.nome_popular, ''),
-			to_char(p.criado_em, 'DD/MM/YYYY'), to_char(p.atualizado_em, 'DD/MM/YYYY'),
+			COALESCE(to_char(p.criado_em, 'DD/MM/YYYY'), ''), COALESCE(to_char(p.atualizado_em, 'DD/MM/YYYY'), ''),
 			COALESCE(p.unidade_id, 0), COALESCE(u.sigla, 'UN'),
 			COALESCE(p.fator_conversao, 1.0), COALESCE(p.peso, 0.0),
 			COALESCE(p.ncm, ''), COALESCE(p.cest, ''), COALESCE(p.origem, 0),
