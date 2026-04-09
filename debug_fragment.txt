@@ -1,0 +1,110 @@
+<!-- FRAGMENTO: FORMULÁRIO DE CADASTRO MASTER DE PRODUTO (SIG V76.1) -->
+<!-- Este arquivo contém apenas o corpo do formulário para ser injetado em Modais (F3) ou Janelas Standalone -->
+
+<div class="flex-1 overflow-hidden flex gap-2 p-2 bg-white">
+    <!-- COLUNA ESQUERDA (DADOS CADASTRAIS) -> 70% Width -->
+    <div class="w-[70%] flex flex-col gap-0 h-full overflow-y-auto pr-2 custom-scrollbar">
+
+        <!-- BLOCO 1: IDENTIFICAÇÃO -->
+        <div class="sig-fieldset-blueprint mt-2 shrink-0">
+            <span class="sig-legend-blueprint">Identificação do Item</span>
+            <div class="flex gap-2">
+                <div class="w-24">
+                    <label class="sig-label-dense">Status</label>
+                    <select id="prod-ativo" class="sig-input-dense w-full font-bold cursor-pointer bg-white text-green-700" onchange="this.classList.toggle('text-green-700', this.value==='true'); this.classList.toggle('text-red-700', this.value==='false');">
+                        <option value="true" class="text-green-700">ATIVO</option>
+                        <option value="false" class="text-red-700">INATIVO</option>
+                    </select>
+                </div>
+                <div class="w-16">
+                    <label class="sig-label-dense">ID</label>
+                    <input type="text" id="prod-id"
+                        class="sig-input-dense w-full bg-slate-100 font-bold text-center" value="NOVO"
+                        readonly tabindex="-1">
+                </div>
+                <div class="w-[30%] relative">
+                    <label class="sig-label-dense">Cód. Fabr. (SKU) <span class="text-red-600 font-bold">*</span></label>
+                    <div class="flex gap-1">
+                        <input type="text" id="prod-sku" class="sig-input-dense flex-1 uppercase border-blue-200 focus:ring-red-400" placeholder="AL-1234" oninput="window.validarCamposObrigatorios()" onblur="window.verificarSKUCadastro()">
+                        <button type="button" onclick="window.abrirBuscaCatalogo()" class="sig-btn-icon !h-6 !w-8 !p-0" title="Buscar no Catálogo Online">
+                            <span class="material-symbols-outlined !text-[16px]">search</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="w-1/4">
+                    <label class="sig-label-dense">Marca da Peça <span class="text-red-600 font-bold">*</span></label>
+                    <select id="prod-marca-id"
+                        class="sig-input-dense w-full bg-white cursor-pointer uppercase text-slate-700 font-bold border-blue-200"
+                        onchange="window.aplicarMargemMarca(); window.validarCamposObrigatorios()">
+                        <option value="0">SELECIONE...</option>
+                    </select>
+                </div>
+                <div class="flex-1">
+                    <label class="sig-label-dense">Código de Barras <span class="text-red-600 font-bold">*</span></label>
+                    <input type="text" id="prod-codigo-barra" class="sig-input-dense w-full border-blue-100"
+                        placeholder="Ex: 7891234567890" oninput="window.validarCamposObrigatorios()">
+                </div>
+            </div>
+
+            <!-- LINHA 2: TAXONOMIA -->
+            <div class="flex gap-2 mt-2">
+                <div class="w-1/2">
+                    <label class="sig-label-dense">Categoria <span class="text-red-600 font-bold">*</span></label>
+                    <select id="prod-categoria-id" class="sig-input-dense w-full bg-white cursor-pointer font-bold uppercase border-blue-200" onchange="window.onCategoriaChange(); window.validarCamposObrigatorios()">
+                        <option value="">SELECIONE...</option>
+                    </select>
+                </div>
+                <div class="w-1/2">
+                    <label class="sig-label-dense">Subcategoria <span class="text-red-600 font-bold">*</span></label>
+                    <select id="prod-subcategoria-id" class="sig-input-dense w-full bg-white cursor-pointer uppercase border-blue-200" onchange="window.validarCamposObrigatorios()">
+                        <option value="0">SELECIONE UMA CATEGORIA ANTES...</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- LINHA 3: DESCRIÇÕES -->
+            <div class="flex gap-2 mt-2">
+                <div class="flex-1 relative group">
+                    <label class="sig-label-dense">Descrição Padrão SIG <span class="text-red-600 font-bold">*</span></label>
+                    <div id="wrapper-prod-descricao" class="relative h-[24px] bg-white border border-blue-200 rounded-[2px] overflow-hidden transition-colors">
+                        <div id="prod-descricao-ghost" class="absolute inset-0 px-[6px] flex items-center text-[11px] font-bold text-slate-300 pointer-events-none uppercase whitespace-pre z-0"></div>
+                        <input type="text" id="prod-descricao" autocomplete="off" 
+                            class="w-full h-full px-[6px] text-[11px] font-bold uppercase text-slate-900 border-none outline-none relative z-10 !bg-transparent" 
+                            style="background: transparent !important; box-shadow: none !important;"
+                            placeholder="DIGITE..." 
+                            oninput="window.mostrarSugestoesDescricao(this.value); window.validarCamposObrigatorios()"
+                            onkeydown="window.navegarSugestoesDescricao(event)"
+                            onblur="setTimeout(() => window.fecharSugestoesDescricao(), 200)">
+                    </div>
+                    <div id="placahoard-descricoes" class="hidden absolute left-0 right-0 top-[100%] mt-1 bg-slate-900 text-white rounded shadow-2xl z-[10002] border border-slate-700 overflow-hidden max-h-48 overflow-y-auto custom-scrollbar">
+                        <div class="bg-slate-800 px-3 py-1 flex justify-between items-center border-b border-slate-700">
+                            <span class="text-[9px] font-black uppercase tracking-tighter text-slate-400">Sugestões de Cadastro</span>
+                            <span class="text-[8px] text-slate-500 font-bold">[TAB] para completar</span>
+                        </div>
+                        <div id="lista-sugestoes-inner"></div>
+                    </div>
+                </div>
+                <div class="w-[30%]">
+                    <label class="sig-label-dense">Nome Popular <span class="text-red-600 font-bold">*</span></label>
+                    <input type="text" id="prod-nome-popular" class="sig-input-dense w-full uppercase border-blue-200 bg-orange-50/10" placeholder="Ex: Campana/Burrinho" oninput="window.validarCamposObrigatorios()">
+                </div>
+            </div>
+
+            <!-- LINHA 4: POSIÇÃO E LADO -->
+            <div class="flex gap-2 mt-2 pb-1">
+                <div class="w-1/2">
+                    <label class="sig-label-dense">Posição <span class="text-red-600 font-bold">*</span></label>
+                    <select id="prod-posicao" class="sig-input-dense w-full bg-white cursor-pointer uppercase" onchange="window.validarCamposObrigatorios()">
+                        <option value="">SELECIONE...</option>
+                        <option value="N/A">N/A</option>
+                        <option value="DIANTEIRO">DIANTEIRO</option>
+                        <option value="TRASEIRO">TRASEIRO</option>
+                        <option value="SUPERIOR">SUPERIOR</option>
+                        <option value="INFERIOR">INFERIOR</option>
+                        <option value="INTERNO">INTERNO</option>
+                        <option value="EXTERNO">EXTERNO</option>
+                    </select>
+                </div>
+                <div class="w-1/2">
+                    <label class="sig-label-dense">Lado <span class="text-red-600 font-bold">*</span></label>
+                    <select id=

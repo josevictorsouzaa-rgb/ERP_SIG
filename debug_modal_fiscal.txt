@@ -1,0 +1,877 @@
+<!-- 
+    MODAL PERFIL FISCAL - SIG VMASTER V3 (LEAN BLUEPRINT)
+    Refatorado para uso de Fieldset Blueprints Oficiais (Modularizado)
+    Incluso: Modelo Operacional (Wizard) e Terminologia Simplificada
+-->
+<div id="modal-fiscal" class="sig-modal-overlay hidden">
+    <div class="sig-modal-blueprint-container w-[850px]">
+        
+        <!-- Header Modular Blueprint -->
+        <div class="sig-modal-header-blueprint">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-sig-blue !text-base">account_balance_wallet</span>
+                <h3 id="modal-titulo" class="text-slate-700 font-bold text-[11px] uppercase tracking-wider">Arquitetura de Perfil Fiscal</h3>
+            </div>
+            <button onclick="fecharModal()" class="sig-btn-close !w-7 !h-7">
+                <span class="material-symbols-outlined !text-base">close</span>
+            </button>
+        </div>
+
+        <!-- Conteúdo em 3 Colunas Lean -->
+        <div class="p-4 bg-slate-50 overflow-y-auto max-h-[75vh]">
+            <form id="form-fiscal" class="flex flex-col gap-4">
+                <input type="hidden" id="fis-id" value="0">
+
+                <!-- NOVO BLOCO: ASSISTENTE DE PERFIL (SIMPLIFICADO) -->
+                <div class="sig-fieldset-blueprint w-full !bg-indigo-50/50 border-indigo-200">
+                    <div class="flex justify-between items-center mb-1 pr-1">
+                        <span class="sig-legend-blueprint !text-indigo-700 !static !m-0 uppercase font-black">ASSISTENTE DE CONSTRUÇÃO DE PERFIL</span>
+                        <button type="button" onclick="limparAssistente()" class="sig-btn-sec h-6 px-3 !text-[9px] flex items-center gap-1 hover:!bg-red-50 hover:!text-red-600 hover:!border-red-200 transition-all">
+                            <span class="material-symbols-outlined !text-sm">backspace</span>
+                            REINICIAR FORMULÁRIO
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-1">
+                        <div>
+                            <label class="sig-label-dense text-indigo-900 font-black" title="Escolha o cenário de negócio que mais se aproxima da sua necessidade operacional.">01. QUAL O PERFIL BASE DE NEGÓCIO?</label>
+                            <select id="fis-as-perfil-base" class="sig-input-dense w-full font-black text-indigo-800 border-indigo-300 !h-9 text-xs" onchange="aplicarPerfilBase()">
+                                <option value="">--- SELECIONE UM CENÁRIO ---</option>
+                                <option value="COMPRA" title="Entrada de mercadoria para estoque. gera financeiro a pagar e atualiza custo médio.">COMPRA PARA REVENDA</option>
+                                <option value="VENDA" title="Saída de mercadoria para cliente. gera financeiro a receber e baixa estoque.">VENDA DE MERCADORIA</option>
+                                <option value="DEV_COMPRA" title="Devolução de mercadoria comprada (saída para o fornecedor). estorna estoque.">DEVOLUÇÃO DE COMPRA (SAÍDA)</option>
+                                <option value="DEV_VENDA" title="Devolução de mercadoria vendida (entrada do cliente). retorna ao estoque físico.">DEVOLUÇÃO DE VENDA (ENTRADA)</option>
+                                <option value="TRANSFERENCIA" title="Movimentação entre suas próprias filiais. não gera financeiro por padrão.">TRANSFERÊNCIA ENTRE FILIAIS</option>
+                                <option value="MGER_ENTRADA" title="Entrada interna (ajuste, inventário, etc) sem impacto fiscal ou financeiro.">MOVIMENTAÇÃO GERENCIAL (ENTRADA)</option>
+                                <option value="MGER_SAIDA" title="Saída interna (ajuste, brinde, etc) sem impacto fiscal ou financeiro.">MOVIMENTAÇÃO GERENCIAL (SAÍDA)</option>
+                            </select>
+                        </div>
+                        <div id="wrapper-subtipo" class="opacity-30 pointer-events-none transition-all">
+                            <label class="sig-label-dense" title="Define o comportamento tributário de ICMS da operação.">02. POSSUI INCIDÊNCIA DE ST?</label>
+                            <select id="fis-as-subtipo" class="sig-input-dense w-full font-bold !h-9" onchange="aplicarPerfilBase()">
+                                <option value="NORMAL" title="Operação simples de ICMS (Débito/Crédito normal).">NÃO - OPERAÇÃO NORMAL (S/ ST)</option>
+                                <option value="ST" title="Operação com Substituição Tributária (Retenção antecipada do imposto).">SIM - COM SUBSTITUIÇÃO TRIBUTÁRIA</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-2 bg-indigo-100/50 p-2 rounded border border-indigo-200">
+                            <span class="material-symbols-outlined text-indigo-600 !text-xl">info</span>
+                            <p class="text-[9px] text-indigo-900 font-bold leading-tight uppercase">
+                                Selecione o cenário base. O sistema preencherá as regras técnicas automaticamente. você poderá ajustar qualquer campo abaixo se necessário.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    
+                    <!-- COLUNA 1 -->
+                    <div class="flex flex-col gap-3">
+                        <!-- BLOCO 01: IDENTIDADE DO PERFIL -->
+                        <div class="sig-fieldset-blueprint w-full !bg-white">
+                            <span class="sig-legend-blueprint">01. IDENTIDADE DO PERFIL</span>
+                            <div class="flex flex-col gap-2">
+                                <div>
+                                    <label class="sig-label-dense">NOME DO PERFIL</label>
+                                    <input type="text" id="fis-nome" class="sig-input-dense w-full uppercase font-bold" placeholder="EX: VENDA MERCADORIA PADRÃO">
+                                </div>
+                                <label class="sig-check-group cursor-pointer mt-1">
+                                    <input type="checkbox" id="fis-perfil-ativo" class="sig-checkboxScale" checked>
+                                    <span class="sig-check-label">PERFIL ATIVO NO SISTEMA</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- BLOCO 02: CLASSIFICAÇÃO E REGRAS DE MATRIZ -->
+                        <div class="sig-fieldset-blueprint w-full !bg-white">
+                            <span class="sig-legend-blueprint">01. REGRAS DE CLASSIFICAÇÃO</span>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="sig-label-dense">OPERAÇÃO</label>
+                                    <select id="fis-tipo-operacao" class="sig-input-dense w-full font-bold">
+                                        <option value="ENTRADA">ENTRADA</option>
+                                        <option value="SAIDA">SAÍDA</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="sig-label-dense">MOVIMENTAÇÃO</label>
+                                    <select id="fis-tipo-movimentacao" class="sig-input-dense w-full font-bold">
+                                        <option value="COMPRA">COMPRA</option>
+                                        <option value="VENDA">VENDA</option>
+                                        <option value="DEVOLUCAO">DEVOLUÇÃO</option>
+                                        <option value="TRANSFERENCIA">TRANSFERÊNCIA</option>
+                                        <option value="AJUSTE">AJUSTE</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="sig-label-dense text-[8px]">TIPO DOCUMENTO</label>
+                                    <select id="fis-com-nota-fiscal" class="sig-input-dense w-full">
+                                        <option value="true">FISCAL</option>
+                                        <option value="false">GERENCIAL</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="sig-label-dense">INCIDÊNCIA ST</label>
+                                    <select id="fis-incide-st" class="sig-input-dense w-full">
+                                        <option value="false">NÃO</option>
+                                        <option value="true">SIM</option>
+                                    </select>
+                                </div>
+                                <div class="col-span-2">
+                                    <label class="sig-label-dense">NATUREZA DA OPERAÇÃO (DESC.)</label>
+                                    <select id="fis-natureza-operacao" class="sig-input-dense w-full uppercase">
+                                        <option value="FISCAL">FISCAL</option>
+                                        <option value="NÃO FISCAL">NÃO FISCAL</option>
+                                        <option value="DEVOLUÇÃO">DEVOLUÇÃO</option>
+                                        <option value="TRANSFERÊNCIA">TRANSFERÊNCIA</option>
+                                        <option value="AJUSTE">AJUSTE</option>
+                                    </select>
+                                </div>
+                                <div class="col-span-2">
+                                    <label class="sig-label-dense">FINALIDADE / TIPO ITEM</label>
+                                    <div class="grid grid-cols-2 gap-1">
+                                        <select id="fis-finalidade" class="sig-input-dense w-full">
+                                            <option value="NORMAL">NORMAL</option>
+                                            <option value="DEVOLUÇÃO">DEVOLUÇÃO</option>
+                                            <option value="TRANSFERÊNCIA">TRANSFERÊNCIA</option>
+                                            <option value="AJUSTE">AJUSTE</option>
+                                        </select>
+                                        <select id="fis-tipo-item" class="sig-input-dense w-full">
+                                            <option value="REVENDA">REVENDA</option>
+                                            <option value="USO">USO/CONSUMO</option>
+                                            <option value="ATIVO">ATIVO IMOB.</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- BLOCO 03: CLASSIFICAÇÃO FISCAL -->
+                        <div class="sig-fieldset-blueprint w-full">
+                            <span class="sig-legend-blueprint">02. CLASSIFICAÇÃO FISCAL (CFOP)</span>
+                            <div class="flex flex-col gap-2">
+                                <div class="grid grid-cols-4 gap-1">
+                                    <div class="col-span-1">
+                                        <label class="sig-label-dense">CFOP BASE</label>
+                                        <input type="text" id="fis-cfop" class="sig-input-dense w-full text-center font-black" maxlength="4" placeholder="0000" onchange="buscarDescricaoCFOP(this.value)">
+                                    </div>
+                                    <div class="col-span-3">
+                                        <label class="sig-label-dense">DESCRIÇÃO SUGERIDA</label>
+                                        <input type="text" id="fis-cfop-descricao" class="sig-input-dense w-full text-[9px] uppercase italic bg-slate-100 font-bold border-none" readonly>
+                                    </div>
+                                </div>
+                                <div class="bg-amber-50 p-2 rounded border border-amber-100 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-amber-600 !text-sm">lightbulb</span>
+                                    <p class="text-[8px] text-amber-800 leading-tight uppercase font-medium">
+                                        O CFOP e sua descrição são preenchidos automaticamente pelo assistente superior.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COLUNA 2 -->
+                    <div class="flex flex-col gap-3">
+                        <!-- BLOCO 03: COMPORTAMENTO OPERACIONAL -->
+                        <div class="sig-fieldset-blueprint w-full h-full">
+                            <span class="sig-legend-blueprint">03. COMPORTAMENTO OPERACIONAL</span>
+                            <div class="flex flex-col gap-3">
+                                <div class="p-2 rounded bg-white shadow-sm border border-slate-200 flex flex-col gap-2">
+                                    <label class="sig-check-group cursor-pointer">
+                                        <input type="checkbox" id="fis-atualiza-estoque" class="sig-checkboxScale">
+                                        <span class="sig-check-label font-bold" title="Se marcado, a operação somará ou subtrairá saldo físico do estoque geral.">ATUALIZA ESTOQUE FÍSICO</span>
+                                    </label>
+                                    <label class="sig-check-group cursor-pointer">
+                                        <input type="checkbox" id="fis-reserva-estoque" class="sig-checkboxScale">
+                                        <span class="sig-check-label" title="Utilizado para reservar mercadoria do estoque (ex: pré-venda) sem baixar o saldo real de imediato.">GERA RESERVA DE ESTOQUE</span>
+                                    </label>
+                                    <label class="sig-check-group cursor-pointer">
+                                        <input type="checkbox" id="fis-baixa-estoque" class="sig-checkboxScale">
+                                        <span class="sig-check-label" title="Diferente da baixa de faturamento, este marca se a mercadoria já sai fisicamente no momento da emissão (Balcão).">BAIXA IMEDIATA (CONCLUÍDO)</span>
+                                    </label>
+                                </div>
+
+                                <div class="p-2 rounded bg-white shadow-sm border border-slate-200 flex flex-col gap-2">
+                                    <label class="sig-check-group cursor-pointer">
+                                        <input type="checkbox" id="fis-gera-financeiro" class="sig-checkboxScale" checked>
+                                        <span class="sig-check-label font-bold" title="Se marcado, gera um lançamento automático no Contas a Pagar (Entradas) ou Receber (Saídas).">GERA FINANCEIRO (PAG/REC)</span>
+                                    </label>
+                                    <label class="sig-check-group cursor-pointer">
+                                        <input type="checkbox" id="fis-forma-custo-medio" class="sig-checkboxScale" checked>
+                                        <span class="sig-check-label font-bold" title="Crucial para Entradas: Recalcula o valor médio do estoque baseado no preço de compra e impostos.">RECALCULA CUSTO MÉDIO</span>
+                                    </label>
+                                    <label class="sig-check-group cursor-pointer">
+                                        <input type="checkbox" id="fis-permite-venda-negativa" class="sig-checkboxScale">
+                                        <span class="sig-check-label" title="Permite faturar produtos mesmo se o saldo no sistema estiver zerado (não recomendado para autopeças rigorosas).">PERMITE SALDO NEGATIVO</span>
+                                    </label>
+                                </div>
+
+                                <div class="mt-auto">
+                                    <label class="sig-label-dense">MODO DE MOVIMENTAÇÃO TÉCNICO</label>
+                                    <select id="fis-tipo-mov-estoque" class="sig-input-dense w-full">
+                                        <option value="REAL">MOVIMENTAÇÃO REAL</option>
+                                        <option value="RESERVA">SÓ RESERVA</option>
+                                        <option value="SIMBOLICA">ENTREGA SIMBÓLICA</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COLUNA 3 -->
+                    <div class="flex flex-col gap-3">
+                        <!-- BLOCO 04: COMPOSIÇÃO DE CUSTO -->
+                        <div id="section-composicao-custo" class="sig-fieldset-blueprint w-full">
+                            <span class="sig-legend-blueprint">04. COMPOSIÇÃO DE CUSTO</span>
+                            <div class="flex flex-col gap-2">
+                                <div class="bg-indigo-50/50 p-2 rounded border border-indigo-100 flex flex-col gap-2">
+                                    <label class="sig-check-group cursor-pointer">
+                                        <input type="checkbox" id="fis-soma-st-custo" class="sig-checkboxScale">
+                                        <span class="sig-check-label font-bold text-indigo-900 text-[10px]" title="Soma o valor do ICMS-ST recolhido na nota ao custo unitário do produto.">SOMAR ICMS-ST AO CUSTO</span>
+                                    </label>
+                                    <label class="sig-check-group cursor-pointer">
+                                        <input type="checkbox" id="fis-soma-ipi-custo" class="sig-checkboxScale">
+                                        <span class="sig-check-label font-bold text-indigo-900 text-[10px]" title="Soma o valor do IPI (não recuperável em autopeças varejo) ao custo operacional.">SOMAR IPI AO CUSTO</span>
+                                    </label>
+                                </div>
+                                <div class="bg-slate-50 p-2 rounded flex flex-col gap-2 border border-slate-200">
+                                    <label class="sig-check-group cursor-pointer">
+                                        <input type="checkbox" id="fis-soma-frete-custo" class="sig-checkboxScale">
+                                        <span class="sig-check-label" title="Distribui o valor do frete da nota proporcionalmente ao custo de cada item.">SOMAR FRETE AO CUSTO</span>
+                                    </label>
+                                    <label class="sig-check-group cursor-pointer">
+                                        <input type="checkbox" id="fis-soma-despesas-custo" class="sig-checkboxScale">
+                                        <span class="sig-check-label" title="Soma outras despesas acessórias (seguro, embalagem) ao custo dos itens.">SOMAR DESPESAS AO CUSTO</span>
+                                    </label>
+                                    <label class="sig-check-group cursor-pointer">
+                                        <input type="checkbox" id="fis-soma-difal-custo" class="sig-checkboxScale">
+                                        <span class="sig-check-label" title="Soma a Diferença de Alíquota (DIFAL) para compras interestaduais ao custo final.">SOMAR DIFAL AO CUSTO</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- BLOCO 05: REGRAS DE TRIBUTAÇÃO -->
+                        <div class="sig-fieldset-blueprint w-full">
+                            <span class="sig-legend-blueprint">05. REGRAS DE TRIBUTAÇÃO</span>
+                            <div class="flex flex-col gap-2">
+                                <div>
+                                    <label class="sig-label-dense">REGIME TRIBUTÁRIO EMPRESA</label>
+                                    <select id="fis-regime-empresa" class="sig-input-dense w-full font-bold">
+                                        <option value="SIMPLES">SIMPLES NACIONAL</option>
+                                        <option value="PRESUMIDO">LUCRO PRESUMIDO</option>
+                                        <option value="REAL">LUCRO REAL</option>
+                                    </select>
+                                </div>
+                                <div class="grid grid-cols-1 gap-2 mt-1">
+                                    <label class="sig-check-group cursor-pointer">
+                                        <input type="checkbox" id="fis-destaca-icms" class="sig-checkboxScale" checked>
+                                        <span class="sig-check-label" title="Define se o sistema deve imprimir o valor de ICMS no corpo da NF-e e no XML.">DESTACA ICMS NA NOTA</span>
+                                    </label>
+                                    <label class="sig-check-group cursor-pointer">
+                                        <input type="checkbox" id="fis-gera-credito-icms" class="sig-checkboxScale">
+                                        <span class="sig-check-label" title="Indica se a empresa está apta a se creditar do ICMS destacado nesta operação (Lucro Real/Presumido).">GERA CRÉDITO DE ICMS</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+
+        <!-- Footer Modular Blueprint -->
+        <div class="p-3 bg-slate-100 border-t border-slate-300 flex justify-end gap-2 px-6">
+            <button onclick="fecharModal()" class="sig-btn sig-btn-neutral min-w-[100px]">
+                CANCELAR
+            </button>
+            <button onclick="salvar()" class="sig-btn sig-btn-primary min-w-[220px] shadow-md">
+                <span class="material-symbols-outlined !text-base">save</span>
+                EFETIVAR PERFIL FISCAL (F10)
+            </button>
+        </div>
+    </div>
+</div>
+        <!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>SISTEMA CORE - LOGIN</title>
+    <!-- Tailwind CSS v3 -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="stylesheet" href="../../assets/css/sig-ui.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: transparent;
+            overflow: hidden;
+            font-family: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
+            animation: fadeIn 0.25s ease-in-out forwards;
+        }
+
+        /* Arrastar Janela */
+        .drag-region {
+            --wails-drop-target: drop;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            z-index: 50;
+        }
+
+        .login-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            background: white;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+        }
+
+        /* Lado Esquerdo - Importado Modularmente via iframe para dar poder de costumização ao usuário final */
+
+        /* Lado Direito - Card Branco Limpo */
+        .login-main {
+            flex: 1;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            position: relative;
+        }
+
+        .login-card-inner {
+            width: 100%;
+            max-width: 340px;
+        }
+
+        .btn-close-organic {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8fafc;
+            color: #94a3b8;
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 100;
+            border: none;
+        }
+
+        .btn-close-organic:hover {
+            background: #fee2e2;
+            color: #ef4444;
+            transform: rotate(90deg) scale(1.1);
+        }
+
+        .login-card-inner h2 {
+            font-size: 36px;
+            font-weight: 900;
+            color: #1e293b;
+            margin-bottom: 5px;
+            letter-spacing: -1px;
+        }
+
+        .login-card-inner .subtext {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 40px;
+            font-weight: 500;
+        }
+
+        /* Inputs Modernos com Borda Forte (Referência) */
+        .form-row {
+            margin-bottom: 25px;
+        }
+
+        .form-row label {
+            display: block;
+            font-size: 11px;
+            font-weight: 800;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .input-vibrant {
+            width: 100%;
+            height: 52px;
+            padding: 0 16px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #0f172a;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .input-vibrant:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Ocultar "olho" nativo do Windows em inputs password */
+        input[type="password"]::-ms-reveal,
+        input[type="password"]::-ms-clear {
+            display: none !important;
+        }
+
+        /* Servidor Toggle */
+        .server-toggle {
+            display: flex;
+            gap: 15px;
+            margin-top: 5px;
+        }
+
+        .server-opt {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #64748b;
+            cursor: pointer;
+        }
+
+        .server-opt input {
+            accent-color: #3b82f6;
+            cursor: pointer;
+        }
+
+        /* Botão de Sistema */
+        .btn-access-sys {
+            width: 100%;
+            height: 54px;
+            background: #0f172a;
+            color: white;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 800;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 30px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.4);
+        }
+
+        .btn-access-sys:hover {
+            background: #1e293b;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.5);
+        }
+
+        .btn-access-sys:active {
+            transform: translateY(0);
+        }
+
+        .form-footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: #94a3b8;
+        }
+
+        .form-footer a {
+            color: #3b82f6;
+            text-decoration: none;
+            margin: 0 5px;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Drag Region -->
+    <div class="drag-region"></div>
+
+    <div class="login-wrapper">
+        <!-- Arte Lateral com as Texturas da Nova Referência -->
+        <iframe src="./login_design.html"
+            style="flex: 1.2; border: none; overflow: hidden; background: transparent;"></iframe>
+
+        <!-- Área de Login -->
+        <main class="login-main">
+            <!-- Fechar Janela -->
+            <button class="btn-close-organic" onclick="fecharJanela()">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+
+            <div id="login-form-box" class="login-card-inner">
+                <h2>Olá,</h2>
+                <p class="subtext">Sincronize sua credencial para continuar.</p>
+
+                <div id="login-error-box"
+                    style="display: none; background: rgba(239, 68, 68, 0.08); border-radius: 8px; padding: 12px 14px; margin-bottom: 24px; align-items: center; justify-content: flex-start; gap: 8px;">
+                    <span class="material-symbols-outlined" style="color: #ef4444; font-size: 18px;">error</span>
+                    <span id="login-error-text"
+                        style="color: #ef4444; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;"></span>
+                </div>
+
+                <form onsubmit="handleLogin(event)">
+                    <div class="form-row">
+                        <label>Usuário Corporativo</label>
+                        <input type="text" id="username" required class="input-vibrant" placeholder="nome.sobrenome">
+                    </div>
+
+                    <div class="form-row">
+                        <label>Chave de Acesso</label>
+                        <input type="password" id="password" required class="input-vibrant" placeholder="••••••••">
+                    </div>
+
+                    <div class="form-row">
+                        <label>Ambiente de Trabalho</label>
+                        <div class="server-toggle">
+                            <label class="server-opt">
+                                <input type="radio" name="conn" value="local" checked> Operação Local
+                            </label>
+                            <label class="server-opt">
+                                <input type="radio" name="conn" value="remoto"> Acesso Remoto
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-access-sys">ENTRAR NO SISTEMA</button>
+
+                    <div class="form-footer">
+                        <a href="#">Trocar Senha</a>
+                        <span>•</span>
+                        <a href="#">Suporte Direto</a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- TELA DE REDEFINIÇÃO DE SENHA OBRIGATÓRIA (OCULTA POR PADRÃO) -->
+            <div id="reset-form-box" class="login-card-inner" style="display: none;">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 5px;">
+                    <div
+                        style="width: 40px; height: 40px; border-radius: 50%; background: #eff6ff; color: #3b82f6; display: flex; align-items: center; justify-content: center;">
+                        <span class="material-symbols-outlined">lock_reset</span>
+                    </div>
+                    <h2 style="font-size: 24px; margin:0; font-weight: 900; letter-spacing: -1px; color: #1e293b;">
+                        Segurança</h2>
+                </div>
+                <p class="subtext" style="margin-bottom: 25px; line-height: 1.5; padding-left: 2px;">Este é seu primeiro
+                    acesso com a senha padrão. Redefina sua credencial corporativa para continuar.</p>
+
+                <div id="reset-error-box"
+                    style="display: none; background: rgba(239, 68, 68, 0.08); border-radius: 8px; padding: 12px 14px; margin-bottom: 24px; align-items: center; justify-content: flex-start; gap: 8px;">
+                    <span class="material-symbols-outlined" style="color: #ef4444; font-size: 18px;">error</span>
+                    <span id="reset-error-text"
+                        style="color: #ef4444; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;"></span>
+                </div>
+
+                <form onsubmit="handleResetSenha(event)">
+                    <div class="form-row" style="margin-bottom: 22px;">
+                        <label>NOVA CHAVE DE ACESSO</label>
+                        <div style="position: relative;">
+                            <input type="password" id="new-password" required class="input-vibrant"
+                                placeholder="Mínimo 6 dígitos" oninput="validarSenhas()" style="padding-right: 40px;">
+                            <button type="button" onclick="togglePassword('new-password', 'eye-icon-1')"
+                                style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #94a3b8; display: flex; align-items: center; justify-content: center;">
+                                <span id="eye-icon-1" class="material-symbols-outlined"
+                                    style="font-size: 20px;">visibility</span>
+                            </button>
+                        </div>
+                        <!-- BARRA DE FORÇA (3 NÍVEIS) -->
+                        <div style="display: flex; gap: 4px; margin-top: 8px; height: 4px;">
+                            <div id="str-1"
+                                style="flex: 1; background: #e2e8f0; border-radius: 2px; transition: background 0.3s;">
+                            </div>
+                            <div id="str-2"
+                                style="flex: 1; background: #e2e8f0; border-radius: 2px; transition: background 0.3s;">
+                            </div>
+                            <div id="str-3"
+                                style="flex: 1; background: #e2e8f0; border-radius: 2px; transition: background 0.3s;">
+                            </div>
+                        </div>
+                        <span id="str-text"
+                            style="font-size: 10px; font-weight: 800; color: #94a3b8; display: block; margin-top: 4px; text-transform: uppercase;"></span>
+                    </div>
+
+                    <div class="form-row" style="margin-bottom: 24px;">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <label style="margin: 0;">CONFIRMAÇÃO</label>
+                            <span id="pass-feedback"
+                                style="font-size: 10px; font-weight: 800; color: #ef4444; text-transform: uppercase;"></span>
+                        </div>
+                        <div style="position: relative;">
+                            <input type="password" id="new-password-confirm" required class="input-vibrant"
+                                placeholder="Repita a senha" oninput="validarSenhas()" style="padding-right: 40px;">
+                            <button type="button" onclick="togglePassword('new-password-confirm', 'eye-icon-2')"
+                                style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #94a3b8; display: flex; align-items: center; justify-content: center;">
+                                <span id="eye-icon-2" class="material-symbols-outlined"
+                                    style="font-size: 20px;">visibility</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="btn-reset" class="btn-access-sys"
+                        style="background: #94a3b8; box-shadow: none; cursor: not-allowed; transition: all 0.3s;"
+                        disabled>ATUALIZAR CREDENCIAL</button>
+
+                    <button type="button" onclick="cancelarReset()"
+                        style="width: 100%; margin-top: 15px; background: transparent; border: none; font-size: 13px; font-weight: 700; color: #64748b; cursor: pointer;">Cancelar
+                        e Voltar</button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function fecharJanela() {
+            if (window.runtime) window.runtime.Quit();
+        }
+
+        function mostrarErroReversivel(boxId, textId, msg) {
+            const errorBox = document.getElementById(boxId);
+            const errorText = document.getElementById(textId);
+            errorText.innerText = msg;
+            errorBox.style.display = 'flex';
+            setTimeout(() => {
+                errorBox.style.display = 'none';
+            }, 5000);
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span class="animate-pulse">AUTENTICANDO...</span>';
+            btn.disabled = true;
+
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value.trim();
+
+            try {
+                const goEngine = window.parent.go || window.go;
+                if (!goEngine) {
+                    mostrarErroReversivel('login-error-box', 'login-error-text', 'Acesso Negado: App offline.');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                    return;
+                }
+
+                // Dispara pro BACKEND do GO as credenciais
+                const res = await goEngine.main.App.AutenticarLogin(user, pass);
+                if (res.status === "ok") {
+                    // VERIFICAR PRIMEIRO ACESSO
+                    if (res.usuario.precisa_alterar_senha) {
+                        window._tempLoggedUser = res.usuario;
+                        document.getElementById('login-form-box').style.display = 'none';
+                        document.getElementById('reset-form-box').style.display = 'block';
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                        return; // Para o fluxo aqui!
+                    }
+
+                    btn.innerHTML = '<span class="text-green-300">ACESSO AUTORIZADO</span>';
+                    
+                    // Fade out pro Hub (Crossfade)
+                    document.body.style.transition = 'opacity 0.25s ease-in-out';
+                    document.body.style.opacity = '0';
+                    
+                    setTimeout(() => {
+                        if (window.parent) {
+                            window.parent.postMessage({ type: 'LOGIN_SUCCESS', usuario: res.usuario }, '*');
+                        }
+                    }, 250);
+                } else {
+                    mostrarErroReversivel('login-error-box', 'login-error-text', res.mensagem);
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                mostrarErroReversivel('login-error-box', 'login-error-text', "Falha de Comunicação: " + err);
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        async function handleResetSenha(e) {
+            e.preventDefault();
+            const pass1 = document.getElementById('new-password').value;
+            const pass2 = document.getElementById('new-password-confirm').value;
+
+            if (pass1 !== pass2) {
+                mostrarErroReversivel('reset-error-box', 'reset-error-text', "ERRO: As novas credenciais não coincidem!");
+                return;
+            }
+            if (pass1.length < 6) {
+                mostrarErroReversivel('reset-error-box', 'reset-error-text', "ERRO: A credencial deve ter no mínimo 6 caracteres!");
+                return;
+            }
+
+            const btn = e.target.querySelector('button');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span class="animate-pulse">ATUALIZANDO...</span>';
+            btn.disabled = true;
+
+            try {
+                const goEngine = window.parent.go || window.go;
+                const res = await goEngine.main.App.AlterarSenhaOperadorLogado(pass1);
+
+                if (res === "OK") {
+                    btn.innerHTML = '<span style="color: white;">CONCLUÍDO! INICIANDO...</span>';
+
+                    // Como a senha foi atualizada no banco e na memória, podemos prosseguir pro Hub!
+                    if (window._tempLoggedUser) {
+                        window._tempLoggedUser.precisa_alterar_senha = false;
+                    }
+                    setTimeout(() => {
+                        if (window.parent) {
+                            window.parent.postMessage({ type: 'LOGIN_SUCCESS', usuario: window._tempLoggedUser }, '*');
+                        }
+                    }, 800);
+                } else {
+                    mostrarErroReversivel('reset-error-box', 'reset-error-text', "Erro ao redefinir a credencial: " + res);
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                mostrarErroReversivel('reset-error-box', 'reset-error-text', "Falha Global: " + err);
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        function togglePassword(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.innerText = 'visibility_off';
+            } else {
+                input.type = 'password';
+                icon.innerText = 'visibility';
+            }
+        }
+
+        function analisarForca(v1) {
+            const str1 = document.getElementById('str-1');
+            const str2 = document.getElementById('str-2');
+            const str3 = document.getElementById('str-3');
+            const txt = document.getElementById('str-text');
+
+            if (v1.length === 0) {
+                str1.style.background = '#e2e8f0';
+                str2.style.background = '#e2e8f0';
+                str3.style.background = '#e2e8f0';
+                txt.innerText = '';
+                return;
+            }
+
+            if (v1.length < 6) {
+                str1.style.background = '#ef4444'; // Vermelho
+                str2.style.background = '#e2e8f0';
+                str3.style.background = '#e2e8f0';
+                txt.innerText = 'FRACA';
+                txt.style.color = '#ef4444';
+            } else {
+                // Tem 6 ou mais caracteres
+                const temLetra = /[a-zA-Z]/.test(v1);
+                const temNumero = /[0-9]/.test(v1);
+                const temEspecial = /[^a-zA-Z0-9]/.test(v1);
+
+                if ((temLetra && !temNumero && !temEspecial) || (!temLetra && temNumero && !temEspecial)) {
+                    // Só letras ou só números
+                    str1.style.background = '#f59e0b'; // Amarelo
+                    str2.style.background = '#f59e0b';
+                    str3.style.background = '#e2e8f0';
+                    txt.innerText = 'MÉDIA (ADICIONE NÚMEROS E LETRAS PARA + SEGURANÇA)';
+                    txt.style.color = '#f59e0b';
+                } else {
+                    // Mista = Forte
+                    str1.style.background = '#10b981'; // Verde
+                    str2.style.background = '#10b981';
+                    str3.style.background = '#10b981';
+                    txt.innerText = 'FORTE (ÓTIMA SELEÇÃO)';
+                    txt.style.color = '#10b981';
+                }
+            }
+        }
+
+        function validarSenhas() {
+            const v1 = document.getElementById('new-password').value;
+            const v2 = document.getElementById('new-password-confirm').value;
+            const btn = document.getElementById('btn-reset');
+            const feedback = document.getElementById('pass-feedback');
+
+            analisarForca(v1);
+
+            if (v1.length === 0 && v2.length === 0) {
+                feedback.innerText = '';
+                desativarBtn(btn);
+                return;
+            }
+            if (v1.length > 0 && v1.length < 6) {
+                feedback.innerText = '';
+                desativarBtn(btn);
+                return;
+            }
+            if (v2.length > 0 && v1 !== v2) {
+                feedback.innerText = 'NÃO CONFERE';
+                feedback.style.color = '#ef4444';
+                desativarBtn(btn);
+                return;
+            }
+            if (v1 === v2 && v1.length >= 6) {
+                feedback.innerText = 'VÁLIDA ✓';
+                feedback.style.color = '#10b981';
+                ativarBtn(btn);
+            }
+        }
+
+        function desativarBtn(btn) {
+            btn.disabled = true;
+            btn.style.background = '#94a3b8';
+            btn.style.boxShadow = 'none';
+            btn.style.cursor = 'not-allowed';
+        }
+        function ativarBtn(btn) {
+            btn.disabled = false;
+            btn.style.background = '#10b981';
+            btn.style.boxShadow = '0 10px 20px rgba(16,185,129,0.2)';
+            btn.style.cursor = 'pointer';
+        }
+        function cancelarReset() {
+            document.getElementById('reset-form-box').style.display = 'none';
+            document.getElementById('login-form-box').style.display = 'block';
+            document.getElementById('new-password').value = '';
+            document.getElementById('new-password-confirm').value = '';
+            validarSenhas();
+        }
+    </script>

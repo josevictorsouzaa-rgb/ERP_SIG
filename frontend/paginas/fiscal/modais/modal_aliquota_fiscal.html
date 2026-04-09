@@ -1,0 +1,136 @@
+<div id="modal-aliquota-fiscal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-[1000] p-4 font-sans">
+    <div class="bg-white w-full max-w-[900px] rounded-md shadow-2xl overflow-hidden border border-slate-400 animate-in fade-in zoom-in duration-200 h-fit max-h-[95vh] flex flex-col">
+        
+        <!-- Header do Modal (Pattern SIG V3 UIKit) -->
+        <div class="bg-slate-50 p-2 px-4 flex justify-between items-center border-b border-slate-300 shrink-0">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-slate-500 !text-base">percent</span>
+                <h3 id="modal-aliquota-titulo" class="text-slate-700 font-bold text-[11px] uppercase tracking-wider italic">Configuração de Alíquota Fiscal</h3>
+            </div>
+            <button onclick="fecharModalAliquota()" class="sig-btn-close !w-7 !h-7">
+                <span class="material-symbols-outlined !text-base">close</span>
+            </button>
+        </div>
+
+        <!-- Conteúdo do Modal (Alta Densidade) -->
+        <div class="p-6 overflow-y-auto bg-white flex-1 custom-scrollbar">
+            <form id="form-aliquota" class="space-y-6">
+                <!-- BLOCO 1: CONDIÇÕES -->
+                <div class="sig-fieldset-blueprint">
+                    <span class="sig-legend-blueprint text-blue-700 bg-blue-50">01. CONDIÇÕES DE APLICAÇÃO</span>
+                    <div class="grid grid-cols-12 gap-x-4 gap-y-4 pt-2">
+                        <div class="col-span-12 md:col-span-3">
+                            <label class="sig-label-dense flex items-center gap-1">REGIME TRIBUTÁRIO <span class="material-symbols-outlined !text-[10px] text-slate-400 cursor-help" title="Regime tributário da empresa que emite a nota.">help</span></label>
+                            <select id="ali-regime" class="sig-input-dense w-full">
+                                <option value="TODOS">TODOS</option>
+                                <option value="SIMPLES">SIMPLES NACIONAL</option>
+                                <option value="PRESUMIDO">LUCRO PRESUMIDO</option>
+                                <option value="REAL">LUCRO REAL</option>
+                            </select>
+                        </div>
+                        <div class="col-span-12 md:col-span-3">
+                            <label class="sig-label-dense flex items-center gap-1">TIPO DESTINO <span class="material-symbols-outlined !text-[10px] text-slate-400 cursor-help" title="Localidade do destinatário da mercadoria.">help</span></label>
+                            <select id="ali-tipo-destino" class="sig-input-dense w-full">
+                                <option value="TODOS">TODOS</option>
+                                <option value="INTERNA">INTERNA (ESTADUAL)</option>
+                                <option value="INTERESTADUAL">INTERESTADUAL (OUTRAS UFS)</option>
+                                <option value="INTERNACIONAL">INTERNACIONAL (EXPORTAÇÃO)</option>
+                            </select>
+                        </div>
+                        <div class="col-span-12 md:col-span-3">
+                            <label class="sig-label-dense flex items-center gap-1">INCIDÊNCIA ST <span class="material-symbols-outlined !text-[10px] text-slate-400 cursor-help" title="Se o item possui ou não substituição tributária.">help</span></label>
+                            <select id="ali-incide-st" class="sig-input-dense w-full">
+                                <option value="TODOS">TODOS</option>
+                                <option value="SIM">COM SUBSTITUIÇÃO (ST)</option>
+                                <option value="NAO">SEM SUBSTITUIÇÃO (NÃO ST)</option>
+                            </select>
+                        </div>
+                        <div class="col-span-12 md:col-span-3">
+                            <label class="sig-label-dense">PRIORIDADE DA REGRA</label>
+                            <select id="ali-prioridade" class="sig-input-dense w-full font-black text-indigo-600">
+                                <option value="PADRÃO">PADRÃO</option>
+                                <option value="ALTA">ALTA</option>
+                                <option value="CRÍTICA">CRÍTICA (EXCEÇÃO)</option>
+                            </select>
+                        </div>
+                        <div class="col-span-12 md:col-span-4">
+                            <label class="sig-label-dense">NCM (PREFIXO)</label>
+                            <input type="text" id="ali-ncm" placeholder="EX: 8708" class="sig-input-dense w-full font-mono text-center tracking-widest uppercase">
+                        </div>
+                        <div class="col-span-12 md:col-span-4">
+                            <label class="sig-label-dense">CFOP ESPECÍFICO</label>
+                            <input type="text" id="ali-cfop" placeholder="EX: 5102" class="sig-input-dense w-full font-mono text-center tracking-widest">
+                        </div>
+                        <div class="col-span-12 md:col-span-4">
+                            <label class="sig-label-dense">CST / CSOSN ESPECÍFICO</label>
+                            <input type="text" id="ali-cst" placeholder="EX: 102" class="sig-input-dense w-full font-mono text-center tracking-widest">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BLOCO 2: ALÍQUOTAS -->
+                <div class="sig-fieldset-blueprint">
+                    <span class="sig-legend-blueprint text-indigo-700 bg-indigo-50">02. PERCENTUAIS DAS ALÍQUOTAS (%)</span>
+                    <div class="grid grid-cols-12 gap-x-4 gap-y-4 pt-2">
+                        <div class="col-span-6 md:col-span-3">
+                            <label class="sig-label-dense text-indigo-600 font-bold border-b border-indigo-100 mb-1">ICMS (%)</label>
+                            <input type="number" id="ali-icms" step="0.01" value="0.00" class="sig-input-dense w-full font-black text-blue-700 text-center text-sm shadow-inner">
+                        </div>
+                        <div class="col-span-6 md:col-span-3">
+                            <label class="sig-label-dense text-indigo-600 font-bold border-b border-indigo-100 mb-1">ICMS-ST (%)</label>
+                            <input type="number" id="ali-icms-st" step="0.01" value="0.00" class="sig-input-dense w-full font-black text-blue-700 text-center text-sm shadow-inner">
+                        </div>
+                        <div class="col-span-6 md:col-span-3">
+                            <label class="sig-label-dense text-indigo-600 font-bold border-b border-indigo-100 mb-1">IPI (%)</label>
+                            <input type="number" id="ali-ipi" step="0.01" value="0.00" class="sig-input-dense w-full font-black text-blue-700 text-center text-sm shadow-inner">
+                        </div>
+                        <div class="col-span-6 md:col-span-3">
+                            <label class="sig-label-dense text-indigo-600 font-bold border-b border-indigo-100 mb-1">PIS (%)</label>
+                            <input type="number" id="ali-pis" step="0.01" value="0.00" class="sig-input-dense w-full font-black text-blue-700 text-center text-sm shadow-inner">
+                        </div>
+                        <div class="col-span-6 md:col-span-3">
+                            <label class="sig-label-dense text-indigo-600 font-bold border-b border-indigo-100 mb-1">COFINS (%)</label>
+                            <input type="number" id="ali-cofins" step="0.01" value="0.00" class="sig-input-dense w-full font-black text-blue-700 text-center text-sm shadow-inner">
+                        </div>
+                        <div class="col-span-6 md:col-span-3">
+                            <label class="sig-label-dense text-indigo-600 font-bold border-b border-indigo-100 mb-1">DIFAL (%)</label>
+                            <input type="number" id="ali-difal" step="0.01" value="0.00" class="sig-input-dense w-full font-black text-blue-700 text-center text-sm shadow-inner">
+                        </div>
+                        <div class="col-span-6 md:col-span-3">
+                            <label class="sig-label-dense text-indigo-600 font-bold border-b border-indigo-100 mb-1">FCP (%)</label>
+                            <input type="number" id="ali-fcp" step="0.01" value="0.00" class="sig-input-dense w-full font-black text-blue-700 text-center text-sm shadow-inner">
+                        </div>
+                        <div class="col-span-12 flex items-center justify-center p-2 bg-slate-50 border border-slate-200 rounded text-[9px] font-bold text-slate-400 uppercase italic">
+                            <span class="material-symbols-outlined !text-xs mr-2">info</span> Defina os percentuais conforme a legislação vigente para este cenário tributário.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BLOCO 3: CONTROLE -->
+                <div class="sig-fieldset-blueprint bg-slate-50 border-slate-300">
+                    <span class="sig-legend-blueprint text-slate-700 bg-slate-200 border-slate-300">03. IDENTIFICAÇÃO E STATUS</span>
+                    <div class="grid grid-cols-12 gap-x-4 gap-y-4 pt-2 items-center">
+                        <div class="col-span-12 md:col-span-10">
+                            <label class="sig-label-dense font-black">NOME DESCRITIVO / APELIDO DA REGRA</label>
+                            <input type="text" id="ali-nome" class="sig-input-dense w-full font-bold uppercase border-slate-300" placeholder="EX: ALÍQUOTA PADRÃO SIMPLES">
+                        </div>
+                        <div class="col-span-12 md:col-span-2 pt-4">
+                            <label class="sig-check-group cursor-pointer">
+                                <input type="checkbox" id="ali-ativa" class="sig-checkboxScale" checked>
+                                <span class="sig-check-label font-bold text-[10px]">ATIVO</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Footer do Modal (UIKit Pattern) -->
+        <div class="p-3 bg-slate-50 border-t border-slate-200 flex justify-end gap-2 px-6 shrink-0">
+            <button onclick="fecharModalAliquota()" class="sig-btn text-slate-500 hover:bg-slate-200 uppercase text-[10px] font-bold">Cancelar</button>
+            <button onclick="salvarAliquota()" class="sig-btn sig-btn-primary min-w-[200px] uppercase text-[10px] font-black tracking-widest shadow-lg shadow-blue-500/10">
+                Efetivar Alíquotas (F10)
+            </button>
+        </div>
+    </div>
+</div>

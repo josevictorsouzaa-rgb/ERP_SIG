@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>SIG - SELECIONAR PRODUTOS</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'sig-blue': '#1e40af',
+                        'sig-blue-dark': '#001b2b',
+                        'sig-brand-cyan': '#00e5ff',
+                        'sig-border': '#cbd5e1',
+                        'sig-bg-light': '#f8fafc'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="../../assets/css/sig-ui.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@300..700,0..1&display=swap"
+        rel="stylesheet" />
+    <style>
+        .aba-ativa {
+            background-color: white !important;
+            border-bottom-color: white !important;
+            color: #1e40af !important;
+            font-weight: 800 !important;
+        }
+
+        /* Alta Performance: Seleção de Linha de Alto Contraste */
+        .sig-row-selected {
+            background-color: #1e40af !important;
+            color: #ffffff !important;
+        }
+
+        .sig-row-selected td {
+            color: #ffffff !important;
+            border-right-color: rgba(255, 255, 255, 0.1) !important;
+            border-bottom-color: rgba(255, 255, 255, 0.05) !important;
+        }
+
+        .sig-row-selected .font-mono {
+            color: #ffffff !important;
+            font-weight: 800;
+        }
+
+        .sig-row-selected .material-symbols-outlined {
+            color: #ffffff !important;
+        }
+    </style>
+</head>
+
+<body class="flex flex-col h-screen overflow-hidden text-slate-800 bg-[#f8fafc]">
+
+    <!-- CABEÇALHO COMPACTO DO MODAL -->
+    <header class="bg-slate-50 p-2 px-4 flex justify-between items-center border-b border-slate-300 shrink-0">
+        <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-slate-500 text-[14px]">shopping_cart_checkout</span>
+            <h3 class="text-slate-700 font-bold text-[11px] uppercase tracking-wider">Selecionar Itens para Pedido</h3>
+        </div>
+        
+        <div class="flex items-center gap-3">
+            <button onclick="fecharJanelaSelecao()" class="sig-btn-close !w-7 !h-7">
+                <span class="material-symbols-outlined !text-base">close</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- ÁREA DE NAVEGAÇÃO DE ABAS (Toda a extremidade) -->
+    <div class="bg-[#f8fafc] w-full pt-3 px-4 border-b border-slate-300 shrink-0 flex items-end">
+        <div class="sig-tabs !mb-0 !border-b-0 w-full max-w-[500px]" style="margin-bottom: -1px;">
+            <div class="sig-tab ativa flex-1 text-center" onclick="mudarAbaPesquisa('catalogo')" id="btn-catalogo">CATÁLOGO DE PRODUTOS (F2)</div>
+            <div class="sig-tab flex-1 text-center" onclick="mudarAbaPesquisa('solicitacoes')" id="btn-solicitacoes">SOLICITAÇÕES DE COMPRA (F3)</div>
+        </div>
+    </div>
+
+    <!-- ÁREA DE TRABALHO -->
+    <main class="flex-1 overflow-hidden bg-[#f8fafc] relative">
+
+        <!-- VISUALIZAÇÃO DE PESQUISA (Sempre Ativa) -->
+        <div id="aba-f2" class="w-full h-full p-0 flex flex-col bg-[#f8fafc]">
+            <!-- INTEGRAÇÃO DRY: Utilizando o módulo nativo do catálogo isolado para manter apenas UM design fiel! -->
+            <iframe id="iframe-catalogo" src="../pesquisa_produtos/pesquisa_produtos.html" class="w-full h-full border-0"></iframe>
+        </div> <!-- /FIM PESQUISA -->
+
+        <!-- ABA SOLICITAÇÕES (Oculta por Padrão) -->
+        <div id="aba-solicitacoes" class="w-full h-full p-4 flex flex-col bg-[#f8fafc] hidden">
+            
+            <!-- BLOCO 1: FILTROS DE SOLICITAÇÃO -->
+            <div class="sig-fieldset-container mt-0 shrink-0 w-full bg-white shadow-sm border border-slate-300 rounded-sm">
+                <div class="sig-fieldset-header bg-slate-50 border-b border-slate-200 text-slate-700 flex justify-between items-center h-8 px-3">
+                    <div class="flex items-center gap-1.5 uppercase font-bold text-[10px] tracking-widest">
+                        <span class="material-symbols-outlined text-sig-blue !text-[16px]">filter_alt</span>
+                        FILTROS DE SOLICITAÇÕES
+                    </div>
+                </div>
+                <div class="sig-fieldset-content p-3 flex flex-wrap gap-3 items-end">
+                    <div class="flex-1 min-w-[250px] transition-all duration-300" id="filtro-busca-container">
+                        <label class="sig-label-dense">BUSCAR SOLICITAÇÃO (PRODUTO, OBS OU CÓD.)</label>
+                        <div class="relative">
+                            <span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 text-[16px]">search</span>
+                            <input type="text" class="sig-input-dense w-full uppercase pl-8 text-[12px] font-bold text-slate-700" placeholder="O QUE VOCÊ ESTÁ PROCURANDO?">
+                        </div>
+                    </div>
+
+                    <div class="w-[200px]">
+                        <label class="sig-label-dense">SITUAÇÃO DO SISTEMA</label>
+                        <select class="sig-input-dense w-full font-bold">
+                            <option value="TODOS">TODAS SOLICITAÇÕES</option>
+                            <option value="COM_CADASTRO">COM CÓDIGO (CADASTRADO)</option>
+                            <option value="SEM_CADASTRO">SEM CÓDIGO (NOVO)</option>
+                        </select>
+                    </div>
+
+                    <div class="w-[125px] transition-all duration-300">
+                        <label class="sig-label-dense">DATA (DE)</label>
+                        <input type="date" class="sig-input-dense w-full font-mono text-center cursor-pointer">
+                    </div>
+
+                    <div class="w-[125px] transition-all duration-300">
+                        <label class="sig-label-dense">DATA (ATÉ)</label>
+                        <input type="date" class="sig-input-dense w-full font-mono text-center cursor-pointer">
+                    </div>
+
+                    <div class="flex gap-2 w-auto shrink-0">
+                        <button class="sig-btn sig-btn-primary px-4 flex items-center justify-center gap-1 shadow-sm h-[28px] mt-[18px]" title="Filtrar Resultados (F8)">
+                            <span class="material-symbols-outlined text-[16px]">search</span> FILTRAR
+                        </button>
+                        <button class="bg-slate-50 border border-slate-300 text-slate-700 font-bold uppercase tracking-tight text-[11px] px-3 flex items-center justify-center gap-1.5 shadow-sm h-[28px] mt-[18px] hover:bg-slate-100 transition-colors rounded-sm group" title="Limpar Filtros (F9)">
+                            <span class="material-symbols-outlined text-[16px] text-orange-700 group-hover:rotate-180 transition-transform duration-300">history</span> LIMPAR (F9)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOCO 2: LISTA DE SOLICITAÇÕES -->
+            <div class="flex-1 flex flex-col min-h-0 relative overflow-hidden mb-2 mt-4">
+                <div class="sig-tabs !mb-0 border-b-0" style="margin-bottom: -1px; padding-left: 2px;">
+                    <div class="sig-tab ativa uppercase font-bold tracking-tight text-[11px] h-9 transition-colors cursor-pointer px-6" onclick="filtrarStatusOperacional(this, 'PENDENTES')">
+                        PENDENTES <span id="badge-pendentes" class="bg-blue-100 text-blue-800 ml-1.5 px-1.5 py-[1px] rounded-sm font-black text-[10px]">0</span>
+                    </div>
+                    <div class="sig-tab uppercase font-bold tracking-tight text-[11px] h-9 transition-colors cursor-pointer px-6" onclick="filtrarStatusOperacional(this, 'EM ANDAMENTO')">
+                        EM ANDAMENTO <span id="badge-andamento" class="bg-slate-100 text-slate-500 ml-1.5 px-1.5 py-[1px] rounded-sm font-black text-[10px]">0</span>
+                    </div>
+                    <div class="sig-tab uppercase font-bold tracking-tight text-[11px] h-9 transition-colors cursor-pointer px-6" onclick="filtrarStatusOperacional(this, 'CONCLUIDAS')">
+                        CONCLUÍDAS <span id="badge-concluidas" class="bg-slate-100 text-slate-500 ml-1.5 px-1.5 py-[1px] rounded-sm font-black text-[10px]">0</span>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-slate-300 rounded-sm shadow-sm flex-1 overflow-hidden relative flex flex-col z-10">
+                    <div class="overflow-y-auto flex-1 h-full w-full">
+                        <table class="sig-table sig-table-sm w-full">
+                            <thead class="bg-slate-100 sticky top-0 shadow-sm z-10 border-b border-slate-300">
+                                <tr>
+                                    <th class="w-[120px] whitespace-nowrap text-center">Data</th>
+                                    <th class="w-40">Solicitante</th>
+                                    <th>Produto Desejado</th>
+                                    <th class="w-32 text-center">Qtd Solicitada</th>
+                                    <th class="w-32 text-center">Tem Cadastro?</th>
+                                    <th class="w-32 text-center">Status</th>
+                                    <th class="w-[140px] text-center">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-solicitacoes">
+                                <!-- Renderizado via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div> <!-- /FIM SOLICITAÇÕES -->
+
+        <!-- O MODAL DE CADASTRO F3 FOI MOVIDO PARA O COMPONENTE GLOBAL: modal_produto.js -->
+    </main>
+
+    <!-- MENU DE CONTEXTO (Botão Direito) -->
+    <div id="context-menu"
+        class="hidden fixed bg-white border border-slate-300 shadow-xl z-[999] py-1 rounded-sm w-48 animate-in fade-in zoom-in duration-100">
+        <div onclick="if(window.copiarCadastro) window.copiarCadastro()"
+            class="flex items-center gap-3 px-4 py-2 hover:bg-blue-50 cursor-pointer text-slate-700 hover:text-blue-800 transition-colors">
+            <span class="material-symbols-outlined text-blue-600 text-[18px]">content_copy</span>
+            <span class="text-[11px] font-bold uppercase tracking-wide">Copiar Cadastro</span>
+        </div>
+        <div class="border-t border-slate-100 my-1"></div>
+        <div onclick="if(window.abrirCadastroProduto) window.abrirCadastroProduto(true)"
+            class="flex items-center gap-3 px-4 py-2 hover:bg-slate-50 cursor-pointer text-slate-700 transition-colors">
+            <span class="material-symbols-outlined text-slate-500 text-[18px]">edit</span>
+            <span class="text-[11px] font-bold uppercase tracking-wide">Editar Registro</span>
+        </div>
+    </div>
+
+    <!-- O rodapé foi removido a pedido do usuário -->
+    <!-- MODAL DE ZOOM DA IMAGEM -->
+    <div id="modal-zoom" class="sig-modal-overlay hidden" onclick="fecharZoomImagem()">
+        <div class="relative bg-white p-2 rounded-md shadow-2xl max-w-4xl max-h-full flex flex-col"
+            onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-2 px-2">
+                <span class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Visualização Técnica do
+                    Item</span>
+                <button onclick="fecharZoomImagem()" class="text-slate-400 hover:text-red-500 transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="bg-slate-100 p-4 border border-slate-200 rounded-sm">
+                <img id="img-zoom-target" src="" class="max-w-full max-h-[70vh] object-contain" alt="Zoom">
+            </div>
+            <div class="mt-4 flex justify-end">
+                <button onclick="fecharZoomImagem()"
+                    class="bg-slate-800 text-white font-bold text-[10px] px-6 py-2 rounded-sm uppercase tracking-widest hover:bg-black transition-colors">Fechar
+                    (ESC)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL NOVA APLICAÇÃO -->
+    <div id="modal-nova-aplicacao" class="sig-modal-overlay hidden">
+        <div class="bg-white w-[500px] rounded-md shadow-2xl flex flex-col animate-in fade-in zoom-in duration-150">
+            <div class="bg-[#f8fafc] p-2 px-4 flex justify-between items-center border-b border-slate-300">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-blue-600 text-sm">directions_car</span>
+                    <h3 class="text-slate-700 font-bold text-[11px] uppercase tracking-wider">Nova Aplicação Técnica
+                    </h3>
+                </div>
+                <button onclick="fecharModalAplicacao()" class="sig-btn-close !w-7 !h-7">
+                    <span class="material-symbols-outlined !text-base">close</span>
+                </button>
+            </div>
+            <div class="p-5 grid grid-cols-2 gap-4">
+                <div class="col-span-1">
+                    <label class="sig-label">Marca Veículo</label>
+                    <select id="app-marca" class="sig-input w-full">
+                        <option value="VW">VOLKSWAGEN</option>
+                        <option value="FIAT">FIAT</option>
+                        <option value="CHEVROLET">CHEVROLET</option>
+                        <option value="FORD">FORD</option>
+                        <option value="TOYOTA">TOYOTA</option>
+                    </select>
+                </div>
+                <div class="col-span-1">
+                    <label class="sig-label">Modelo</label>
+                    <input type="text" id="app-modelo" class="sig-input w-full uppercase" placeholder="EX: GOL G5">
+                </div>
+                <div class="col-span-2">
+                    <label class="sig-label">Motorização / Versão</label>
+                    <input type="text" id="app-motor" class="sig-input w-full uppercase" placeholder="EX: 1.6 8V">
+                </div>
+                <div>
+                    <label class="sig-label">Ano Início</label>
+                    <input type="text" id="app-ano-inicio" class="sig-input w-full text-center" placeholder="2000">
+                </div>
+                <div>
+                    <label class="sig-label">Ano Fim</label>
+                    <input type="text" id="app-ano-fim" class="sig-input w-full text-center" placeholder="2024">
+                </div>
+            </div>
+            <div class="bg-slate-100 p-3 border-t border-slate-300 flex justify-end gap-2">
+                <button onclick="fecharModalAplicacao()"
+                    class="sig-btn text-slate-500 hover:bg-slate-200 px-6 h-9 font-bold">CANCELAR</button>
+                <button onclick="confirmarNovaAplicacao()" class="sig-btn sig-btn-primary px-8 h-9 shadow-lg">CONFIRMAR
+                    INCLUSÃO</button>
+            </div>
+        </div>
+    </div>
+    <div id="modal-selecao-marca" class="sig-modal-overlay hidden">
+        <div
+            class="bg-white w-[420px] h-[520px] rounded-md shadow-2xl flex flex-col animate-in fade-in zoom-in duration-150">
+            <div class="bg-[#f8fafc] p-2 px-4 flex justify-between items-center border-b border-slate-300 shrink-0">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-slate-500 text-sm">label</span>
+                    <h3 class="text-slate-700 font-bold text-[11px] uppercase tracking-wider">Selecionar Marca
+                        Fabricante</h3>
+                </div>
+                <button onclick="fecharSelecaoMarca()" class="sig-btn-close !w-7 !h-7">
+                    <span class="material-symbols-outlined !text-base">close</span>
+                </button>
+            </div>
+            <div class="p-4 bg-slate-50 border-b border-slate-200">
+                <div class="relative">
+                    <input type="text" id="filtro-marcas" class="sig-input-dense w-full !pl-10"
+                        placeholder="Digite para filtrar marcas..." oninput="filtrarMarcas(this.value)">
+                    <span
+                        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 !text-lg">filter_alt</span>
+                </div>
+            </div>
+            <div class="flex-1 overflow-y-auto bg-white custom-scrollbar">
+                <table class="sig-table w-full">
+                    <thead class="sticky top-0 bg-slate-100 shadow-sm z-10">
+                        <tr>
+                            <th class="w-20 text-center">ID SISTEMA</th>
+                            <th>NOME DA MARCA / FABRICANTE</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lista-marcas">
+                        <!-- Renderizado via JS -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="bg-slate-100 px-4 py-2 border-t border-slate-300 flex justify-end shrink-0">
+                <button onclick="fecharSelecaoMarca()"
+                    class="sig-btn text-slate-500 hover:bg-slate-200 px-6 h-8 text-[11px] font-bold">FECHAR JANELA
+                    (ESC)</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Atualiza Relógio do Rodapé
+        setInterval(() => {
+            const agora = new Date();
+            const el = document.getElementById('data-hora-footer');
+            if (el) el.innerText = agora.toLocaleString('pt-br');
+        }, 1000);
+
+        // LOGICA DE ABAS ESTILIZADAS E STATUS DA ABA SOLICITAÇÕES
+        function filtrarStatusOperacional(abaClicada, statusFiltro) {
+            const abasContainer = abaClicada.closest('.sig-tabs');
+            abasContainer.querySelectorAll('.sig-tab').forEach(aba => {
+                aba.classList.remove('ativa');
+                const badge = aba.querySelector('span');
+                if(badge) {
+                    badge.classList.remove('bg-blue-100', 'text-blue-800');
+                    badge.classList.add('bg-slate-100', 'text-slate-500');
+                }
+            });
+            abaClicada.classList.add('ativa');
+            const novoBadge = abaClicada.querySelector('span');
+            if(novoBadge) {
+                novoBadge.classList.remove('bg-slate-100', 'text-slate-500');
+                novoBadge.classList.add('bg-blue-100', 'text-blue-800');
+            }
+
+            const linhas = document.querySelectorAll('.sol-linha');
+            linhas.forEach(linha => {
+                const trStatus = linha.getAttribute('data-status');
+                if(trStatus === statusFiltro) linha.style.display = 'table-row';
+                else linha.style.display = 'none';
+            });
+        }
+
+        function recalcularBadges() {
+            const linhas = document.querySelectorAll('.sol-linha');
+            let pendentes = 0, andamento = 0, concluidas = 0;
+            linhas.forEach(linha => {
+                const s = linha.getAttribute('data-status');
+                if(s === 'PENDENTES') pendentes++;
+                if(s === 'EM ANDAMENTO') andamento++;
+                if(s === 'CONCLUIDAS') concluidas++;
+            });
+
+            const bPen = document.getElementById('badge-pendentes');
+            if(bPen) bPen.innerText = pendentes;
+            
+            const bAnd = document.getElementById('badge-andamento');
+            if(bAnd) bAnd.innerText = andamento;
+            
+            const bCon = document.getElementById('badge-concluidas');
+            if(bCon) bCon.innerText = concluidas;
+        }
+
+        function getGoEngine() {
+            try {
+                let win = window;
+                let depth = 0;
+                while(win && depth < 5) {
+                    if(win.go) return win.go;
+                    if(win === win.parent) break;
+                    win = win.parent;
+                    depth++;
+                }
+            } catch(e) {
+                return { error: "cross-origin ou outro: " + e.message };
+            }
+            return null;
+        }
+
+        async function carregarTabelaComprasPedido() {
+            const tb = document.getElementById('tabela-solicitacoes');
+            try {
+                const goEngine = getGoEngine();
+                if(!goEngine) {
+                    tb.innerHTML = '<tr><td colspan="7">Não achou goEngine na hierarquia</td></tr>';
+                    return;
+                }
+                if(goEngine.error) {
+                    tb.innerHTML = `<tr><td colspan="7">${goEngine.error}</td></tr>`;
+                    return;
+                }
+                if(!goEngine.main || !goEngine.main.App || !goEngine.main.App.ListarSolicitacoesCompra) {
+                    tb.innerHTML = '<tr><td colspan="7">goEngine.main.App incompleto!</td></tr>';
+                    return;
+                }
+                
+                const compras = await goEngine.main.App.ListarSolicitacoesCompra();
+                tb.innerHTML = '';
+                if(!compras) {
+                    tb.innerHTML = '<tr><td colspan="7">compras retornou NULL</td></tr>';
+                    return;
+                }
+                if(compras.length === 0) {
+                    recalcularBadges();
+                    tb.innerHTML = '<tr><td colspan="7" class="text-center py-10 font-bold text-slate-400">NENHUMA SOLICITAÇÃO ENCONTRADA.</td></tr>';
+                    return;
+                }
+
+                let h = '';
+                for(let s of compras) {
+                    let badgeCad = s.codigo_erp ? `<span class="sig-badge sig-badge-success !text-[10px]">CÓD: ${s.codigo_erp}</span>` : `<span class="sig-badge sig-badge-error !text-[10px]">NOVO (S/ CÓD)</span>`;
+                    
+                    let bgStatus = '';
+                    let statusLabel = s.status || 'PENDENTES';
+                    if (statusLabel === 'PENDENTES') bgStatus = 'sig-badge-warning';
+                    else if (statusLabel === 'EM ANDAMENTO') bgStatus = 'sig-badge-blue';
+                    else bgStatus = 'sig-badge-success';
+
+                    const sData = {
+                        id: s.codigo_erp || '',
+                        descricao: s.produto,
+                        descricao_tecnica: s.produto,
+                        marca: s.marca,
+                        referencia: s.referencia,
+                        quantidade_solicitada: s.quantidade,
+                        solicitacao_id: s.id
+                    };
+                    const sJson = JSON.stringify(sData).replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+
+                    let colAcoes = `
+                        <td class="text-center">
+                            <button class="bg-sig-blue text-white rounded-sm px-3 py-1 text-[9px] font-black hover:bg-blue-800 shadow-sm w-[130px]" onclick="selecionarProdutoParaPedido(${sJson})">
+                                VINCULAR AO PEDIDO
+                            </button>
+                        </td>
+                    `;
+
+                    h += `
+                        <tr class="hover:bg-blue-50 cursor-pointer border-t border-slate-200 transition-colors group sol-linha" data-status="${statusLabel}">
+                            <td class="text-center font-mono text-[11px] text-slate-500 font-bold whitespace-nowrap">${s.data_solicitacao}</td>
+                            <td class="font-bold text-[12px] text-slate-700">${s.solicitante_nome}</td>
+                            <td class="uppercase tracking-tight text-slate-800">
+                                <span class="font-bold text-[12px]">${s.produto} ${s.marca ? ' - '+s.marca : ''}</span>
+                                <div class="text-[10px] text-slate-400 font-normal mt-0.5">${s.observacao}</div>
+                            </td>
+                            <td class="text-center font-mono font-bold text-blue-700 text-[12px]">${s.quantidade}</td>
+                            <td class="text-center">${badgeCad}</td>
+                            <td class="text-center">
+                                <span class="sig-badge ${bgStatus} !text-[10px]">${statusLabel}</span>
+                            </td>
+                            ${colAcoes}
+                        </tr>
+                    `;
+                }
+                tb.innerHTML = h;
+                recalcularBadges();
+                
+                // Mostrar a aba default "PENDENTES" explicitamente
+                const tabPendentes = document.querySelector('#aba-solicitacoes .sig-tabs .sig-tab:first-child');
+                if (tabPendentes) filtrarStatusOperacional(tabPendentes, 'PENDENTES');
+
+            } catch(e) {
+                console.error("Erro ao listar:", e);
+            }
+        }
+
+        function mudarAbaPesquisa(abaId) {
+            document.querySelectorAll('.sig-tabs .sig-tab').forEach(el => el.classList.remove('ativa'));
+            
+            const btnCatalogo = document.getElementById('btn-catalogo');
+            const btnSolicitacoes = document.getElementById('btn-solicitacoes');
+            
+            const abaF2 = document.getElementById('aba-f2');
+            const abaSolicitacoes = document.getElementById('aba-solicitacoes');
+            const btnNovoProd = document.getElementById('btn-novo-produto');
+
+            // Reset tabs class
+            if(btnCatalogo) btnCatalogo.classList.remove('ativa');
+            if(btnSolicitacoes) btnSolicitacoes.classList.remove('ativa');
+
+            if (abaId === 'catalogo') {
+                if(btnCatalogo) btnCatalogo.classList.add('ativa');
+                abaF2.classList.remove('hidden');
+                abaF2.classList.add('flex');
+                abaSolicitacoes.classList.add('hidden');
+                abaSolicitacoes.classList.remove('flex');
+                if(btnNovoProd) btnNovoProd.classList.remove('hidden');
+            } else if (abaId === 'solicitacoes') {
+                if(btnSolicitacoes) btnSolicitacoes.classList.add('ativa');
+                abaF2.classList.add('hidden');
+                abaF2.classList.remove('flex');
+                abaSolicitacoes.classList.remove('hidden');
+                abaSolicitacoes.classList.add('flex');
+                if(btnNovoProd) btnNovoProd.classList.add('hidden');
+                
+                carregarTabelaComprasPedido();
+            }
+        }
+
+        // COMUNICAÇÃO (QUANDO ABERTO VIA IFRAME)
+        window.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'PRODUTO_SELECIONADO') {
+                selecionarProdutoParaPedido(event.data.data);
+            }
+            if (event.data && event.data.type === 'ABRIR_CADASTRO_PRODUTO') {
+                if (window.parent) {
+                    window.parent.postMessage({ type: 'ABRIR_CADASTRO_PRODUTO' }, '*');
+                }
+            }
+        });
+
+        // CONTROLE DE CARREGAMENTO (PROGRESS BAR)
+        function setLoading(isLoading) {
+            const bar = document.getElementById('footer-progress');
+            if (!bar) return;
+            if (isLoading) {
+                bar.classList.add('loading');
+                bar.style.width = '30%';
+            } else {
+                bar.classList.remove('loading');
+                bar.style.width = '0%';
+            }
+        }
+
+        // SIMULAÇÃO DE PESQUISA COM CARREGAMENTO
+        function pesquisarComFiltros() {
+            setLoading(true);
+            // Simula delay de rede/processamento
+            setTimeout(() => {
+                setLoading(false);
+            }, 1500);
+        }
+
+        // QUANDO UM PRODUTO É SALVO GLOBALMENTE, INSERE ELE NO PEDIDO
+        window.addEventListener('produtoSalvo', (e) => {
+            const novoProduto = e.detail;
+            if (novoProduto) {
+                console.log("Produto Capturado Globalmente:", novoProduto);
+                selecionarProdutoParaPedido(novoProduto);
+            }
+        });
+
+        // MENU DE CONTEXTO (BOTÃO DIREITO)
+        const contextMenu = document.getElementById('context-menu');
+
+        document.addEventListener('contextmenu', (e) => {
+            const row = e.target.closest('tr');
+            if (row && row.closest('table').parentElement.parentElement.id !== 'aba-f3') {
+                e.preventDefault();
+
+                // Posição do Mouse
+                const x = e.clientX;
+                const y = e.clientY;
+
+                contextMenu.style.left = `${x}px`;
+                contextMenu.style.top = `${y}px`;
+                contextMenu.classList.remove('hidden');
+
+                // Marca a linha como selecionada visualmente
+                document.querySelectorAll('tr').forEach(tr => tr.classList.remove('selected'));
+                row.classList.add('selected');
+            } else {
+                fecharContextMenu();
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!contextMenu.contains(e.target)) fecharContextMenu();
+        });
+
+        function fecharContextMenu() {
+            contextMenu.classList.add('hidden');
+        }
+
+        // ZOOM DA IMAGEM
+        function abrirZoomImagem() {
+            const previewImg = document.getElementById('img-preview-f2');
+            const zoomModal = document.getElementById('modal-zoom');
+            const targetImg = document.getElementById('img-zoom-target');
+
+            // Simular uma imagem se não tiver (provisório para demo)
+            const src = previewImg.src && !previewImg.src.includes('undefined') && previewImg.src !== window.location.href
+                ? previewImg.src
+                : "https://images.tcdn.com.br/img/img_prod/704153/amortecedor_dianteiro_direito_turbogas_volkswagen_gol_g5_g6_voyage_saveiro_g5_g6_fox_polo_cofap_al548_255_1_20200505160537.jpg";
+
+            targetImg.src = src;
+            zoomModal.classList.remove('hidden');
+            zoomModal.classList.add('flex');
+        }
+
+        function fecharZoomImagem() {
+            const zoomModal = document.getElementById('modal-zoom');
+            zoomModal.classList.add('hidden');
+            zoomModal.classList.remove('flex');
+        }
+
+        // LÓGICA DO SPLITTER (RESIZE)
+        const splitter = document.getElementById('splitter-f2');
+        const painelInferior = document.getElementById('painel-inferior-f2');
+        let isResizing = false;
+
+        if (splitter) {
+            splitter.addEventListener('mousedown', (e) => {
+                isResizing = true;
+                document.body.style.cursor = 'row-resize';
+                document.addEventListener('mousemove', handleMouseMove);
+                document.addEventListener('mouseup', () => {
+                    isResizing = false;
+                    document.body.style.cursor = 'default';
+                    document.removeEventListener('mousemove', handleMouseMove);
+                });
+            });
+        }
+
+        function handleMouseMove(e) {
+            if (!isResizing) return;
+
+            // Calcula a nova altura baseado na posição do mouse em relação à janela
+            const windowHeight = window.innerHeight;
+            // O splitter está acima do painel, então a altura é o que falta da tela
+            // subtraindo a barra de status (aprox 46px) e a margem de segurança
+            const statusBarHeight = 46;
+            const paddingBottom = 8;
+
+            let newHeight = windowHeight - e.clientY - statusBarHeight - paddingBottom;
+
+            // Limite de altura melhorado: 
+            // - Mínimo 180px para garantir a visualização da imagem quadrada 124x124 + legendas.
+            if (newHeight < 180) newHeight = 180;
+            if (newHeight > 600) newHeight = 600; // Aumentado para permitir visão maior das aplicações
+
+            painelInferior.style.height = `${newHeight}px`;
+        }
+
+        // LÓGICA DE MARCAS
+        const mockMarcas = [
+            { id: 1, nome: 'COFAP' },
+            { id: 2, nome: 'NAKATA' },
+            { id: 3, nome: 'METAL LEVE' },
+            { id: 4, nome: 'BOSCH' },
+            { id: 5, nome: 'MONROE' },
+            { id: 6, nome: 'KYB' },
+            { id: 7, nome: 'MAGNETI MARELLI' },
+            { id: 8, nome: 'TRW' },
+            { id: 9, nome: 'MTE-THOMSON' },
+            { id: 10, nome: 'VALEO' },
+            { id: 11, nome: 'SABÓ' },
+            { id: 12, nome: 'FRAS-LE' },
+            { id: 13, nome: 'SKF' },
+            { id: 14, nome: 'LUK' },
+            { id: 15, nome: 'DAYCO' }
+        ];
+
+        function abrirSelecaoMarca() {
+            document.getElementById('modal-selecao-marca').classList.remove('hidden');
+            document.getElementById('modal-selecao-marca').classList.add('flex');
+            document.getElementById('filtro-marcas').value = '';
+            document.getElementById('filtro-marcas').focus();
+            renderListaMarcas(mockMarcas);
+        }
+
+        function fecharSelecaoMarca() {
+            document.getElementById('modal-selecao-marca').classList.add('hidden');
+            document.getElementById('modal-selecao-marca').classList.remove('flex');
+        }
+
+        // LÓGICA DE APLICAÇÃO TÉCNICA
+        function abrirModalAplicacao() {
+            const modal = document.getElementById('modal-nova-aplicacao');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.getElementById('app-modelo').focus();
+        }
+
+        function fecharModalAplicacao() {
+            const modal = document.getElementById('modal-nova-aplicacao');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function confirmarNovaAplicacao() {
+            const marca = document.getElementById('app-marca').value;
+            const modelo = document.getElementById('app-modelo').value.trim().toUpperCase();
+            const motor = document.getElementById('app-motor').value.trim().toUpperCase();
+            const inicio = document.getElementById('app-ano-inicio').value.trim();
+            const fim = document.getElementById('app-ano-fim').value.trim();
+
+            if (!modelo) {
+                alert("O modelo do veículo é obrigatório!");
+                document.getElementById('app-modelo').focus();
+                return;
+            }
+
+            const tbody = document.getElementById('lista-aplicacoes-tecnicas');
+            const tr = document.createElement('tr');
+            tr.className = 'bg-white';
+            tr.innerHTML = `
+                <td>${marca}</td>
+                <td>${modelo}</td>
+                <td>${motor}</td>
+                <td class="text-center">${inicio}</td>
+                <td class="text-center">${fim}</td>
+                <td class="sig-text-center">
+                    <button onclick="removerAplicacao(this)" class="text-red-600 hover:text-red-800 font-bold">[X]</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+
+            // Limpar e fechar
+            document.getElementById('app-modelo').value = '';
+            document.getElementById('app-motor').value = '';
+            document.getElementById('app-ano-inicio').value = '';
+            document.getElementById('app-ano-fim').value = '';
+            fecharModalAplicacao();
+        }
+
+        function removerAplicacao(btn) {
+            if (confirm("Deseja remover esta aplicação técnica?")) {
+                btn.closest('tr').remove();
+            }
+        }
+
+        function filtrarMarcas(query) {
+            const filtrados = mockMarcas.filter(m => m.nome.includes(query.toUpperCase()));
+            renderListaMarcas(filtrados);
+        }
+
+        function renderListaMarcas(lista) {
+            const tbody = document.getElementById('lista-marcas');
+            tbody.innerHTML = '';
+            lista.forEach(m => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-blue-50 cursor-pointer';
+                tr.innerHTML = `
+                    <td class="text-center font-mono text-slate-400 border-r border-slate-100">${m.id.toString().padStart(3, '0')}</td>
+                    <td class="font-bold uppercase text-slate-700">${m.nome}</td>
+                `;
+                tr.onclick = () => {
+                    document.getElementById('prod-marca').value = m.nome;
+                    fecharSelecaoMarca();
+                };
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Atalhos de Teclado
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const modalApp = document.getElementById('modal-nova-aplicacao');
+                if (!modalApp.classList.contains('hidden')) {
+                    fecharModalAplicacao();
+                    return;
+                }
+                const modalMarca = document.getElementById('modal-selecao-marca');
+                if (!modalMarca.classList.contains('hidden')) {
+                    fecharSelecaoMarca();
+                    return;
+                }
+
+                fecharJanelaSelecao();
+                return;
+            }
+            if (e.key === 'F2') {
+                e.preventDefault();
+                mudarAbaPesquisa('catalogo');
+            }
+            if (e.key === 'F3') {
+                const modalCadastro = document.getElementById('modal-cadastro');
+                if (modalCadastro.classList.contains('hidden')) {
+                    e.preventDefault();
+                    mudarAbaPesquisa('solicitacoes');
+                }
+            }
+            if (e.key === 'F6') {
+                const abaCat = document.getElementById('aba-f2');
+                if (!abaCat.classList.contains('hidden')) {
+                    e.preventDefault();
+                    if (window.abrirCadastroProduto) window.abrirCadastroProduto();
+                }
+            }
+            if (e.key === 'F8') {
+                e.preventDefault();
+                pesquisarComFiltros();
+            }
+            if (e.key === 'F5') {
+                if(window.isProdutoReadOnlyGlobal) return;
+                const modalCadastro = document.getElementById('modal-cadastro');
+                if (modalCadastro && !modalCadastro.classList.contains('hidden')) {
+                    e.preventDefault();
+                    if (window.salvarProduto) window.salvarProduto();
+                }
+            }
+            
+            // Navegação de Setas na Tabela
+            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                const ativaTabelaOuNao = document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'SELECT';
+                if (ativaTabelaOuNao) return; 
+
+                const tbody = document.getElementById('tb-produtos-lista');
+                if (!tbody) return;
+                const rows = Array.from(tbody.querySelectorAll('tr'));
+                if (rows.length === 0) return;
+
+                e.preventDefault();
+                let idx = rows.findIndex(r => r.classList.contains('selected'));
+                
+                if (e.key === 'ArrowDown') {
+                    if (idx < rows.length - 1) idx++;
+                    else idx = 0; 
+                } else if (e.key === 'ArrowUp') {
+                    if (idx > 0) idx--;
+                    else idx = rows.length - 1; 
+                }
+
+                if(idx !== -1) {
+                    // Remove current selection
+                    if (rows.find(r => r.classList.contains('selected'))) {
+                        rows.forEach(r => r.classList.remove('selected', 'bg-blue-50'));
+                    }
+                    const rowSelecionada = rows[idx];
+                    rowSelecionada.classList.add('selected', 'bg-blue-50');
+                    rowSelecionada.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    // No click unless the user presses Enter (because click selects the product for the sale)
+                }
+            }
+
+            if (e.key === 'Enter') {
+                const ativaTabelaOuNao = document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'SELECT';
+                if (!ativaTabelaOuNao) {
+                    const selected = document.querySelector('#tb-produtos-lista tr.selected');
+                    if (selected) {
+                        e.preventDefault();
+                        if (selected.onclick) {
+                            selected.onclick(); // Seleciona pro pedido
+                        }
+                    }
+                }
+            }
+        });
+
+        // LÓGICA DE NAVEGAÇÃO ENTRE ABAS
+        function mudarAbaPesquisa(abaAtiva) {
+            const btnCatalogo = document.getElementById('btn-catalogo');
+            const btnSolicitacoes = document.getElementById('btn-solicitacoes');
+            const abaF2 = document.getElementById('aba-f2');
+            const abaSolicitacoes = document.getElementById('aba-solicitacoes');
+            const btnNovoProduto = document.getElementById('btn-novo-produto');
+
+            // Reset
+            btnCatalogo.classList.remove('ativa');
+            btnSolicitacoes.classList.remove('ativa');
+            abaF2.classList.add('hidden');
+            abaSolicitacoes.classList.add('hidden');
+
+            if (abaAtiva === 'catalogo') {
+                btnCatalogo.classList.add('ativa');
+                abaF2.classList.remove('hidden');
+            } else if (abaAtiva === 'solicitacoes') {
+                btnSolicitacoes.classList.add('ativa');
+                abaSolicitacoes.classList.remove('hidden');
+                // DISPARAR BUSCA NO BANCO
+                carregarTabelaComprasPedido();
+            }
+        }
+
+        // LÓGICA DO BOTÃO X E ESC PARA FECHAR O MODAL/IFRAME
+        function fecharJanelaSelecao() {
+            if (window.parent) {
+                window.parent.postMessage({ type: 'FECHAR_MODAL_PESQUISA' }, '*');
+            }
+        }
+
+        // ====== BRIDGE IPC PARA COMUNICAÇÃO DE IFRAME ANINHADO ====== //
+        window.addEventListener("message", function(event) {
+            // Quando a aba do Catálogo isolado dispara selecao de item ou cadastro
+            if(event.data && event.data.type === 'PRODUTO_SELECIONADO') {
+                selecionarProdutoParaPedido(event.data.data);
+            }
+            if(event.data && event.data.type === 'ABRIR_CADASTRO_PRODUTO') {
+                if (window.abrirCadastroProduto) window.abrirCadastroProduto();
+            }
+        });
+
+        // Função para consolidar dados do Catálogo/Solicitações e jogar no Pedido de Compra (Pai)
+        function selecionarProdutoParaPedido(produto) {
+            if (window.parent && window.parent.receberProdutoSelecionado) {
+                const pFormatado = {
+                    id: produto.id || produto.codigo_erp,
+                    descricao: produto.descricao_tecnica || produto.descricao,
+                    un: produto.unidade_sigla || produto.un || 'UN',
+                    valor: produto.preco_balcao || produto.valor || '0,00'
+                };
+                window.parent.receberProdutoSelecionado(pFormatado);
+            }
+        }
+
+        // Nova Lógica de Fluxo Específico: Cadastrar baseando-se em solicitação
+        function abrirCadastroProdutoComoSolicitacao() {
+            if (window.abrirCadastroProduto) window.abrirCadastroProduto();
+            // Mock de preenchimento automático para ilustrar
+            setTimeout(() => {
+                const desc = document.getElementById('prod-descricao');
+                if (desc) desc.value = "BOMBA D'ÁGUA FIAT TORO 2.0 DIESEL 2021";
+            }, 150);
+        }
+    </script>
+
+    <script src="../../componentes/modal_produto.js"></script>
+</body>
+
+</html>

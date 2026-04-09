@@ -1,0 +1,1 @@
+import sys; data = open("SIG_V79_SOLUCAO_CNPJ.exe", "rb").read(); idx = data.find(b"Sincronize sua credencial"); start = data.rfind(b"<html", 0, idx); end = data.find(b"</html>", idx) + 7; open("recovered_login.html", "wb").write(data[start:end])

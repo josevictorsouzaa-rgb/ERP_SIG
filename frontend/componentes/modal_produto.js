@@ -18,386 +18,437 @@ const ModalProdutoHTML = `
         </div>
 
         <!-- CORPO DO CADASTRO -->
-        <div class="flex-1 overflow-hidden flex gap-2 p-2">
-            <!-- COLUNA ESQUERDA (DADOS CADASTRAIS) -> 70% Width -->
-            <div class="w-[70%] flex flex-col gap-0 h-full overflow-y-auto pr-2 custom-scrollbar">
+        <div class="flex-1 overflow-hidden flex gap-2 p-2 bg-white">
+    <!-- COLUNA ESQUERDA (DADOS CADASTRAIS) -> 70% Width -->
+    <div class="w-[70%] flex flex-col gap-0 h-full overflow-y-auto pr-2 custom-scrollbar">
 
-                <!-- BLOCO 1: IDENTIFICAÇÃO -->
-                <div class="sig-fieldset mt-2 shrink-0">
-                    <span class="sig-legend">Identificação do Item</span>
-                    <div class="flex gap-2">
-                        <div class="w-16">
-                            <label class="sig-label-dense">ID</label>
-                            <input type="text" id="prod-id"
-                                class="sig-input-dense w-full bg-slate-100 font-bold text-center" value="NOVO"
-                                readonly tabindex="-1">
+        <!-- BLOCO 1: IDENTIFICAÇÃO -->
+        <div class="sig-fieldset-blueprint mt-2 shrink-0">
+            <span class="sig-legend-blueprint">Identificação do Item</span>
+            <div class="flex gap-2">
+                <div class="w-24">
+                    <label class="sig-label-dense">Status</label>
+                    <select id="prod-ativo" class="sig-input-dense w-full font-bold cursor-pointer bg-white text-green-700" onchange="this.classList.toggle('text-green-700', this.value==='true'); this.classList.toggle('text-red-700', this.value==='false');">
+                        <option value="true" class="text-green-700">ATIVO</option>
+                        <option value="false" class="text-red-700">INATIVO</option>
+                    </select>
+                </div>
+                <div class="w-16">
+                    <label class="sig-label-dense">ID</label>
+                    <input type="text" id="prod-id"
+                        class="sig-input-dense w-full bg-slate-100 font-bold text-center" value="NOVO"
+                        readonly tabindex="-1">
+                </div>
+                <div class="w-[30%] relative">
+                    <label class="sig-label-dense">Cód. Fabr. (SKU) <span class="text-red-600 font-bold">*</span></label>
+                    <div class="flex gap-1">
+                        <input type="text" id="prod-sku" class="sig-input-dense flex-1 uppercase border-blue-200 focus:ring-red-400" placeholder="AL-1234" oninput="window.validarCamposObrigatorios()" onblur="window.verificarSKUCadastro()">
+                        <button type="button" onclick="window.abrirBuscaCatalogo()" class="sig-btn-icon !h-6 !w-8 !p-0" title="Buscar no Catálogo Online">
+                            <span class="material-symbols-outlined !text-[16px]">search</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="w-1/4">
+                    <label class="sig-label-dense">Marca da Peça <span class="text-red-600 font-bold">*</span></label>
+                    <select id="prod-marca-id"
+                        class="sig-input-dense w-full bg-white cursor-pointer uppercase text-slate-700 font-bold border-blue-200"
+                        onchange="window.aplicarMargemMarca(); window.validarCamposObrigatorios()">
+                        <option value="0">SELECIONE...</option>
+                    </select>
+                </div>
+                <div class="flex-1">
+                    <label class="sig-label-dense">Código de Barras <span class="text-red-600 font-bold">*</span></label>
+                    <input type="text" id="prod-codigo-barra" class="sig-input-dense w-full border-blue-100"
+                        placeholder="Ex: 7891234567890" oninput="window.validarCamposObrigatorios()">
+                </div>
+            </div>
+
+            <!-- LINHA 2: TAXONOMIA -->
+            <div class="flex gap-2 mt-2">
+                <div class="w-1/2">
+                    <label class="sig-label-dense">Categoria <span class="text-red-600 font-bold">*</span></label>
+                    <select id="prod-categoria-id" class="sig-input-dense w-full bg-white cursor-pointer font-bold uppercase border-blue-200" onchange="window.onCategoriaChange(); window.validarCamposObrigatorios()">
+                        <option value="">SELECIONE...</option>
+                    </select>
+                </div>
+                <div class="w-1/2">
+                    <label class="sig-label-dense">Subcategoria <span class="text-red-600 font-bold">*</span></label>
+                    <select id="prod-subcategoria-id" class="sig-input-dense w-full bg-white cursor-pointer uppercase border-blue-200" onchange="window.validarCamposObrigatorios()">
+                        <option value="0">SELECIONE UMA CATEGORIA ANTES...</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- LINHA 3: DESCRIÇÕES -->
+            <div class="flex gap-2 mt-2">
+                <div class="flex-1 relative group">
+                    <label class="sig-label-dense">Descrição Padrão SIG <span class="text-red-600 font-bold">*</span></label>
+                    <div id="wrapper-prod-descricao" class="relative h-[24px] bg-white border border-blue-200 rounded-[2px] overflow-hidden transition-colors">
+                        <div id="prod-descricao-ghost" class="absolute inset-0 px-[6px] flex items-center text-[11px] font-bold text-slate-300 pointer-events-none uppercase whitespace-pre z-0"></div>
+                        <input type="text" id="prod-descricao" autocomplete="off" 
+                            class="w-full h-full px-[6px] text-[11px] font-bold uppercase text-slate-900 border-none outline-none relative z-10 !bg-transparent" 
+                            style="background: transparent !important; box-shadow: none !important;"
+                            placeholder="DIGITE..." 
+                            oninput="window.mostrarSugestoesDescricao(this.value); window.validarCamposObrigatorios()"
+                            onkeydown="window.navegarSugestoesDescricao(event)"
+                            onblur="setTimeout(() => window.fecharSugestoesDescricao(), 200)">
+                    </div>
+                    <div id="placahoard-descricoes" class="hidden absolute left-0 right-0 top-[100%] mt-1 bg-slate-900 text-white rounded shadow-2xl z-[10002] border border-slate-700 overflow-hidden max-h-48 overflow-y-auto custom-scrollbar">
+                        <div class="bg-slate-800 px-3 py-1 flex justify-between items-center border-b border-slate-700">
+                            <span class="text-[9px] font-black uppercase tracking-tighter text-slate-400">Sugestões de Cadastro</span>
+                            <span class="text-[8px] text-slate-500 font-bold">[TAB] para completar</span>
                         </div>
-                        <div class="w-[30%]">
-                            <label class="sig-label-dense">Cód. Fabr. (SKU)</label>
-                            <div class="flex gap-1">
-                                <input type="text" id="prod-sku" class="sig-input-dense flex-1 uppercase" placeholder="AL-1234">
-                                <button type="button" onclick="window.abrirBuscaCatalogo()" class="sig-btn-icon !h-6 !w-8 !p-0" title="Buscar no Catálogo Online">
-                                    <span class="material-symbols-outlined !text-[16px]">search</span>
-                                </button>
+                        <div id="lista-sugestoes-inner"></div>
+                    </div>
+                </div>
+                <div class="w-[30%]">
+                    <label class="sig-label-dense">Nome Popular <span class="text-red-600 font-bold">*</span></label>
+                    <input type="text" id="prod-nome-popular" class="sig-input-dense w-full uppercase border-blue-200 bg-orange-50/10" placeholder="Ex: Campana/Burrinho" oninput="window.validarCamposObrigatorios()">
+                </div>
+            </div>
+
+            <!-- LINHA 4: POSIÇÃO E LADO -->
+            <div class="flex gap-2 mt-2 pb-1">
+                <div class="w-1/2">
+                    <label class="sig-label-dense">Posição <span class="text-red-600 font-bold">*</span></label>
+                    <select id="prod-posicao" class="sig-input-dense w-full bg-white cursor-pointer uppercase" onchange="window.validarCamposObrigatorios()">
+                        <option value="">SELECIONE...</option>
+                        <option value="N/A">N/A</option>
+                        <option value="DIANTEIRO">DIANTEIRO</option>
+                        <option value="TRASEIRO">TRASEIRO</option>
+                        <option value="SUPERIOR">SUPERIOR</option>
+                        <option value="INFERIOR">INFERIOR</option>
+                        <option value="INTERNO">INTERNO</option>
+                        <option value="EXTERNO">EXTERNO</option>
+                    </select>
+                </div>
+                <div class="w-1/2">
+                    <label class="sig-label-dense">Lado <span class="text-red-600 font-bold">*</span></label>
+                    <select id="prod-lado" class="sig-input-dense w-full bg-white cursor-pointer uppercase" onchange="window.validarCamposObrigatorios()">
+                        <option value="">SELECIONE...</option>
+                        <option value="N/A">N/A</option>
+                        <option value="ESQUERDO">ESQUERDO</option>
+                        <option value="DIREITO">DIREITO</option>
+                        <option value="PAR / AMBOS">PAR / AMBOS</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- BLOCO 2: APLICAÇÃO TÉCNICA -->
+        <div class="sig-fieldset-blueprint sig-fieldset-flush flex flex-col mt-1 shrink-0">
+            <span class="sig-legend-blueprint">Aplicação Técnica Detalhada</span>
+            <div id="container-app-cadastro" class="overflow-y-auto w-full bg-slate-50 relative border border-slate-200 rounded-t-sm" style="height: 100px; min-height: 80px; max-height: 450px;">
+                <table class="sig-table sig-table-sm w-full border-none">
+                    <thead class="sticky top-0 shadow-sm z-10 px-2 bg-slate-100">
+                        <tr>
+                            <th class="w-20 border-none">Marca</th>
+                            <th class="border-none">Modelo</th>
+                            <th class="border-none">Versão / Motor</th>
+                            <th class="w-12 text-center border-none">Ini</th>
+                            <th class="w-12 text-center border-none">Fim</th>
+                            <th class="w-12 sig-text-center border-none">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tb-aplicacoes">
+                        <tr class="bg-white"><td colspan="6" class="text-center text-slate-400 py-3 text-[10px] italic border-none">Nenhuma aplicação cadastrada</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="p-1 px-2 bg-slate-50 border-x border-b border-slate-300 rounded-b-sm flex justify-between items-center">
+                <button type="button" onclick="window.abrirModalAddAplicacao()" class="bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold px-3 py-1 text-[10px] rounded-sm shadow-sm flex items-center gap-2">
+                    <span class="material-symbols-outlined !text-[12px]">add</span> Adicionar Aplicação
+                </button>
+                <div id="splitter-app-cadastro" class="h-3 w-12 bg-slate-200 hover:bg-blue-300 cursor-row-resize rounded-full opacity-40 transition-colors" title="Arraste para ajustar altura"></div>
+            </div>
+        </div>
+
+
+        <!-- LINHA: LOGÍSTICA + FISCAL -->
+        <div class="flex gap-2 mt-1 shrink-0">
+            <!-- SUB-BLOCO: LOGÍSTICA E DIMENSÕES -->
+            <div class="sig-fieldset-blueprint w-1/2 flex flex-col">
+                <span class="sig-legend-blueprint flex items-center gap-1.5 font-bold"><span class="material-symbols-outlined !text-[14px]">package_2</span> Logística e Dimensões</span>
+                <div class="flex gap-2 items-center bg-slate-50/50 p-1 flex-1">
+                    <div class="w-24 h-20 bg-white border border-slate-200 rounded-sm shadow-inner shrink-0 relative flex items-center justify-center p-0.5 group">
+                        <svg viewBox="0 0 160 120" class="w-full h-full drop-shadow-sm transition-all group-hover:scale-105 duration-300">
+                            <!-- Box Paths -->
+                            <path d="M48 40 L80 56 L80 96 L48 80 Z" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1" stroke-linejoin="round"/>
+                            <path d="M112 40 L112 80 L80 96 L80 56 Z" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" stroke-linejoin="round"/>
+                            <path d="M80 24 L112 40 L80 56 L48 40 Z" fill="#f8fafc" stroke="#94a3b8" stroke-width="1" stroke-linejoin="round"/>
+                            <!-- Indicator Lines & Texts -->
+                            <line x1="30" y1="40" x2="30" y2="80" stroke="#ef4444" stroke-width="1.5" marker-start="url(#arrow-red)" marker-end="url(#arrow-red)" />
+                            <text x="18" y="64" fill="#ef4444" font-size="12" font-weight="900" font-family="sans-serif">A</text>
+                            
+                            <line x1="42" y1="90" x2="74" y2="106" stroke="#3b82f6" stroke-width="1.5" marker-start="url(#arrow-blue)" marker-end="url(#arrow-blue)" />
+                            <text x="50" y="112" fill="#3b82f6" font-size="12" font-weight="900" font-family="sans-serif">C</text>
+                            
+                            <line x1="118" y1="90" x2="86" y2="106" stroke="#f59e0b" stroke-width="1.5" marker-start="url(#arrow-orange)" marker-end="url(#arrow-orange)" />
+                            <text x="100" y="112" fill="#f59e0b" font-size="12" font-weight="900" font-family="sans-serif">L</text>
+                            <defs>
+                                <marker id="arrow-red" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444" /></marker>
+                                <marker id="arrow-blue" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6" /></marker>
+                                <marker id="arrow-orange" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b" /></marker>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div class="flex-1 grid grid-cols-2 gap-x-1.5 gap-y-1">
+                        <div class="col-span-1 flex gap-1">
+                            <div class="flex-1">
+                                <label class="sig-label-dense text-blue-600 font-extrabold text-[8px]">UNID. <span class="text-red-600">*</span></label>
+                                <select id="prod-unidade-id" class="sig-input-dense w-full font-bold bg-white border-blue-200 !text-[10px] !h-6" onchange="window.validarCamposObrigatorios()"><option value="0">UNIDADE (UN)</option></select>
+                            </div>
+                            <div class="w-10">
+                                <label class="sig-label-dense opacity-60 !text-[8px]">FATOR</label>
+                                <input type="text" id="prod-fator-conversao" class="sig-input-dense w-full text-center !h-6 !text-[10px]" value="1.0000">
                             </div>
                         </div>
-                        <div class="w-1/4">
-                            <label class="sig-label-dense">Marca da Peça</label>
-                            <select id="prod-marca-id"
-                                class="sig-input-dense w-full bg-white cursor-pointer uppercase text-slate-700 font-bold"
-                                onchange="window.aplicarMargemMarca()">
-                                <option value="0">SELECIONE...</option>
-                            </select>
+                        <div class="col-span-1">
+                            <label class="sig-label-dense opacity-60 !text-[8px]">PESO (KG)</label>
+                            <input type="text" id="prod-peso" class="sig-input-dense w-full text-right font-mono font-bold text-blue-900 !h-6" placeholder="0.000">
                         </div>
-                        <div class="flex-1">
-                            <label class="sig-label-dense">Código de Barras</label>
-                            <input type="text" id="prod-codigo-barra" class="sig-input-dense w-full"
-                                placeholder="Ex: 7891234567890">
-                        </div>
-                    </div>
-
-                    <!-- LINHA 2: TAXONOMIA -->
-                    <div class="flex gap-2 mt-2">
-                        <div class="w-1/2">
-                            <label class="sig-label-dense">Categoria</label>
-                            <select id="prod-categoria-id" class="sig-input-dense w-full bg-white cursor-pointer font-bold uppercase" onchange="window.onCategoriaChange(); window.atualizarDescricaoPadrao()">
-                                <option value="">SELECIONE...</option>
-                            </select>
-                        </div>
-                        <div class="w-1/2">
-                            <label class="sig-label-dense">Subcategoria</label>
-                            <select id="prod-subcategoria-id" class="sig-input-dense w-full bg-white cursor-pointer uppercase">
-                                <option value="0">SELECIONE UMA CATEGORIA ANTES...</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- LINHA 3: DESCRIÇÕES -->
-                    <div class="flex gap-2 mt-2">
-                        <div class="flex-1">
-                            <label class="sig-label-dense">Descrição Padrão SIG (Fiscal/Pesquisa)</label>
-                            <input type="text" id="prod-descricao" class="sig-input-dense w-full uppercase text-slate-900 font-bold text-[12px] bg-slate-50 border-blue-200" placeholder="GERADA AUTOMATICAMENTE PELOS CAMPOS ACIMA">
-                        </div>
-                        <div class="w-[30%]">
-                            <label class="sig-label-dense">Nome Popular (Apelido)</label>
-                            <input type="text" id="prod-nome-popular" class="sig-input-dense w-full uppercase border-orange-200 bg-orange-50/20" placeholder="Ex: Campana/Burrinho">
-                        </div>
-                    </div>
-
-                    <!-- LINHA 4: POSIÇÃO E LADO -->
-                    <div class="flex gap-2 mt-2 pb-1">
-                        <div class="w-1/2">
-                            <label class="sig-label-dense">Posição</label>
-                            <select id="prod-posicao" class="sig-input-dense w-full bg-white cursor-pointer uppercase" onchange="window.atualizarDescricaoPadrao()">
-                                <option value="">N/A</option>
-                                <option value="DIANTEIRO">DIANTEIRO</option>
-                                <option value="TRASEIRO">TRASEIRO</option>
-                                <option value="SUPERIOR">SUPERIOR</option>
-                                <option value="INFERIOR">INFERIOR</option>
-                                <option value="INTERNO">INTERNO</option>
-                                <option value="EXTERNO">EXTERNO</option>
-                            </select>
-                        </div>
-                        <div class="w-1/2">
-                            <label class="sig-label-dense">Lado</label>
-                            <select id="prod-lado" class="sig-input-dense w-full bg-white cursor-pointer uppercase" onchange="window.atualizarDescricaoPadrao()">
-                                <option value="">N/A</option>
-                                <option value="ESQUERDO">ESQUERDO</option>
-                                <option value="DIREITO">DIREITO</option>
-                                <option value="PAR / AMBOS">PAR / AMBOS</option>
-                            </select>
+                        <div class="col-span-2 grid grid-cols-3 gap-1">
+                            <div><label class="sig-label-dense !text-[8px] text-red-500 font-bold">A - ALTURA</label><input type="text" id="prod-altura" class="sig-input-dense w-full text-right !h-6" placeholder="0.00"></div>
+                            <div><label class="sig-label-dense !text-[8px] text-orange-500 font-bold">L - LARGURA</label><input type="text" id="prod-largura" class="sig-input-dense w-full text-right !h-6" placeholder="0.00"></div>
+                            <div><label class="sig-label-dense !text-[8px] text-blue-500 font-bold">C - COMPRIM</label><input type="text" id="prod-comprimento" class="sig-input-dense w-full text-right !h-6" placeholder="0.00"></div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- BLOCO 2: APLICAÇÃO TÉCNICA (AGORA NO TOPO) -->
-                <div class="sig-fieldset sig-fieldset-flush flex flex-col mt-1 shrink-0">
-                    <span class="sig-legend">Aplicação Técnica Detalhada</span>
-                    
-                    <div id="container-app-cadastro" class="overflow-y-auto w-full bg-slate-50 relative border border-slate-200 rounded-t-sm" style="height: 100px; min-height: 80px; max-height: 450px;">
-                        <table class="sig-table sig-table-sm w-full border-none">
-                            <thead class="sticky top-0 shadow-sm z-10 px-2 bg-slate-100">
-                                <tr>
-                                    <th class="w-20 border-none">Marca</th>
-                                    <th class="border-none">Modelo</th>
-                                    <th class="border-none">Versão / Motor</th>
-                                    <th class="w-20 text-center border-none">Início</th>
-                                    <th class="w-20 text-center border-none">Fim</th>
-                                    <th class="w-16 sig-text-center border-none">Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tb-aplicacoes">
-                                <tr class="bg-white">
-                                    <td colspan="6" class="text-center text-slate-400 py-4 text-xs italic border-none">Nenhuma aplicação cadastrada</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="shrink-0 bg-slate-50 border-x border-b border-slate-300 rounded-b-sm flex flex-col">
-                        <div id="splitter-app-cadastro" class="h-1.5 bg-slate-200 hover:bg-blue-300 cursor-row-resize flex items-center justify-center transition-colors group" title="Arraste para ajustar a altura da tabela">
-                            <div class="w-12 h-[2px] bg-slate-400 group-hover:bg-blue-500 rounded-full opacity-40"></div>
+            <!-- SUB-BLOCO: FISCAL -->
+            <div class="sig-fieldset-blueprint w-1/2 border-slate-300 bg-slate-50/10">
+                <span class="sig-legend-blueprint !text-slate-700 font-bold flex items-center gap-1">
+                    <span class="material-symbols-outlined !text-[15px]">balance</span> Tributação e Base Fiscal
+                </span>
+                <div class="grid grid-cols-3 gap-x-1.5 gap-y-1.5 p-0.5">
+                    <div class="col-span-1">
+                        <label class="sig-label-dense opacity-70">NCM <span class="text-red-600 font-bold">*</span></label>
+                        <div class="flex gap-0.5">
+                            <input type="text" id="prod-ncm" class="sig-input-dense w-full font-mono text-blue-800 !h-6 !text-[10px]" placeholder="0000.0000" oninput="window.validarCamposObrigatorios()">
+                            <button onclick="window.consultarDadosFiscais()" class="sig-button-orange !p-0.5 !h-6 !w-6 shrink-0"><span class="material-symbols-outlined !text-[14px]">search</span></button>
                         </div>
-                        
-                        <div class="p-1 px-2 border-t border-slate-200">
-                            <button onclick="window.abrirModalAddAplicacao()" class="bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold px-3 py-1 text-[10px] rounded-sm shadow-sm flex items-center gap-2">
-                                <span class="material-symbols-outlined !text-[12px]">add</span> Adicionar Nova Aplicação
+                    </div>
+                    <div class="col-span-1">
+                        <label class="sig-label-dense opacity-70">CEST</label>
+                        <input type="text" id="prod-cest" class="sig-input-dense w-full font-mono !h-6 !text-[10px]" placeholder="00.000.00">
+                    </div>
+                    <div class="col-span-1">
+                        <label class="sig-label-dense opacity-70">ORIGEM <span class="text-red-600 font-bold">*</span></label>
+                        <select id="prod-origem" class="sig-input-dense w-full !h-6 !text-[10px] border-blue-100" onchange="window.validarCamposObrigatorios()">
+                            <option value="">SELECIONE...</option>
+                            <option value="0">0 - NACIONAL</option>
+                            <option value="1">1 - IMPORTAÇÃO DIRETA</option>
+                            <option value="2">2 - IMPORTADA (INTERNA)</option>
+                        </select>
+                    </div>
+                    <div class="col-span-3 mt-1 p-2 bg-blue-100/50 rounded border border-blue-200">
+                        <label class="sig-label-dense text-blue-700 font-extrabold flex items-center gap-1 mb-1">
+                            <span class="material-symbols-outlined !text-[12px]">style</span> PERFIL FISCAL <span class="text-red-600">*</span>
+                        </label>
+                        <div class="flex gap-1 items-center w-full">
+                            <select id="prod-perfil-fiscal-id" class="sig-input-dense w-full font-bold bg-white border-blue-300 !h-7 !text-[11px] flex-1" onchange="window.validarCamposObrigatorios()">
+                                <option value="0">SELECIONE O GRUPO FISCAL...</option>
+                            </select>
+                            <button tabindex="-1" type="button" onclick="window.exibirResumoFiscal()" class="h-7 px-3 bg-white border border-blue-300 rounded-[2px] shadow-sm hover:bg-blue-50 text-blue-600 font-bold flex items-center justify-center transition-colors shrink-0 outline-none focus:ring-2 focus:ring-blue-400" title="Ver Detalhes do Perfil">
+                                <span class="material-symbols-outlined text-[16px]">info</span>
                             </button>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <!-- LINHA: LOGÍSTICA + FISCAL -->
-                <div class="flex gap-2 mt-1 shrink-0">
-                    <!-- SUB-BLOCO: LOGÍSTICA E DIMENSÕES -->
-                    <div class="sig-fieldset w-1/2 flex flex-col">
-                        <span class="sig-legend flex items-center gap-1.5"><span class="material-symbols-outlined !text-[14px]">package_2</span> Logística e Dimensões</span>
-                        <div class="flex gap-2 items-center bg-slate-50/50 p-1 flex-1">
-                            <!-- Ilustração Isométrica Sólida -->
-                            <div class="w-24 h-20 bg-white border border-slate-200 rounded-sm shadow-inner shrink-0 relative flex items-center justify-center p-0.5 group">
-                                <svg viewBox="0 0 160 120" class="w-full h-full text-slate-400 drop-shadow-sm transition-all group-hover:scale-105 duration-300">
-                                    <path d="M40 40 L80 60 L80 100 L40 80 Z" fill="#cbd5e1" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
-                                    <path d="M120 40 L120 80 L80 100 L80 60 Z" fill="#e2e8f0" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
-                                    <path d="M80 20 L120 40 L80 60 L40 40 Z" fill="#f8fafc" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
-                                </svg>
-                                <div class="absolute left-0.5 top-6 text-[6px] font-black text-blue-700 bg-white/90 px-0.5 border border-blue-100 rounded">ALT</div>
-                                <div class="absolute right-0.5 bottom-1 text-[6px] font-black text-blue-700 bg-white/90 px-0.5 border border-blue-100 rounded">COMP</div>
-                                <div class="absolute left-2 bottom-1 text-[6px] font-black text-blue-700 bg-white/90 px-0.5 border border-blue-100 rounded">LARG</div>
-                            </div>
-
-                            <!-- Grid de Dados Integrado -->
-                            <div class="flex-1 grid grid-cols-2 gap-x-1.5 gap-y-1">
-                                <div class="col-span-1 flex gap-1">
-                                    <div class="flex-1">
-                                        <label class="sig-label-dense text-blue-600 font-extrabold text-[8px] flex items-center gap-0.5"><span class="material-symbols-outlined !text-[10px]">scale</span> UNIDADE</label>
-                                        <select id="prod-unidade-id" class="sig-input-dense w-full font-bold bg-blue-50 border-blue-200 !text-[10px] !h-6"><option value="0">UNIDADE (UN)</option></select>
-                                    </div>
-                                    <div class="w-10">
-                                        <label class="sig-label-dense opacity-60 !text-[8px]">FATOR</label>
-                                        <input type="text" id="prod-fator-conversao" class="sig-input-dense w-full text-center !h-6 !text-[10px]" value="1.0000">
-                                    </div>
-                                </div>
-                                <div class="col-span-1">
-                                    <label class="sig-label-dense opacity-60 !text-[8px]">PESO (KG)</label>
-                                    <input type="text" id="prod-peso" class="sig-input-dense w-full text-right font-mono font-bold text-blue-900 !h-6" placeholder="0.000">
-                                </div>
-                                <div class="col-span-2 grid grid-cols-3 gap-1">
-                                    <div><label class="sig-label-dense !text-[8px]">ALT</label><input type="text" id="prod-altura" class="sig-input-dense w-full text-right !h-6" placeholder="0.00"></div>
-                                    <div><label class="sig-label-dense !text-[8px]">LARG</label><input type="text" id="prod-largura" class="sig-input-dense w-full text-right !h-6" placeholder="0.00"></div>
-                                    <div><label class="sig-label-dense !text-[8px]">COMP</label><input type="text" id="prod-comprimento" class="sig-input-dense w-full text-right !h-6" placeholder="0.00"></div>
-                                </div>
-                            </div>
+        <!-- LINHA: CUSTOS + CANAIS DE VENDA -->
+        <div class="flex gap-2 mt-1 shrink-0 pb-2">
+        <!-- SUB-BLOCO: CUSTOS -->
+        <div id="painel-custos-bloco" class="sig-fieldset-blueprint flex-[2] border-slate-300 bg-slate-50/30 transition-opacity duration-300">
+            <span class="sig-legend-blueprint !text-slate-700 font-bold flex items-center gap-1">
+                    <span class="material-symbols-outlined !text-[15px]">request_quote</span> Custos e Formação
+                </span>
+                <div class="grid grid-cols-3 gap-1.5 p-0.5">
+                    <input type="hidden" id="prod-custo" value="0,00">
+                    <input type="hidden" id="prod-frete" value="0.00">
+                    
+                    <div class="flex flex-col bg-white border border-slate-200 rounded-[3px] p-1.5 px-2 shadow-sm relative overflow-hidden">
+                        <span class="text-[8px] font-black text-slate-500 uppercase tracking-wider">Último Custo</span>
+                        <div class="flex items-center justify-between mt-1">
+                            <span class="font-mono text-slate-800 font-black text-[12px]">R$ 0,00</span>
+                            <span class="px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded-full text-[7px] font-bold uppercase tracking-tighter border border-slate-200">Últ. Nota</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col bg-blue-50/70 border border-blue-200 rounded-[3px] p-1.5 px-2 shadow-sm relative overflow-hidden">
+                        <span class="text-[8px] font-black text-blue-700 uppercase tracking-wider">Custo Médio</span>
+                        <div class="flex items-center justify-between mt-1">
+                            <span class="font-mono text-blue-900 font-black text-[13px]">R$ 0,00</span>
+                            <span class="px-1.5 py-0.5 bg-blue-200/50 text-blue-700 rounded-full text-[7px] font-bold uppercase tracking-tighter border border-blue-300">Estoque</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col bg-[#fff6ed] border border-orange-200 rounded-[3px] p-1.5 px-2 shadow-sm relative overflow-hidden">
+                        <span class="text-[8px] font-black text-orange-700 uppercase tracking-wider">Reposição</span>
+                        <div class="flex items-center justify-between mt-1">
+                            <span class="font-mono text-orange-900 font-black text-[12px]">R$ 0,00</span>
+                            <span class="px-1.5 py-0.5 bg-orange-200/50 text-orange-700 rounded-full text-[7px] font-bold uppercase tracking-tighter border border-orange-300">Últ. Compra</span>
                         </div>
                     </div>
 
-                        <!-- SUB-BLOCO: FISCAL -->
-                        <div class="sig-fieldset w-1/2 border-slate-300 bg-slate-50/10">
-                            <span class="sig-legend !text-slate-700 font-bold flex items-center gap-1">
-                                <span class="material-symbols-outlined !text-[15px]">balance</span> Tributação e Base Fiscal
-                            </span>
-
-                            <div class="grid grid-cols-3 gap-x-1.5 gap-y-1.5 p-0.5">
-                                <div class="col-span-1">
-                                    <label class="sig-label-dense opacity-70 flex items-center gap-1">NCM <span class="material-symbols-outlined !text-[10px] text-slate-400 cursor-help" title="Nomenclatura Comum do MERCOSUL. Código de 8 dígitos para identificar a natureza do produto para o governo.">help</span></label>
-                                    <div class="flex gap-0.5">
-                                        <input type="text" id="prod-ncm" class="sig-input-dense w-full font-mono text-blue-800 !h-6 !text-[10px]" placeholder="0000.0000">
-                                        <button onclick="window.consultarDadosFiscais()" class="sig-button-orange !p-0.5 !h-6 !w-6 shrink-0"><span class="material-symbols-outlined !text-[14px]">search</span></button>
-                                    </div>
-                                </div>
-                                <div class="col-span-1">
-                                    <label class="sig-label-dense opacity-70 flex items-center gap-1">CEST <span class="material-symbols-outlined !text-[10px] text-slate-400 cursor-help" title="Código Especificador da Substituição Tributária. Só preencha se o produto tiver Substituição Tributária (ST).">help</span></label>
-                                    <input type="text" id="prod-cest" class="sig-input-dense w-full font-mono !h-6 !text-[10px]" placeholder="00.000.00">
-                                </div>
-                                <div class="col-span-1">
-                                    <label class="sig-label-dense opacity-70 flex items-center gap-1">ORIGEM <span class="material-symbols-outlined !text-[10px] text-slate-400 cursor-help" title="Indica se o produto é fabricado no Brasil ou vem de fora.">help</span></label>
-                                    <select id="prod-origem" class="sig-input-dense w-full !h-6 !text-[10px]">
-                                        <option value="0">0 - NACIONAL</option>
-                                        <option value="1">1 - IMPORTAÇÃO DIRETA</option>
-                                        <option value="2">2 - IMPORTADA (INTERNA)</option>
-                                    </select>
-                                </div>
-                                
-                                <div class="col-span-3 mt-1 p-2 bg-blue-100/50 rounded border border-blue-200">
-                                    <label class="sig-label-dense text-blue-700 font-extrabold flex items-center gap-1 mb-1">
-                                        <span class="material-symbols-outlined !text-[12px]">style</span> PERFIL/GRUPO FISCAL
-                                    </label>
-                                    <select id="prod-perfil-fiscal-id" class="sig-input-dense w-full font-bold bg-white border-blue-300 !h-7 !text-[11px]">
-                                        <option value="0">SELECIONE O GRUPO FISCAL...</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-span-3 grid grid-cols-4 gap-2 mt-1">
-                                    <label class="flex items-center gap-1.5 cursor-pointer">
-                                        <input type="checkbox" id="prod-tem-icms" checked class="w-3.5 h-3.5 text-blue-600 border-slate-300 rounded focus:ring-blue-500">
-                                        <div class="flex flex-col leading-tight">
-                                            <span class="text-[9px] font-bold text-slate-700">ICMS</span>
-                                        </div>
-                                        <span class="material-symbols-outlined !text-[11px] text-slate-400 cursor-help" title="Imposto sobre circulação de mercadorias. Ative se este item sofre tributação normal de ICMS.">help</span>
-                                    </label>
-                                    <label class="flex items-center gap-1.5 cursor-pointer">
-                                        <input type="checkbox" id="prod-tem-st" class="w-3.5 h-3.5 text-blue-600 border-slate-300 rounded focus:ring-blue-500">
-                                        <div class="flex flex-col leading-tight">
-                                            <span class="text-[9px] font-bold text-slate-700">ST</span>
-                                        </div>
-                                        <span class="material-symbols-outlined !text-[11px] text-slate-400 cursor-help" title="Substituição Tributária. Ative se o imposto desse item é pago de forma antecipada.">help</span>
-                                    </label>
-                                    <label class="flex items-center gap-1.5 cursor-pointer">
-                                        <input type="checkbox" id="prod-tem-ipi" class="w-3.5 h-3.5 text-blue-600 border-slate-300 rounded focus:ring-blue-500">
-                                        <div class="flex flex-col leading-tight">
-                                            <span class="text-[9px] font-bold text-slate-700">IPI</span>
-                                        </div>
-                                        <span class="material-symbols-outlined !text-[11px] text-slate-400 cursor-help" title="Imposto sobre produtos industrializados. Comum para indústrias e importadoras.">help</span>
-                                    </label>
-                                    <label class="flex items-center gap-1.5 cursor-pointer">
-                                        <input type="checkbox" id="prod-tem-pis-cofins" checked class="w-3.5 h-3.5 text-blue-600 border-slate-300 rounded focus:ring-blue-500">
-                                        <div class="flex flex-col leading-tight">
-                                            <span class="text-[9px] font-bold text-slate-700">PIS/COF</span>
-                                        </div>
-                                        <span class="material-symbols-outlined !text-[11px] text-slate-400 cursor-help" title="Contribuições federais sobre o faturamento.">help</span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                </div>
-
-                <!-- LINHA: CUSTOS + CANAIS DE VENDA -->
-                <div class="flex gap-2 mt-1 shrink-0 pb-2">
-                    <!-- SUB-BLOCO: CUSTOS -->
-                    <div class="sig-fieldset w-[38%] border-slate-300 bg-slate-50/30">
-                        <span class="sig-legend !text-slate-700 font-bold flex items-center gap-1">
-                            <span class="material-symbols-outlined !text-[15px]">request_quote</span> Custos e Formação
-                        </span>
-                        <div class="flex flex-col gap-1.5 p-0.5">
-                            <div class="flex gap-2">
-                                <div class="flex-1">
-                                    <label class="sig-label-dense opacity-70 font-bold">Custo Compra</label>
-                                    <div class="relative">
-                                        <span class="absolute left-1.5 top-1 text-[8px] font-black text-slate-400">R$</span>
-                                        <input type="text" id="prod-custo" class="sig-input-dense !pl-5 w-full text-right font-black text-slate-800 text-[12px] bg-white border-blue-100 !h-7" value="0,00" onchange="window.recalcularPrecos()">
-                                    </div>
-                                </div>
-                                <div class="w-1/3">
-                                    <label class="sig-label-dense opacity-70">Frete (%)</label>
-                                    <input type="text" id="prod-frete" class="sig-input-dense w-full text-right font-bold !h-7" value="0.00" onchange="window.recalcularPrecos()">
-                                </div>
-                            </div>
-                            <div class="bg-blue-600 p-1 rounded-sm flex justify-between items-center shadow-md">
-                                <span class="text-white text-[8px] font-black uppercase tracking-widest pl-1">Sugerido</span>
-                                <span id="label-venda-sugerida" class="text-white font-black text-[14px] leading-none pr-1">R$ 0,00</span>
-                            </div>
-                            <div id="label-custo-real" class="text-right font-mono font-bold text-slate-400 text-[9px] italic">Custo Real: R$ 0,00</div>
+                    <div class="flex flex-col bg-white border border-slate-200 rounded-[3px] p-1.5 px-2 shadow-sm relative overflow-hidden">
+                        <span class="text-[8px] font-black text-slate-500 uppercase tracking-wider">Contábil</span>
+                        <div class="flex items-center justify-between mt-1">
+                            <span class="font-mono text-slate-800 font-black text-[11px]">R$ 0,00</span>
+                            <span class="px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded-full text-[7px] font-bold uppercase tracking-tighter border border-slate-200">Fiscal</span>
                         </div>
                     </div>
 
-                    <!-- SUB-BLOCO: CANAIS DE VENDA -->
-                    <div class="sig-fieldset flex-1 sig-fieldset-flush">
-                        <span class="sig-legend">Canais de Venda / Preços</span>
-                        <table class="w-full border-collapse">
-                            <thead>
-                                <tr class="bg-slate-200 text-[9px] text-slate-600 font-bold border-b border-slate-300">
-                                    <th class="text-left py-1 pl-2">Tabela</th>
-                                    <th class="text-left py-1">MKP%</th>
-                                    <th class="text-right py-1 pr-2 w-28">Preço R$</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="border-b border-slate-100">
-                                    <td class="py-1 px-2 text-[10px] font-semibold text-slate-700">Balcão</td>
-                                    <td><input type="text" id="prod-mkp-balcao" class="sig-input-dense w-12 text-center !h-6 !text-[10px]" value="100" onchange="window.recalcularPrecos()"></td>
-                                    <td class="px-2"><input type="text" id="prod-venda" class="sig-input-dense w-full sig-price-input sig-box-green !h-6 !text-[11px]" value="0,00" onfocus="this.select()" onchange="window.recalcularMKP('balcao')"></td>
-                                </tr>
-                                <tr class="bg-[#eff6ff] border-b border-[#bfdbfe]">
-                                    <td class="py-1 px-2 text-[10px] font-semibold text-[#1e40af]">Externo</td>
-                                    <td><input type="text" id="prod-mkp-externo" class="sig-input-dense w-12 text-center border-[#93c5fd] !h-6 !text-[10px]" value="100" onchange="window.recalcularPrecos()"></td>
-                                    <td class="px-2"><input type="text" id="prod-preco-externo" class="sig-input-dense w-full sig-price-input !h-6 !text-[11px]" style="background: white;" value="0,00" onchange="window.recalcularMKP('externo')"></td>
-                                </tr>
-                                <tr>
-                                    <td class="py-1 px-2 text-[10px] font-semibold text-slate-700">Oficina</td>
-                                    <td><input type="text" id="prod-mkp-oficina" class="sig-input-dense w-12 text-center !h-6 !text-[10px]" value="100" onchange="window.recalcularPrecos()"></td>
-                                    <td class="px-2 pb-1 pt-0.5"><input type="text" id="prod-preco-oficina" class="sig-input-dense w-full sig-price-input sig-box-green !h-6 !text-[11px]" value="0,00" onchange="window.recalcularMKP('oficina')"></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-            </div> <!-- /FIM COLUNA 70% -->
-
-            <!-- COLUNA DIREITA (VISUAL E INVENTÁRIO) -->
-            <div class="w-[30%] flex flex-col gap-1.5 h-full overflow-y-auto pl-1 border-l border-slate-200">
-                
-                <!-- VISUAL -->
-                <div class="sig-fieldset shrink-0">
-                    <span class="sig-legend">Visual do Produto</span>
-                    <div id="img-container-produto"
-                        class="w-full bg-slate-50 border-2 border-dashed border-slate-300 h-28 flex flex-col items-center justify-center text-slate-400 rounded-sm hover:border-blue-400 hover:text-blue-500 transition-all cursor-pointer relative overflow-hidden group">
-                        <span class="material-symbols-outlined text-[32px] opacity-20">image</span>
-                        <span class="text-[8px] font-bold uppercase tracking-tighter">Vincular Imagem</span>
-                    </div>
-                </div>
-
-                <!-- PAINEL DE INVENTÁRIO E LOCALIZAÇÃO -->
-                <div id="painel-inventario-bloco" class="sig-fieldset shrink-0 border-orange-200 bg-orange-50/20">
-                    <span class="sig-legend !text-orange-600 flex items-center gap-1"><span class="material-symbols-outlined !text-[14px]">location_on</span> Inventário e Localização</span>
-                    <div class="flex flex-col gap-1.5 p-1 text-slate-800">
-                        <div>
-                            <label class="sig-label-dense opacity-70">Localização no Estoque (Logística)</label>
-                            <div class="flex gap-1">
-                                <input type="text" id="prod-localizacao" class="sig-input-dense flex-1 font-mono font-bold text-orange-700 bg-white uppercase text-[10px]" placeholder="G01-T01-E01-P01" title="Galpão-Térreo/Mezanino-Estante-Prateleira">
-                                <button class="sig-button-orange !p-1 !h-6 !w-8" title="Ver no Mapa"><span class="material-symbols-outlined !text-[15px]">location_searching</span></button>
-                            </div>
+                    <div class="flex flex-col bg-slate-50 border border-slate-200 rounded-[3px] p-1.5 px-2 shadow-sm relative overflow-hidden">
+                        <span class="text-[8px] font-black text-slate-600 uppercase tracking-wider">Gerencial</span>
+                        <div class="flex items-center justify-between mt-1">
+                            <span class="font-mono text-slate-800 font-black text-[11px]">R$ 0,00</span>
+                            <span class="px-1.5 py-0.5 bg-slate-200/50 text-slate-700 rounded-full text-[7px] font-bold uppercase tracking-tighter border border-slate-300">S/ Imposto</span>
                         </div>
-                        <div class="flex gap-2">
-                            <div class="flex-1 text-center bg-white border border-slate-200 rounded-sm py-1 shadow-inner">
-                                <label class="sig-label-dense !text-[8px] opacity-60">SALDO DISPONÍVEL</label>
-                                <div class="text-[18px] font-black text-slate-800 leading-none">0 <span class="text-[9px] font-normal text-slate-400 uppercase unit-sigla-label">UN</span></div>
-                            </div>
-                            <div class="w-1/3">
-                                <label class="sig-label-dense opacity-70">EST. MÍN.</label>
-                                <input type="text" id="prod-estoque-minimo" class="sig-input-dense w-full text-center font-bold" value="1">
-                            </div>
+                    </div>
+
+                    <div class="flex flex-col bg-slate-50 border border-slate-200 rounded-[3px] p-1 shadow-sm justify-center">
+                        <div class="flex items-center justify-between px-1">
+                            <span class="text-[8px] font-black text-slate-600 uppercase tracking-wider flex items-center gap-1"><span class="material-symbols-outlined !text-[11px]">local_shipping</span> Frete</span>
+                            <span class="font-mono text-slate-900 font-black text-[11px]">0.00%</span>
                         </div>
-                        <input type="hidden" id="prod-estoque-atual" value="0">
-                    </div>
-                    <div class="hidden">
-                        <table class="sig-table sig-table-sm w-full">
-                            <thead class="bg-slate-50 border-b border-slate-200">
-                                <tr>
-                                    <th class="text-left">Localização</th>
-                                    <th class="text-right">Saldo</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="text-[11px]">ESTOQUE_01 (PRINCIPAL)</td>
-                                    <td class="text-right font-mono font-bold text-[11px]">0 UN</td>
-                                </tr>
-                            </tbody>
-                            <tfoot class="bg-blue-50 font-extrabold border-t-2 border-blue-200 text-blue-900">
-                                <tr>
-                                    <td class="py-1.5 px-2 uppercase tracking-wider text-[10px]">Min <input type="number" id="prod-estoque-minimo" class="w-12 h-4 text-xs font-mono ml-2"></td>
-                                    <td class="py-1.5 px-2 text-right"><input type="number" id="prod-estoque-atual" class="w-16 h-5 text-right font-mono bg-transparent border border-blue-300 rounded-sm" value="0"> UN</td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-
-                </div>
-
-                <!-- SIMILARES -->
-                <div class="sig-fieldset flex-1 flex flex-col min-h-[150px] overflow-hidden mb-2">
-                    <span class="sig-legend">Similares / Outras Marcas</span>
-                    <div class="flex-1 overflow-y-auto border border-slate-200 bg-white rounded-sm">
-                        <table class="w-full sig-table sig-table-sm w-full border-none">
-                            <thead class="sticky top-0 bg-slate-100 shadow-sm border-b"><tr><th class="text-left font-bold border-none">Marca</th><th class="text-right font-bold border-none">Código</th></tr></thead>
-                            <tbody id="tb-similares">
-                                <tr><td colspan="2" class="text-center py-4 text-slate-300 italic">Nenhum similar</td></tr>
-                            </tbody>
-                        </table>
+                        <div class="flex items-center justify-between border-t border-slate-200 mt-0.5 pt-0.5 px-1">
+                            <span class="text-[8px] font-black text-slate-600 uppercase tracking-wider flex items-center gap-1"><span class="material-symbols-outlined !text-[11px]">receipt</span> Despesa</span>
+                            <span class="font-mono text-slate-900 font-black text-[11px]">0.00%</span>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <!-- SUB-BLOCO: CANAIS DE VENDA -->
+            <div class="sig-fieldset-blueprint flex-[1] sig-fieldset-flush">
+                <span class="sig-legend-blueprint">Canais de Venda / Preços</span>
+                <table class="w-full border-collapse">
+                    <thead>
+                        <tr class="bg-slate-200 text-[9px] text-slate-600 font-bold border-b border-slate-300">
+                            <th class="text-left py-1 pl-2">Tabela</th>
+                            <th class="text-center py-1 w-12">MKP%</th>
+                            <th class="text-right py-1 pr-2 w-24">Preço R$</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b border-slate-100">
+                            <td class="py-1 px-2 text-[10px] font-semibold text-slate-700">Balcão</td>
+                            <td><input type="text" id="prod-mkp-balcao" class="sig-input-dense w-12 text-center !h-6 !text-[10px]" value="100" onchange="window.recalcularPrecos()"></td>
+                            <td class="px-2"><input type="text" id="prod-venda" class="sig-input-dense w-full sig-price-input sig-box-green !h-6 !text-[11px]" value="0,00" onfocus="this.select()" onchange="window.recalcularMKP('balcao')"></td>
+                        </tr>
+                        <tr>
+                            <td class="py-1 px-2 text-[10px] font-semibold text-slate-700">Oficina</td>
+                            <td><input type="text" id="prod-mkp-oficina" class="sig-input-dense w-12 text-center !h-6 !text-[10px]" value="100" onchange="window.recalcularPrecos()"></td>
+                            <td class="px-2 pb-1 pt-0.5"><input type="text" id="prod-preco-oficina" class="sig-input-dense w-full sig-price-input sig-box-green !h-6 !text-[11px]" value="0,00" onchange="window.recalcularMKP('oficina')"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
+
+        <!-- HISTÓRICO DE MOVIMENTAÇÃO -->
+        <div id="painel-historico-bloco" class="sig-fieldset-blueprint flex flex-col mt-1 flex-1 min-h-[5rem] relative border-slate-200 transition-opacity duration-300">
+            <span class="sig-legend-blueprint flex items-center gap-1">
+                <span class="material-symbols-outlined !text-[14px]">history</span> Histórico de Movimentação
+            </span>
+            <div class="flex-1 overflow-y-auto w-full bg-slate-50 relative border border-slate-200 rounded-sm mt-1 custom-scrollbar">
+                <table class="sig-table sig-table-sm w-full table-fixed border-none">
+                    <thead class="bg-slate-50 sticky top-0 z-10 border-b border-slate-200">
+                        <tr>
+                            <th class="w-24 text-center">Data / Hora</th>
+                            <th class="w-20 text-center border-l border-slate-200">Tipo</th>
+                            <th class="text-left border-l border-slate-200">Descrição / Doc Origem</th>
+                            <th class="w-16 text-right border-l border-slate-200">Qtde</th>
+                            <th class="w-20 text-right border-l border-slate-200">Saldo</th>
+                            <th class="w-24 text-left px-2 border-l border-slate-200">Usuário</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tb-movimentacao" class="divide-y divide-slate-100">
+                        <tr class="bg-white"><td colspan="6" class="text-center text-slate-400 py-6 text-[10px] italic border-none">Produto novo ou sem movimentações.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- COLUNA DIREITA (VISUAL E INVENTÁRIO) -->
+    <div class="w-[30%] flex flex-col gap-1.5 h-full overflow-y-auto pl-1 border-l border-slate-200">
+        <div class="sig-fieldset-blueprint shrink-0">
+            <span class="sig-legend-blueprint">Visual do Produto</span>
+            <div class="flex flex-col gap-1.5 w-full">
+                <div id="img-grid-produto" class="flex flex-wrap gap-2 w-full bg-slate-50 p-2 border border-slate-200 rounded-sm shadow-inner min-h-[7.5rem]">
+                    <!-- Vazio será injetado pelo JS -->
+                </div>
+                <button type="button" onclick="window.addProdutoImg()" class="w-full bg-white border border-slate-300 border-dashed hover:bg-slate-50 hover:border-blue-400 text-slate-500 hover:text-blue-600 font-bold px-3 py-1.5 text-[10px] rounded-sm shadow-sm flex items-center justify-center gap-1.5 transition-colors">
+                    <span class="material-symbols-outlined !text-[14px]">add_photo_alternate</span> Adicionar Imagem
+                </button>
+            </div>
+        </div>
+
+        <div id="painel-inventario-bloco" class="sig-fieldset-blueprint shrink-0 border-orange-200 bg-orange-50/20">
+            <span class="sig-legend-blueprint !text-orange-600 flex items-center gap-1"><span class="material-symbols-outlined !text-[14px]">location_on</span> Inventário & Saldos</span>
+            <div class="flex flex-col gap-1.5 p-1 text-slate-800">
+                <div class="flex gap-1.5 items-end">
+                    <div class="flex-1">
+                        <label class="sig-label-dense opacity-70">Localização</label>
+                        <input type="text" id="prod-localizacao" class="sig-input-dense w-full font-mono font-bold text-orange-700 bg-white uppercase text-[10px]" placeholder="G01-T01-E01-P01">
+                    </div>
+                </div>
+
+                <!-- TABELA DE DISCRIMINAÇÃO DE SALDOS -->
+                <div class="flex-1 overflow-y-auto w-full bg-white relative min-h-0 border border-slate-200 rounded-sm mt-0.5">
+                    <table class="sig-table sig-table-sm w-full">
+                        <thead class="bg-slate-50 sticky top-0 z-10 border-b border-slate-200">
+                            <tr>
+                                <th class="text-left">Depósito / Área</th>
+                                <th class="text-right border-l border-slate-200">Saldo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tb-inventario-saldos">
+                            <tr class="bg-white"><td colspan="2" class="text-center text-slate-400 py-4 text-[9px] italic border-none bg-slate-50/50">Produto novo ou sem saldo físico no momento.</td></tr>
+                        </tbody>
+                        <tfoot class="bg-blue-50 font-extrabold border-t-2 border-blue-200 text-blue-900">
+                            <tr>
+                                <td class="py-1.5 px-2 uppercase tracking-wider text-[9px]">Saldo Total em Estoque:</td>
+                                <td class="py-1.5 px-2 text-right font-mono text-[11px]"><span id="prod-total-estoque" class="font-black">0</span> <span class="text-[8px] font-normal text-slate-400 unit-sigla-label">UN</span></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- BLOCO 3: REFERÊNCIAS CRUZADAS (SIMILARES) -> CORREÇÃO DE COR E POSIÇÃO -->
+        <div class="sig-fieldset-blueprint flex flex-col mt-3 flex-1 min-h-0 !px-1 relative border-blue-200">
+            <span class="sig-legend-blueprint !text-sig-blue !bg-white px-2 py-0.5 font-bold flex items-center gap-1 z-50">
+                <span class="material-symbols-outlined !text-[14px]">link</span> Similares
+            </span>
+            <div id="container-similares-cadastro" class="flex-1 overflow-y-auto w-full bg-slate-50 relative border border-slate-200 rounded-sm mt-1">
+                <table class="sig-table sig-table-sm w-full table-fixed border-none">
+                    <thead class="bg-slate-50 sticky top-0 z-10 border-b border-slate-200">
+                        <tr>
+                            <th class="text-left">Marca</th>
+                            <th class="text-left border-l border-slate-200 w-[50%]">Código</th>
+                            <th class="w-8 border-l border-slate-200"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tb-similares" class="divide-y divide-slate-100">
+                        <tr class="bg-white"><td colspan="3" class="text-center text-slate-400 py-6 text-[9px] italic border-none">Nenhuma referência</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="p-1 px-2 bg-slate-50 border-x border-b border-slate-300 rounded-b-sm">
+                <button type="button" onclick="window.abrirModalAddSimilar()" class="w-full bg-white border border-slate-300 hover:bg-blue-50 text-sig-blue font-bold py-1 text-[9px] rounded-sm shadow-sm flex items-center justify-center gap-1 transition-colors">
+                    <span class="material-symbols-outlined !text-[12px]">add_link</span> Adicionar Referência Similar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
         <footer class="h-[46px] bg-[#e2e8f0] border-t border-[#cbd5e1] flex items-center justify-end px-4 gap-3">
             <button onclick="window.fecharCadastroProduto()" class="sig-btn sig-btn-neutral">
@@ -566,7 +617,7 @@ window.abrirCadastroProduto = async function (isEdit = false, p = null) {
     document.getElementById('prod-custo').value = "0,00";
     document.getElementById('prod-venda').value = "0,00";
     document.getElementById('prod-mkp-balcao').value = "100";
-    document.getElementById('prod-mkp-externo').value = "100";
+    if(document.getElementById('prod-mkp-externo')) document.getElementById('prod-mkp-externo').value = "100";
     document.getElementById('prod-mkp-oficina').value = "100";
     document.getElementById('prod-fator-conversao').value = "1.0000";
     document.getElementById('prod-peso').value = "0.000";
@@ -607,10 +658,10 @@ window.abrirCadastroProduto = async function (isEdit = false, p = null) {
         document.getElementById('prod-perfil-fiscal-id').value = p.perfil_fiscal_id || 0;
         
         // Indicadores (Checkboxes)
-        document.getElementById('prod-tem-icms').checked = p.tem_icms === undefined ? true : p.tem_icms;
-        document.getElementById('prod-tem-st').checked = p.tem_st === undefined ? false : p.tem_st;
-        document.getElementById('prod-tem-ipi').checked = p.tem_ipi === undefined ? false : p.tem_ipi;
-        document.getElementById('prod-tem-pis-cofins').checked = p.tem_pis_cofins === undefined ? true : p.tem_pis_cofins;
+        if(document.getElementById('prod-tem-icms')) document.getElementById('prod-tem-icms').checked = p.tem_icms === undefined ? true : p.tem_icms;
+        if(document.getElementById('prod-tem-st')) document.getElementById('prod-tem-st').checked = p.tem_st === undefined ? false : p.tem_st;
+        if(document.getElementById('prod-tem-ipi')) document.getElementById('prod-tem-ipi').checked = p.tem_ipi === undefined ? false : p.tem_ipi;
+        if(document.getElementById('prod-tem-pis-cofins')) document.getElementById('prod-tem-pis-cofins').checked = p.tem_pis_cofins === undefined ? true : p.tem_pis_cofins;
     } else {
         document.getElementById('titulo-cadastro').innerText = "F3 - NOVO PRODUTO";
         try {
@@ -658,10 +709,10 @@ window.salvarProduto = async function () {
         cest: document.getElementById('prod-cest').value.trim(),
         origem: parseInt(document.getElementById('prod-origem').value) || 0,
         perfil_fiscal_id: parseInt(document.getElementById('prod-perfil-fiscal-id').value) || 0,
-        tem_icms: document.getElementById('prod-tem-icms').checked,
-        tem_st: document.getElementById('prod-tem-st').checked,
-        tem_ipi: document.getElementById('prod-tem-ipi').checked,
-        tem_pis_cofins: document.getElementById('prod-tem-pis-cofins').checked,
+        tem_icms: document.getElementById('prod-tem-icms') ? document.getElementById('prod-tem-icms').checked : true,
+        tem_st: document.getElementById('prod-tem-st') ? document.getElementById('prod-tem-st').checked : false,
+        tem_ipi: document.getElementById('prod-tem-ipi') ? document.getElementById('prod-tem-ipi').checked : false,
+        tem_pis_cofins: document.getElementById('prod-tem-pis-cofins') ? document.getElementById('prod-tem-pis-cofins').checked : true,
 
         // Legados (Esvaziados na nova estrutura de pré-cadastro)
         cfop: "",

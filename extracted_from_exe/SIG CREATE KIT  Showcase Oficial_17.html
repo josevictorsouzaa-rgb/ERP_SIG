@@ -1,0 +1,1769 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>SIG CREATE KIT - Showcase Oficial</title>
+    <!-- Web Components Oficiais -->
+    <script src="../../componentes/blueprint/sig-sidebar.js"></script>
+    <script src="../../componentes/blueprint/sig-toolbar.js"></script>
+    <script src="../../componentes/blueprint/sig-statusbar.js"></script>
+    <script src="../../componentes/blueprint/sig-tabs.js"></script>
+    <script src="../../componentes/blueprint/sig-tree.js"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'sig-blue': '#1E40AF',
+                        'sig-red': '#EF4444',
+                        'sig-green': '#10B981',
+                        'sig-orange': '#F59E0B',
+                        'sig-brand-cyan': '#00E5FF',
+                        'sig-brand-dark': '#001B2B'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Fontes Oficiais -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+    
+    <!-- CSS do Projeto SIG -->
+    <link rel="stylesheet" href="../css/sig-ui.css">
+    
+    <!-- Script Oficial de Notificações -->
+    <script src="../js/sig-toast.js"></script>
+    
+    <!-- CSS Nativo do Showcase -->
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f8fafc; 
+            color: #2c3e50;
+        }
+        
+        .showcase-header {
+            border-bottom: 2px solid #ecf0f1;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+        }
+
+        .showcase-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #2c3e50;
+            letter-spacing: -1px;
+        }
+
+        .showcase-block-title {
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: #34495e;
+            text-transform: uppercase;
+            letter-spacing: 0px;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #ecf0f1;
+            padding-bottom: 0.5rem;
+        }
+
+        /* Estudo de Grid estilo Masonry Automático do Tailwind (columns) */
+        .showcase-grid {
+            column-count: 1;
+            column-gap: 2rem;
+        }
+        @media (min-width: 768px) { .showcase-grid { column-count: 2; } }
+        @media (min-width: 1024px) { .showcase-grid { column-count: 3; } }
+        @media (min-width: 1440px) { .showcase-grid { column-count: 4; } }
+
+        .showcase-card {
+            break-inside: avoid;
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            border: 1px solid #f1f5f9;
+        }
+
+        /* Oculta magicamente a opção de cópia até fazer o Hover no bloco do componente */
+        .copy-trigger {
+            opacity: 0;
+            transition: opacity 0.2s ease, background-color 0.2s;
+        }
+        .group:hover .copy-trigger {
+            opacity: 1;
+        }
+    </style>
+
+    <script>
+        // Função universal de cópia de componentes
+        function copiarHTML(btn) {
+            const row = btn.closest('.group');
+            const target = row.querySelector('.sig-copyable-target');
+            
+            // Pega todo o HTML interno puro perfeitamente como foi renderizado
+            let htmlToCopy = target.innerHTML;
+            
+            // Remove espaços excedentes das pontas
+            htmlToCopy = htmlToCopy.trim();
+            
+            navigator.clipboard.writeText(htmlToCopy).then(() => {
+                const icon = btn.querySelector('span');
+                const oldIcon = icon.innerText;
+                
+                icon.innerText = 'check';
+                icon.classList.add('text-emerald-500');
+                btn.classList.add('bg-emerald-50');
+                
+                setTimeout(() => {
+                    icon.innerText = oldIcon;
+                    icon.classList.remove('text-emerald-500');
+                    btn.classList.remove('bg-emerald-50');
+                }, 1500);
+            });
+        }
+    </script>
+</head>
+<body class="p-8 lg:p-12">
+
+    <div class="max-w-[1600px] mx-auto">
+        
+        <!-- CABEÇALHO DO MOSTRUÁRIO -->
+        <div class="uikit-nav-group">Agrupadores de Dados</div>
+        <a href="#fieldsets" class="uikit-nav-item">FLD-1 / Fieldsets</a>
+        
+        <div class="uikit-nav-group">Menus & Navegação</div>
+        <a href="#breadcrumbs" class="uikit-nav-item">BRD-1 / Breadcrumbs</a>
+        <a href="#menus" class="uikit-nav-item">MNU-1 / Menus e Abas</a>
+        
+        <div class="uikit-nav-group">Estados & Elementos Visuais</div>
+        <a href="#upload" class="uikit-nav-item">UPL-1 / Caixa de Upload</a>
+        <a href="#empty" class="uikit-nav-item">EMP-1 / Empty States</a>
+        <a href="#placas" class="uikit-nav-item">PNL-1 / Placas Informativas</a>
+        <a href="#toast" class="uikit-nav-item">TST-1 / Mensagens (Toast)</a>
+        
+        <div class="uikit-nav-group">Grids e Elementos Complexos</div>
+        <a href="#tabelasm" class="uikit-nav-item">TBL-1 / Matrizes (Densidades)</a>
+        <a href="#tabela_aninhada" class="uikit-nav-item">TBL-2 / Master-Detail (Tree)</a>
+        <a href="#timeline" class="uikit-nav-item">TML-1 / Timeline Stepper</a>
+        <a href="#timeline-horizontal" class="uikit-nav-item">TML-2 / Timeline Horizontal</a>
+        <a href="#kanban" class="uikit-nav-item">KBN-1 / Quadro Kanban</a>
+        <header class="showcase-header">
+            <div>
+                <h1 class="showcase-title">SIG Blueprint</h1>
+                <p class="text-slate-500 font-medium text-sm mt-1">Biblioteca visual de componentes ERP. Passe o mouse sobre o componente para copiar o código.</p>
+            </div>
+            <div class="text-right">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Versão 2.1 <br> Design System Oficial</span>
+            </div>
+        </header>
+
+        <!-- MOSTRUÁRIO MASONRY GRID -->
+        <div class="showcase-grid">
+
+            <!-- Identidade Visual (Branding) -->
+            <div class="showcase-card break-inside-avoid" style="column-span: all;">
+                <h3 class="showcase-block-title">Identidade Visual da Marca</h3>
+
+                <!-- Banner da Marca (Réplica da Imagem) -->
+                <div class="sig-logo-banner mb-6 shadow-md rounded-t">
+                    <span class="sig-logo-brand">SIG</span>
+                    <span class="sig-logo-separator">|</span>
+                    <span class="sig-logo-tagline">SISTEMA CORE ERP</span>
+                </div>
+
+                <!-- Paleta de Cores da Marca -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="flex items-center gap-4 p-4 bg-white border border-slate-200 rounded">
+                        <div class="w-12 h-12 rounded shadow-inner" style="background-color: var(--sig-brand-cyan);"></div>
+                        <div>
+                            <p class="text-xs font-bold text-slate-800">Ciano Vibrante (Brand Main)</p>
+                            <p class="text-[10px] text-slate-500 font-mono">#00E5FF</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4 p-4 bg-white border border-slate-200 rounded">
+                        <div class="w-12 h-12 rounded shadow-inner" style="background-color: var(--sig-brand-dark);"></div>
+                        <div>
+                            <p class="text-xs font-bold text-slate-800">Azul Marinho Profundo (Brand Background)</p>
+                            <p class="text-[10px] text-slate-500 font-mono">#001B2B</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8">
+                    <p class="text-[10px] font-black text-slate-400 mb-4 uppercase tracking-wider">Principais e Destaque</p>
+                    <div class="flex flex-wrap gap-4">
+                        <div class="flex items-center gap-2 bg-slate-50 p-2 rounded border border-slate-200">
+                            <div class="w-4 h-4 rounded-sm" style="background-color: var(--sig-blue);"></div>
+                            <div class="flex flex-col">
+                                <span class="text-[9px] font-black text-slate-700">SOBER BLUE</span>
+                                <span class="text-[8px] font-mono text-slate-400">#1E40AF</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 bg-slate-50 p-2 rounded border border-slate-200">
+                            <div class="w-4 h-4 rounded-sm" style="background-color: var(--sig-brand-cyan);"></div>
+                            <div class="flex flex-col">
+                                <span class="text-[9px] font-black text-slate-700">BRAND CYAN</span>
+                                <span class="text-[8px] font-mono text-slate-400">#00E5FF</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 bg-slate-50 p-2 rounded border border-slate-200">
+                            <div class="w-4 h-4 rounded-sm" style="background-color: var(--sig-brand-dark);"></div>
+                            <div class="flex flex-col">
+                                <span class="text-[9px] font-black text-slate-700">BRAND DARK</span>
+                                <span class="text-[8px] font-mono text-slate-400">#001B2B</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOCO 1: BOTÕES -->
+            <div class="showcase-card">
+                <h3 class="showcase-block-title">Botões (Buttons)</h3>
+                
+                <div class="flex flex-col gap-5">
+                    
+                    <div class="group flex items-center justify-between">
+                        <div class="sig-copyable-target">
+<button class="sig-btn sig-btn-primary w-28">
+    <span class="material-symbols-outlined !text-[16px]">save</span> GRAVAR
+</button>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Primário</span>
+                            <button class="copy-trigger bg-slate-100 text-slate-500 rounded p-1.5 hover:bg-emerald-100 hover:text-emerald-700 outline-none" title="Copiar Fragmento HTML" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                        </div>
+                    </div>
+
+                    <div class="group flex items-center justify-between">
+                        <div class="sig-copyable-target">
+<button class="sig-btn sig-btn-success w-28">
+    <span class="material-symbols-outlined !text-[16px]">add_circle</span> NOVO
+</button>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Sucesso</span>
+                            <button class="copy-trigger bg-slate-100 text-slate-500 rounded p-1.5 hover:bg-emerald-100 hover:text-emerald-700 outline-none" title="Copiar Fragmento HTML" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                        </div>
+                    </div>
+
+                    <div class="group flex items-center justify-between">
+                        <div class="sig-copyable-target">
+<button class="sig-btn sig-btn-danger w-28">
+    <span class="material-symbols-outlined !text-[16px]">delete</span> EXCLUIR
+</button>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Alerta/Erro</span>
+                            <button class="copy-trigger bg-slate-100 text-slate-500 rounded p-1.5 hover:bg-emerald-100 hover:text-emerald-700 outline-none" title="Copiar Fragmento HTML" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                        </div>
+                    </div>
+
+                    <div class="group flex items-center justify-between">
+                        <div class="sig-copyable-target">
+<button class="sig-btn sig-btn-neutral w-28">
+    <span class="material-symbols-outlined !text-[16px]">close</span> CANCELAR
+</button>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Neutro</span>
+                            <button class="copy-trigger bg-slate-100 text-slate-500 rounded p-1.5 hover:bg-emerald-100 hover:text-emerald-700 outline-none" title="Copiar Fragmento HTML" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- BLOCO 1B: TOOLBARS -->
+            <div class="showcase-card break-inside-avoid" style="column-span: all;">
+                <h3 class="showcase-block-title">Barras de Ferramentas (Toolbars)</h3>
+                <div class="group relative">
+                    <div class="absolute -right-2 -top-2 z-10">
+                        <button class="copy-trigger bg-white border border-slate-200 outline-none text-slate-500 rounded p-1.5 hover:bg-emerald-50" title="Copiar Toolbar" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                    </div>
+                    <div class="sig-copyable-target bg-white border border-slate-200 p-2 rounded-sm shadow-sm flex justify-center">
+<!-- Barra de Ações Oficial SIG -->
+<div class="sig-toolbar">
+    <button class="sig-btn-icon" title="Gravar (F10)"><span class="material-symbols-outlined text-[18px]">save</span></button>
+    <button class="sig-btn-icon" title="Novo (F2)"><span class="material-symbols-outlined text-[18px]">add</span></button>
+    <button class="sig-btn-icon" title="Editar"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+    <button class="sig-btn-icon" title="Excluir"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+    <div class="sig-divider"></div>
+    <button class="sig-btn-icon" title="Pesquisar"><span class="material-symbols-outlined text-[18px]">search</span></button>
+    <button class="sig-btn-icon" title="Imprimir"><span class="material-symbols-outlined text-[18px]">print</span></button>
+    <div class="sig-divider"></div>
+    <button class="sig-btn-icon" title="Primeiro"><span class="material-symbols-outlined text-[18px]">first_page</span></button>
+    <button class="sig-btn-icon" title="Anterior"><span class="material-symbols-outlined text-[18px]">navigate_before</span></button>
+    <button class="sig-btn-icon" title="Próximo"><span class="material-symbols-outlined text-[18px]">navigate_next</span></button>
+    <button class="sig-btn-icon" title="Último"><span class="material-symbols-outlined text-[18px]">last_page</span></button>
+    <div class="sig-divider"></div>
+    <button class="sig-btn-icon" title="Configurações"><span class="material-symbols-outlined text-[18px]">settings</span></button>
+    <button class="sig-btn-icon" title="Ajuda"><span class="material-symbols-outlined text-[18px]">help</span></button>
+</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOCO 2: BADGES E PLACAS -->
+            <div class="showcase-card">
+                <h3 class="showcase-block-title">Tags & Indicadores</h3>
+                
+                <div class="flex flex-col gap-6">
+                    <div class="group relative">
+                        <!-- Botão de Cópia Absolute Top Right para itens de layout longo -->
+                        <div class="absolute -right-2 -top-2">
+                            <button class="copy-trigger bg-white border border-slate-200 shadow-sm text-slate-500 rounded p-1.5 hover:bg-emerald-50 hover:text-emerald-700 outline-none z-10" title="Copiar Container HTML" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                        </div>
+                        
+                        <span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-3 block">Color Tags (Status)</span>
+                        <div class="sig-copyable-target flex flex-wrap gap-2">
+<!-- Coleção de Tags de Status -->
+<span class="sig-badge sig-badge-success">APROVADO</span>
+<span class="sig-badge sig-badge-error">REJEITADO</span>
+<span class="sig-badge sig-badge-warning">PENDENTE</span>
+<span class="sig-badge sig-badge-primary">NOVO O.S</span>
+                        </div>
+                    </div>
+
+                    <div class="group relative pt-4 border-t border-slate-100">
+                        <div class="absolute -right-2 top-2">
+                            <button class="copy-trigger bg-white border border-slate-200 shadow-sm text-slate-500 rounded p-1.5 hover:bg-emerald-50 hover:text-emerald-700 outline-none z-10" title="Copiar Dashboard Card" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                        </div>
+                        <span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-3 block">Placas de Scorecard</span>
+                        <div class="sig-copyable-target flex flex-col gap-3">
+<!-- Scorecard Positivo -->
+<div class="sig-box-green px-3 py-1 flex items-center gap-4 shadow-sm rounded-sm">
+    <span class="flex items-center gap-1 font-black text-[10px] tracking-widest"><span class="material-symbols-outlined !text-[14px]">check_box</span> ITEM DISPONÍVEL:</span>
+    <span class="text-xl font-black font-mono">18</span>
+</div>
+<!-- Scorecard Amarelo/Atenção -->
+<div class="sig-box-yellow px-3 py-1 flex items-center gap-4 shadow-sm rounded-sm">
+    <span class="text-[10px] font-black uppercase tracking-widest flex items-center gap-1"><span class="material-symbols-outlined !text-[14px]">warning</span> ESTOQUE BAIXO:</span>
+    <span class="text-xl font-black font-mono">-2</span>
+</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MACRO BLOCO: FORMULÁRIOS E ENTRADAS DE DADOS -->
+            <div class="showcase-card break-inside-avoid" style="column-span: all;" id="formularios">
+                <h3 class="showcase-block-title mb-6"><span class="material-symbols-outlined !text-[18px] align-text-bottom mr-1 text-sig-blue">dashboard_customize</span> Setor de Formulários e Entradas</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    
+                    <!-- COLUNA 1: Text Box & Menus -->
+                    <div>
+                        <h4 class="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-4 pb-2 border-b border-slate-100 flex items-center gap-2"><span class="material-symbols-outlined !text-[14px]">edit_document</span> Text Box & Menus</h4>
+                        <div class="flex flex-col gap-5">
+                            <div class="group relative">
+                                <div class="absolute -right-2 -top-2">
+                                    <button class="copy-trigger bg-white border border-slate-200 shadow-sm text-slate-500 rounded p-1.5 hover:bg-emerald-50 hover:text-emerald-700 outline-none z-10" title="Copiar Input Padrão" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                                </div>
+                                <div class="sig-copyable-target w-full pr-8">
+<!-- Input Padrão (Largura Total da Div Pai) -->
+<div class="w-full">
+    <label class="sig-label-dense">NOME / RAZÃO SOCIAL</label>
+    <input type="text" class="sig-input-dense w-full uppercase" placeholder="INFORME O NOME...">
+</div>
+                                </div>
+                            </div>
+
+                            <div class="group relative">
+                                <div class="absolute -right-2 -top-2">
+                                    <button class="copy-trigger bg-white border border-slate-200 shadow-sm text-slate-500 rounded p-1.5 hover:bg-emerald-50 outline-none z-10" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                                </div>
+                                <div class="sig-copyable-target w-full pr-8">
+<!-- Combo Box / Select Padrão -->
+<div class="w-full">
+    <label class="sig-label-dense">TIPO DE OPERAÇÃO (COMBO)</label>
+    <select class="sig-input-dense w-full font-bold text-sig-blue">
+        <option>VENDA DIRETA</option>
+        <option>COMPRA / SUPRIMENTO</option>
+    </select>
+</div>
+                                </div>
+                            </div>
+
+                            <div class="group relative">
+                                <div class="absolute -right-2 -top-2">
+                                    <button class="copy-trigger bg-white border border-slate-200 shadow-sm text-slate-500 rounded p-1.5 hover:bg-emerald-50 outline-none z-10" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                                </div>
+                                <div class="sig-copyable-target w-full pr-8">
+<!-- Input Numérico / Monetário (Alinhado à Direita, Texto Mono) -->
+<div class="w-full">
+    <label class="sig-label-dense text-sig-green">VALOR TOTAL DO PEDIDO (R$)</label>
+    <input type="text" class="sig-input-dense w-full text-right font-mono text-sig-green border-sig-green bg-emerald-50" value="1.500,00">
+</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COLUNA 2: Checagem e Switches -->
+                    <div>
+                        <h4 class="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-4 pb-2 border-b border-slate-100 flex items-center gap-2"><span class="material-symbols-outlined !text-[14px]">check_box</span> Seleção e Estados</h4>
+                        <div class="flex flex-col gap-8">
+                            
+                            <!-- Checkboxes -->
+                            <div class="group relative">
+                                <div class="absolute -right-2 -top-2">
+                                    <button class="copy-trigger bg-white border border-slate-200 shadow-sm text-slate-500 rounded p-1.5 hover:bg-emerald-50 outline-none z-10" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                                </div>
+                                <span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-3 block">Checkboxes (Variações)</span>
+                                <div class="sig-copyable-target flex flex-col gap-3">
+                                    <label class="sig-check-group pointer-events-auto">
+                                        <input type="checkbox" class="sig-check-input hidden" checked>
+                                        <div class="sig-checkbox"></div>
+                                        <span class="text-slate-700">Opção Marcada</span>
+                                    </label>
+                                    <label class="sig-check-group">
+                                        <input type="checkbox" class="sig-check-input hidden">
+                                        <div class="sig-checkbox"></div>
+                                        <span class="text-slate-700">Opção Desmarcada</span>
+                                    </label>
+                                    <label class="sig-check-group disabled">
+                                        <input type="checkbox" class="sig-check-input hidden" disabled checked>
+                                        <div class="sig-checkbox"></div>
+                                        <span>Desabilitado (Ativo)</span>
+                                    </label>
+                                    <label class="sig-check-group disabled">
+                                        <input type="checkbox" class="sig-check-input hidden" disabled>
+                                        <div class="sig-checkbox"></div>
+                                        <span>Desabilitado (Inativo)</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Switches / Toggles -->
+                            <div class="group relative">
+                                <div class="absolute -right-2 -top-2">
+                                    <button class="copy-trigger bg-white border border-slate-200 shadow-sm text-slate-500 rounded p-1.5 hover:bg-emerald-50 outline-none z-10" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                                </div>
+                                <span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-3 block">Switches (Toggles)</span>
+                                <div class="sig-copyable-target flex flex-col gap-3">
+                                    <label class="sig-check-group">
+                                        <input type="checkbox" class="sig-switch-input hidden" checked>
+                                        <div class="sig-switch"></div>
+                                        <span class="text-slate-700">Serviço Ativo</span>
+                                    </label>
+                                    <label class="sig-check-group">
+                                        <input type="checkbox" class="sig-switch-input hidden">
+                                        <div class="sig-switch"></div>
+                                        <span class="text-slate-700">Serviço Pausado</span>
+                                    </label>
+                                    <label class="sig-check-group disabled">
+                                        <input type="checkbox" class="sig-switch-input hidden" disabled checked>
+                                        <div class="sig-switch"></div>
+                                        <span>Toggle Bloqueado</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Radios -->
+                            <div class="group relative">
+                                <div class="absolute -right-2 -top-2">
+                                    <button class="copy-trigger bg-white border border-slate-200 shadow-sm text-slate-500 rounded p-1.5 hover:bg-emerald-50 outline-none z-10" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                                </div>
+                                <span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-3 block">Radio Buttons</span>
+                                <div class="sig-copyable-target flex flex-col gap-3">
+                                    <label class="sig-check-group">
+                                        <input type="radio" name="rd-exp" class="sig-check-input hidden" checked>
+                                        <div class="sig-radio"></div>
+                                        <span class="text-slate-700">Seleção Única A</span>
+                                    </label>
+                                    <label class="sig-check-group">
+                                        <input type="radio" name="rd-exp" class="sig-check-input hidden">
+                                        <div class="sig-radio"></div>
+                                        <span class="text-slate-700">Seleção Única B</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COLUNA 3: Estrutura / Fieldsets -->
+                    <div>
+                        <h4 class="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-4 pb-2 border-b border-slate-100 flex items-center gap-2"><span class="material-symbols-outlined !text-[14px]">view_agenda</span> Estruturas e Agrupadores</h4>
+                        <div class="flex flex-col gap-6">
+                            <div class="group relative">
+                                <div class="absolute -right-2 -top-2">
+                                    <button class="copy-trigger bg-white border border-slate-200 shadow-sm text-slate-500 rounded p-1.5 hover:bg-emerald-50 hover:text-emerald-700 outline-none z-10" title="Copiar Fieldset Block" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                                </div>
+                                <span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-3 block">Agrupador Grid (Inputs)</span>
+                                <div class="sig-copyable-target pr-6">
+<!-- Agrupador Fieldset Blueprint Oficial (Responsive Grid) -->
+<div class="sig-fieldset-blueprint w-full">
+    <span class="sig-legend-blueprint w-auto font-black px-2">INFORMAÇÕES DE CADASTRO</span>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+            <label class="sig-label-dense">DADO 01</label>
+            <input type="text" class="sig-input-dense w-full">
+        </div>
+        <div>
+            <label class="sig-label-dense">DADO 02</label>
+            <input type="text" class="sig-input-dense w-full bg-slate-50" disabled>
+        </div>
+    </div>
+</div>
+                                </div>
+                            </div>
+
+                            <div class="group relative pt-4 border-t border-slate-100">
+                                <div class="absolute -right-2 top-2">
+                                    <button class="copy-trigger bg-white border border-slate-200 shadow-sm text-slate-500 rounded p-1.5 hover:bg-emerald-50 hover:text-emerald-700 outline-none z-10" title="Copiar Fieldset Block" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                                </div>
+                                <span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-3 block">Agrupador Lista (Configurações)</span>
+                                <div class="sig-copyable-target pr-6">
+<!-- Agrupador Fieldset Blueprint Oficial (Lista de Opções) -->
+<div class="sig-fieldset-blueprint w-full">
+    <span class="sig-legend-blueprint">01. Configurações de Módulo</span>
+    <div class="flex flex-col gap-2">
+        <label class="sig-check-group cursor-pointer">
+            <input type="checkbox" class="sig-checkboxScale" checked>
+            <span class="sig-check-label">Atualização de Estado Numérico</span>
+        </label>
+        <label class="sig-check-group cursor-pointer">
+            <input type="checkbox" class="sig-checkboxScale">
+            <span class="sig-check-label">Gerar Registro Temporário</span>
+        </label>
+        <label class="sig-check-group cursor-pointer">
+            <input type="checkbox" class="sig-checkboxScale" checked>
+            <span class="sig-check-label">Baixa Sistêmica Imediata</span>
+        </label>
+        <div class="mt-2 border-t border-slate-200 pt-2">
+            <label class="sig-label-dense mb-1 block">COMPORTAMENTO DA MOVIMENTAÇÃO</label>
+            <select class="sig-input-dense w-full">
+                <option value="REAL">MOVIMENTAÇÃO REAL</option>
+                <option value="SIMBOLICA">MOVIMENTAÇÃO SIMBÓLICA</option>
+                <option value="TRANSFERENCIA">TRANSFERÊNCIA DE SALDO</option>
+            </select>
+        </div>
+    </div>
+</div>
+                                </div>
+                            </div>
+
+                            <div class="group relative pt-4 border-t border-slate-100">
+                                <div class="absolute -right-2 top-2">
+                                    <button class="copy-trigger bg-white border border-slate-200 shadow-sm text-slate-500 rounded p-1.5 hover:bg-emerald-50 hover:text-emerald-700 outline-none z-10" title="Copiar Fieldset Block" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                                </div>
+                                <span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-3 block">Agrupador Destacado (Sub-Blocos)</span>
+                                <div class="sig-copyable-target pr-6">
+<!-- Agrupador Fieldset com Sub-Blocos Destacados -->
+<div class="sig-fieldset-blueprint w-full">
+    <span class="sig-legend-blueprint">02. Configurações Avançadas</span>
+    <div class="flex flex-col gap-3">
+        <div class="bg-indigo-50/50 p-2 rounded border border-indigo-100">
+            <label class="sig-check-group cursor-pointer">
+                <input type="checkbox" class="sig-checkboxScale" checked>
+                <span class="sig-check-label">Ativar Regra Especial</span>
+            </label>
+            <label class="sig-label-dense mt-1 block">PARÂMETRO DA REGRA</label>
+            <select class="sig-input-dense w-full">
+                <option value="A">PARÂMETRO PADRÃO A</option>
+                <option value="B">PARÂMETRO PADRÃO B</option>
+            </select>
+        </div>
+        <div class="bg-slate-50 p-2 rounded">
+            <label class="sig-check-group cursor-pointer">
+                <input type="checkbox" class="sig-checkboxScale">
+                <span class="sig-check-label">Opção Secundária Comum</span>
+            </label>
+        </div>
+    </div>
+</div>
+                                </div>
+                            </div>
+
+                            <div class="group relative pt-4 border-t border-slate-100">
+                                <div class="absolute -right-2 top-2">
+                                    <button class="copy-trigger bg-white border border-slate-200 shadow-sm text-slate-500 rounded p-1.5 hover:bg-emerald-50 hover:text-emerald-700 outline-none z-10" title="Copiar Fieldset Block" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                                </div>
+                                <span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-3 block">Agrupador Modular (Industrial V3 - Padrão Oficial)</span>
+                                <div class="sig-copyable-target pr-6">
+<!-- Agrupador Modular Oficial (Industrial V3 - White Header) -->
+<div class="sig-fieldset-container w-full">
+    <div class="sig-fieldset-header">
+        <span class="material-symbols-outlined">settings_suggest</span>
+        IDENTIFICAÇÃO DO MÓDULO / GRUPO
+    </div>
+    <div class="sig-fieldset-content">
+        <div class="grid grid-cols-2 gap-3">
+            <div>
+                <label class="sig-label-dense">CAMPO ALFA</label>
+                <input type="text" class="sig-input-dense w-full">
+            </div>
+            <div>
+                <label class="sig-label-dense">CAMPO BETA</label>
+                <input type="text" class="sig-input-dense w-full">
+            </div>
+        </div>
+    </div>
+</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- BLOCO 4.5: ABAS (TABS) OPERACIONAIS ESTÁTICAS -->
+            <div class="showcase-card">
+                <h3 class="showcase-block-title">Navegação e Filtros Operacionais (Abas com Contadores)</h3>
+                
+                <div class="group relative">
+                    <div class="absolute -right-2 -top-2">
+                        <button class="copy-trigger bg-white border border-slate-200 shadow-sm text-slate-500 rounded p-1.5 hover:bg-emerald-50 outline-none z-10" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                    </div>
+                    <div class="sig-copyable-target pr-8 flex flex-col gap-2">
+<!-- Abas Operacionais Estáticas (Exige uso da classe sig-tabs) -->
+<div class="mb-4">
+    <div class="sig-tabs">
+        <div class="sig-tab ativa uppercase font-bold tracking-tight text-[11px] h-9 transition-colors">
+            PENDENTES <span class="bg-blue-100 text-blue-800 ml-1.5 px-1.5 py-[1px] rounded-sm font-black text-[10px]">2</span>
+        </div>
+        <div class="sig-tab uppercase font-bold tracking-tight text-[11px] h-9 transition-colors">
+            EM ANDAMENTO <span class="bg-slate-100 text-slate-500 ml-1.5 px-1.5 py-[1px] rounded-sm font-black text-[10px]">0</span>
+        </div>
+        <div class="sig-tab uppercase font-bold tracking-tight text-[11px] h-9 transition-colors">
+            CONCLUÍDAS <span class="bg-slate-100 text-slate-500 ml-1.5 px-1.5 py-[1px] rounded-sm font-black text-[10px]">0</span>
+        </div>
+    </div>
+    <div class="p-6 bg-white border border-t-0 border-slate-200 rounded-b-sm">
+        <p class="text-xs text-slate-500 italic">Conteúdo da aba ativa em um container sólido.</p>
+    </div>
+</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOCO 5: TYPOGRAPHY (HEADERS) -->
+            <div class="showcase-card">
+                <h3 class="showcase-block-title">Headers & Tipografia</h3>
+                
+                <div class="group relative">
+                    <div class="absolute -right-2 -top-2">
+                        <button class="copy-trigger bg-white border border-slate-200 shadow-sm text-slate-500 rounded p-1.5 hover:bg-emerald-50 outline-none z-10" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                    </div>
+                    <div class="sig-copyable-target pr-8 flex flex-col gap-2">
+<!-- Escala Tipográfica do SIG -->
+<h1 class="sig-text-h1">Header 1 (Títulos)</h1>
+<h2 class="sig-text-h2">Header 2 (Seções)</h2>
+<h3 class="sig-text-h3">Header 3 (Módulos)</h3>
+<h4 class="sig-text-h4">Header 4 (Agrupadores)</h4>
+<p class="sig-text-body mt-2 text-slate-500">Texto padrão de Corpo e descrições com leitura flúida graças à fonte Inter.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOCO 7: TABELAS (OPERAÇÃO E DENSIDADE) -->
+            <div id="tabelasm" class="showcase-card break-inside-avoid mt-8" style="column-span: all;">
+                <h3 class="showcase-block-title">Tabelas de Dados Operacionais (Variações de Densidade)</h3>
+                <div class="group relative">
+                    <div class="absolute -right-2 -top-2 z-10">
+                        <button class="copy-trigger bg-white border border-slate-200 text-slate-500 rounded p-1.5 hover:bg-emerald-50 outline-none" title="Copiar" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                    </div>
+                    <p class="text-[10px] text-slate-400 mb-3">* Use <code>sig-table-sm</code> ou <code>sig-table-md</code> junto a classe <code>sig-table</code> para variar densidades.</p>
+                    <div class="sig-copyable-target">
+<!-- LARGE (Padrão) -->
+<h3 class="text-xs font-black text-slate-500 mb-2 uppercase tracking-wider">Densidade Grande (Padrão) <span class="text-slate-400 font-normal lowercase tracking-normal">.sig-table</span></h3>
+<div class="overflow-hidden border border-slate-200 rounded-sm mb-8 bg-white">
+    <table class="sig-table w-full">
+        <thead class="bg-slate-50 border-b border-slate-300">
+            <tr>
+                <th class="sig-text-center w-12 border-r border-slate-200">ID</th>
+                <th>DESCRIÇÃO</th>
+                <th class="text-right border-l border-slate-200">VALOR BRUTO</th>
+                <th class="sig-text-center border-l border-slate-200">STATUS</th>
+                <th class="sig-text-center w-24 border-l border-slate-200">AÇÕES</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="hover:bg-blue-50 cursor-pointer border-b border-slate-100 transition-colors bg-white">
+                <td class="sig-text-center sig-text-mono text-slate-400 border-r border-slate-100">001</td>
+                <td class="text-[11px] font-bold text-slate-700">PRODUTO COM PREÇO MONO</td>
+                <td class="text-right font-mono font-bold text-slate-800 border-l border-slate-100">R$ 1.500,00</td>
+                <td class="sig-text-center border-l border-slate-100"><span class="sig-badge-primary">ATIVO</span></td>
+                <td class="sig-text-center border-l border-slate-100">
+                    <button class="sig-btn-icon" title="Editar"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- MEDIUM -->
+<h3 class="text-xs font-black text-slate-500 mb-2 uppercase tracking-wider">Densidade Média <span class="text-slate-400 font-normal lowercase tracking-normal">.sig-table .sig-table-md</span></h3>
+<div class="overflow-hidden border border-slate-200 rounded-sm mb-8 bg-white">
+    <table class="sig-table sig-table-md w-full">
+        <thead class="bg-slate-50 border-b border-slate-300">
+            <tr>
+                <th class="sig-text-center w-12 border-r border-slate-200">ID</th>
+                <th>DESCRIÇÃO</th>
+                <th class="text-right border-l border-slate-200">VALOR BRUTO</th>
+                <th class="sig-text-center border-l border-slate-200">STATUS</th>
+                <th class="sig-text-center w-24 border-l border-slate-200">AÇÕES</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="hover:bg-blue-50 cursor-pointer border-b border-slate-100 transition-colors bg-white">
+                <td class="sig-text-center sig-text-mono text-slate-400 border-r border-slate-100">002</td>
+                <td class="text-[11px] font-bold text-slate-700">PRODUTO MÉDIO</td>
+                <td class="text-right font-mono font-bold text-slate-800 border-l border-slate-100">R$ 800,00</td>
+                <td class="sig-text-center border-l border-slate-100"><span class="sig-badge-warning" style="font-size: 9px; padding: 2px 6px;">PENDENTE</span></td>
+                <td class="sig-text-center border-l border-slate-100">
+                    <button class="sig-btn-icon" title="Editar"><span class="material-symbols-outlined text-[16px]">edit</span></button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- SMALL (Compacta) -->
+<h3 class="text-xs font-black text-slate-500 mb-2 uppercase tracking-wider">Densidade Pequena (Alta Carga) <span class="text-slate-400 font-normal lowercase tracking-normal">.sig-table .sig-table-sm</span></h3>
+<div class="overflow-hidden border border-slate-200 rounded-sm mb-4 bg-white">
+    <table class="sig-table sig-table-sm w-full">
+        <thead class="bg-slate-50 border-b border-slate-300">
+            <tr>
+                <th class="sig-text-center w-12 border-r border-slate-200">ID</th>
+                <th>DESCRIÇÃO</th>
+                <th class="text-right border-l border-slate-200">VALOR BRUTO</th>
+                <th class="sig-text-center border-l border-slate-200">STATUS</th>
+                <th class="sig-text-center w-20 border-l border-slate-200">AÇÕES</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="hover:bg-blue-50 cursor-pointer border-b border-slate-100 transition-colors bg-white">
+                <td class="sig-text-center sig-text-mono text-slate-400 border-r border-slate-100">003</td>
+                <td class="text-[10px] uppercase font-bold text-slate-700">PRODUTO COMPACTO PARA ALTA PRECISÃO E LISTAGENS</td>
+                <td class="text-right font-mono font-bold text-slate-800 border-l border-slate-100">R$ 15,50</td>
+                <td class="sig-text-center border-l border-slate-100"><span class="sig-badge-success" style="font-size: 8px; padding: 1px 4px;">OK</span></td>
+                <td class="sig-text-center border-l border-slate-100">
+                    <button class="sig-btn-icon" title="Editar" style="width:16px; height:16px;"><span class="material-symbols-outlined text-[14px]">edit</span></button>
+                </td>
+            </tr>
+            <tr class="hover:bg-blue-50 cursor-pointer border-b border-slate-100 transition-colors bg-white">
+                <td class="sig-text-center sig-text-mono text-slate-400 border-r border-slate-100">004</td>
+                <td class="text-[10px] uppercase font-bold text-slate-700">SISTEMA DE LUBRIFICAÇÃO (ITENS EM LOTE)</td>
+                <td class="text-right font-mono font-bold text-slate-800 border-l border-slate-100">R$ 220,00</td>
+                <td class="sig-text-center border-l border-slate-100"><span class="sig-badge-success" style="font-size: 8px; padding: 1px 4px;">OK</span></td>
+                <td class="sig-text-center border-l border-slate-100">
+                    <button class="sig-btn-icon" title="Editar" style="width:16px; height:16px;"><span class="material-symbols-outlined text-[14px]">edit</span></button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOCO 7B: TABELAS ANINHADAS -->
+            <div id="tabela_aninhada" class="showcase-card break-inside-avoid" style="column-span: all;">
+                <h3 class="showcase-block-title">Tabelas Aninhadas (Expandable/Tree Dinâmico)</h3>
+                <div class="group relative">
+                    <div class="absolute -right-2 -top-2 z-10">
+                        <button class="copy-trigger bg-white border border-slate-200 text-slate-500 rounded p-1.5 hover:bg-emerald-50 outline-none" title="Copiar Master-Detail" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                    </div>
+                    <div class="sig-copyable-target">
+<!-- Master/Detail Tabela Avançada -->
+<div class="overflow-hidden border border-slate-200 rounded-sm bg-white">
+    <table class="sig-table w-full">
+        <thead class="bg-white shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
+            <tr>
+                <th class="w-20 border-r border-slate-200">ID / PAI</th>
+                <th>ESTRUTURA HIERÁRQUICA</th>
+                <th class="w-32 sig-text-center border-l border-slate-200">AÇÕES</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- LINHA PAI (MASTER) -->
+            <tr class="group bg-slate-50 border-y border-slate-200 cursor-pointer hover:bg-[#eff6ff] transition-colors shadow-[inset_4px_0_0_#1e40af]" onclick="toggleTree('sys-001', this)">
+                <td class="font-mono text-[#1e40af] text-xs sig-text-center font-bold border-r border-slate-200">001</td>
+                <td class="font-bold text-slate-800 text-sm tracking-wide">
+                    <div class="flex items-center gap-2 uppercase">
+                        <span class="material-symbols-outlined text-[#1e40af] text-[20px] transition-transform duration-200" id="icon-sys-001">keyboard_arrow_down</span>
+                        SISTEMA MOTOR
+                    </div>
+                </td>
+                <td class="sig-text-center border-l border-slate-200">
+                    <div class="flex justify-center gap-2 opacity-50 group-hover:opacity-100 transition-opacity">
+                        <button class="sig-btn-icon text-[#1e40af] hover:bg-blue-100" title="+ Nova Subcategoria" onclick="event.stopPropagation()">
+                            <span class="material-symbols-outlined text-[18px]">add_circle</span>
+                        </button>
+                        <button class="sig-btn-icon sig-text-red hover:bg-red-50" title="Apagar Categoria" onclick="event.stopPropagation()">
+                            <span class="material-symbols-outlined text-[18px]">delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+
+            <!-- LINHAS FILHAS -->
+            <tr class="group bg-white hover:bg-[#eff6ff] tree-child-sys-001 transition-all border-b border-slate-50/50">
+                <td class="sig-text-center border-r border-slate-100">
+                    <div class="flex items-center justify-end pr-3 gap-1.5 opacity-50 group-hover:opacity-100 transition-opacity text-[#1e40af]">
+                        <span class="text-[10px]">↳</span>
+                        <span class="font-mono text-[10px] font-bold">142</span>
+                    </div>
+                </td>
+                <td class="uppercase font-semibold text-slate-600 group-hover:text-[#1e40af] text-[11px] transition-colors">
+                    <div class="flex items-center gap-2 pl-6 border-l-2 border-slate-200 group-hover:border-[#1e40af] py-1 transition-colors">
+                        VELAS DE IGNIÇÃO
+                    </div>
+                </td>
+                <td class="sig-text-center border-l border-slate-100">
+                    <div class="flex justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button class="sig-btn-icon text-slate-400 hover:text-[#1e40af] hover:bg-blue-50" title="Editar Subcategoria">
+                            <span class="material-symbols-outlined text-[16px]">edit</span>
+                        </button>
+                        <button class="sig-btn-icon sig-text-red hover:bg-red-50" title="Remover Subcategoria">
+                            <span class="material-symbols-outlined text-[16px]">close</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+
+            <tr class="group bg-white hover:bg-[#eff6ff] tree-child-sys-001 transition-all border-b border-slate-50/50">
+                <td class="sig-text-center border-r border-slate-100">
+                    <div class="flex items-center justify-end pr-3 gap-1.5 opacity-50 group-hover:opacity-100 transition-opacity text-[#1e40af]">
+                        <span class="text-[10px]">↳</span>
+                        <span class="font-mono text-[10px] font-bold">143</span>
+                    </div>
+                </td>
+                <td class="uppercase font-semibold text-slate-600 group-hover:text-[#1e40af] text-[11px] transition-colors">
+                    <div class="flex items-center gap-2 pl-6 border-l-2 border-slate-200 group-hover:border-[#1e40af] py-1 transition-colors">
+                        CORREIAS DENTADAS
+                    </div>
+                </td>
+                <td class="sig-text-center border-l border-slate-100">
+                    <div class="flex justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button class="sig-btn-icon text-slate-400 hover:text-[#1e40af] hover:bg-blue-50" title="Editar Subcategoria">
+                            <span class="material-symbols-outlined text-[16px]">edit</span>
+                        </button>
+                        <button class="sig-btn-icon sig-text-red hover:bg-red-50" title="Remover Subcategoria">
+                            <span class="material-symbols-outlined text-[16px]">close</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOCO 7C: TABELA EMBUTIDA (FLUSH FIELDSET) -->
+            <div id="tabela_flush" class="showcase-card break-inside-avoid" style="column-span: all;">
+                <h3 class="showcase-block-title">Tabelas Embutidas em Formulário (Flush)</h3>
+                <div class="group relative">
+                    <div class="absolute -right-2 -top-2 z-10">
+                        <button class="copy-trigger bg-white border border-slate-200 text-slate-500 rounded p-1.5 hover:bg-emerald-50 outline-none" title="Copiar Flush Table" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                    </div>
+                    <div class="sig-copyable-target">
+<!-- Tabela de Inserção Contínua (Embutida no Form) -->
+<div class="sig-fieldset sig-fieldset-flush w-full">
+    <span class="sig-legend">Lista de Itens Detalhados</span>
+    <div class="h-[150px] overflow-y-auto w-full bg-slate-50 relative min-h-0 border border-slate-200 rounded-sm">
+        <table class="sig-table sig-table-sm w-full">
+            <thead class="sticky top-0 shadow-sm z-10 bg-[#f8fafc]">
+                <tr>
+                    <th class="w-16">CÓDIGO</th>
+                    <th>DESCRIÇÃO DO REGISTRO</th>
+                    <th>PARÂMETRO</th>
+                    <th class="w-20">DATA INÍCIO</th>
+                    <th class="w-16 sig-text-center">AÇÕES</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="bg-white border-b border-slate-100 hover:bg-slate-50">
+                    <td class="sig-text-mono font-bold text-slate-500 border-r border-slate-100 text-center">001</td>
+                    <td class="font-bold text-slate-600 text-[10px] uppercase">EXEMPLO DE REGISTRO</td>
+                    <td class="text-slate-500 font-mono text-[10px]">PAR-A</td>
+                    <td class="text-slate-500 text-[10px] font-mono">01/01/2026</td>
+                    <td class="sig-text-center border-l border-slate-100">
+                        <button class="text-red-500 hover:text-red-700 opacity-50 hover:opacity-100 transition-opacity"><span class="material-symbols-outlined !text-[14px]">delete</span></button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <button class="mt-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold px-4 py-1.5 text-[10px] rounded-sm shadow-sm flex items-center gap-2 transition-colors">
+        <span class="material-symbols-outlined !text-[14px]">add_circle</span> ADICIONAR NOVO REGISTRO [INS]
+    </button>
+</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BREADCRUMBS -->
+            <div id="breadcrumbs" class="showcase-card break-inside-avoid" style="column-span: all; margin-top: 2rem;">
+                <h3 class="showcase-block-title">Breadcrumbs (Localização de Fluxo)</h3>
+                <div class="group relative">
+                    <div class="absolute -right-2 -top-2 z-10">
+                        <button class="copy-trigger bg-white border border-slate-200 shadow-sm text-slate-500 rounded p-1.5 hover:bg-emerald-50 hover:text-emerald-700 outline-none" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                    </div>
+                    <div class="sig-copyable-target bg-transparent px-4 py-2 border-l-[3px] border-blue-600">
+<!-- Padrão SIG para Identificação de Tela Ativa -->
+<nav aria-label="Breadcrumb" class="mb-1">
+    <ol class="flex items-center gap-2 text-[9px] font-black w-full uppercase text-slate-400 tracking-widest whitespace-nowrap overflow-hidden text-ellipsis">
+        <li><a href="#" class="hover:text-blue-600 transition-colors">CADASTROS</a></li>
+        <li><span class="text-slate-300">/</span></li>
+        <li><a href="#" class="hover:text-blue-600 transition-colors">PRODUTOS</a></li>
+        <li><span class="text-slate-300">/</span></li>
+        <li class="text-slate-700" aria-current="page">AJUSTE DE ESTOQUE</li>
+    </ol>
+</nav>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOCO DE MENUS E NAVEGAÇÃO INTERNA -->
+            <div id="menus" class="showcase-card break-inside-avoid" style="column-span: all;">
+                <h3 class="showcase-block-title">Menus e Abas Operacionais</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    
+                    <div class="group relative">
+                        <div class="absolute -right-2 -top-2 z-10">
+                            <button class="copy-trigger bg-white border text-slate-500 rounded p-1.5 hover:bg-emerald-50 outline-none" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                        </div>
+                        <span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-3 block">Menu Lateral Secundário (Vertical c/ Atalho)</span>
+                        <div class="sig-copyable-target">
+<!-- Listagem Lateral Vertical Padrão SIG (Submenus/Configurações) -->
+<div class="w-full max-w-[240px] bg-white border border-slate-200 shadow-sm rounded-sm overflow-hidden">
+    <div class="bg-slate-100 text-slate-500 text-[9px] font-black uppercase px-4 py-2 border-b border-slate-200 tracking-widest text-center shadow-inner pt-2.5">VISUALIZAÇÃO PADRÃO</div>
+    <div class="flex flex-col">
+        <!-- Item Selecionado -->
+        <button class="bg-blue-700 border-l-[4px] border-blue-900 border-b border-blue-900 text-white flex justify-between items-center px-4 py-[11px] text-xs font-bold transition-all text-left shadow-sm">
+            Empresas
+            <span class="text-[9px] text-blue-300 font-mono font-bold">F2</span>
+        </button>
+        <!-- Item Não Selecionado -->
+        <button class="bg-slate-50 border-l-[4px] border-transparent text-slate-600 hover:bg-white hover:text-blue-700 flex justify-between items-center px-4 py-[11px] text-xs font-bold transition-all text-left border-b border-slate-200/60">
+            Políticas
+            <span class="text-[9px] text-slate-400 opacity-60 font-mono font-bold transition-opacity">F3</span>
+        </button>
+        <!-- Item Não Selecionado -->
+        <button class="bg-slate-50 border-l-[4px] border-transparent text-slate-600 hover:bg-white hover:text-blue-700 flex justify-between items-center px-4 py-[11px] text-xs font-bold transition-all text-left border-b border-slate-200/60">
+            Documentos
+            <span class="text-[9px] text-slate-400 opacity-60 font-mono font-bold transition-opacity">F4</span>
+        </button>
+    </div>
+</div>
+                        </div>
+                    </div>
+
+                    <div class="group relative">
+                        <div class="absolute -right-2 -top-2 z-10">
+                            <button class="copy-trigger bg-white border border-slate-200 shadow-sm text-slate-500 rounded p-1.5 hover:bg-emerald-50 hover:text-emerald-700 outline-none" title="Copiar Abas Estáticas" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                        </div>
+                        <span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-3 block">Abas Operacionais (PageControl Style)</span>
+                        <div class="sig-copyable-target pr-6">
+<!-- Abas Operacionais Estáticas (Exige uso da classe sig-tabs) -->
+<div class="mb-4">
+    <div class="sig-tabs">
+        <div class="sig-tab ativa">DADOS GERAIS</div>
+        <div class="sig-tab">PREÇOS E CUSTOS</div>
+        <div class="sig-tab">FORNECEDORES</div>
+        <div class="sig-tab">HISTÓRICO</div>
+    </div>
+    <div class="p-6 bg-white border border-t-0 border-slate-200 rounded-b-sm">
+        <p class="text-xs text-slate-500 italic">Conteúdo da aba ativa em um container sólido.</p>
+    </div>
+</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- BLOCO 7D: INDICADORES REGISTRO (MATRIX & STATUS) -->
+            <div id="indicadores" class="showcase-card break-inside-avoid" style="column-span: all;">
+                <h3 class="showcase-block-title">IND-1 / Indicadores de Matriz e Status</h3>
+                <div class="group relative">
+                    <div class="absolute -right-2 -top-2 z-10">
+                        <button class="copy-trigger bg-white border border-slate-200 text-slate-500 rounded p-1.5 hover:bg-emerald-50 outline-none" title="Copiar Indicadores" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                    </div>
+                    <div class="sig-copyable-target bg-white p-6 border border-slate-200 rounded-sm">
+                        <div class="flex flex-wrap gap-8 items-center">
+                            <!-- Sucesso / Habilitado -->
+                            <div class="flex flex-col items-center gap-2">
+                                <span class="sig-indicator sig-indicator-ok">check_circle</span>
+                                <span class="text-[9px] font-bold text-slate-400 uppercase">Habilitado</span>
+                            </div>
+                            <!-- Erro / Desabilitado -->
+                            <div class="flex flex-col items-center gap-2">
+                                <span class="sig-indicator sig-indicator-ko">cancel</span>
+                                <span class="text-[9px] font-bold text-slate-400 uppercase">Desabilitado</span>
+                            </div>
+                            <!-- Aviso / Alerta -->
+                            <div class="flex flex-col items-center gap-2">
+                                <span class="sig-indicator sig-indicator-warn">error</span>
+                                <span class="text-[9px] font-bold text-slate-400 uppercase">Alerta</span>
+                            </div>
+                            <!-- Neutro / Pendente -->
+                            <div class="flex flex-col items-center gap-2">
+                                <span class="sig-indicator sig-indicator-none">do_not_disturb_on</span>
+                                <span class="text-[9px] font-bold text-slate-400 uppercase">Pendente</span>
+                            </div>
+                            <!-- Informação -->
+                            <div class="flex flex-col items-center gap-2">
+                                <span class="sig-indicator sig-indicator-info">info</span>
+                                <span class="text-[9px] font-bold text-slate-400 uppercase">Informação</span>
+                            </div>
+                            <!-- Verificado -->
+                            <div class="flex flex-col items-center gap-2">
+                                <span class="sig-indicator sig-indicator-ok">offline_pin</span>
+                                <span class="text-[9px] font-bold text-slate-400 uppercase">Verificado</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 pt-4 border-t border-slate-100">
+                            <p class="text-[10px] text-slate-500 font-medium italic mb-2">Uso em Matrix Operacional:</p>
+                            <div class="inline-flex gap-4 p-2 bg-slate-50 rounded border border-slate-200">
+                                <span class="sig-indicator sig-indicator-ok">check_circle</span>
+                                <span class="sig-indicator sig-indicator-none">cancel</span>
+                                <span class="sig-indicator sig-indicator-ok">check_circle</span>
+                                <span class="sig-indicator sig-indicator-none">cancel</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOCO ESPECIAL: ESTADOS VAZIOS -->
+            <div id="empty" class="showcase-card break-inside-avoid">
+                <h3 class="showcase-block-title">Empty States (Vazios)</h3>
+                
+                <div class="group relative flex items-center justify-center">
+                    <div class="absolute top-2 right-2">
+                        <button class="copy-trigger bg-slate-100 text-slate-500 rounded p-1 hover:bg-emerald-100 outline-none" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                    </div>
+                    <div class="sig-copyable-target w-full">
+<!-- Estado vazio para interior de tabelas ou blocos sem dados -->
+<div class="w-full flex items-center justify-center py-6 px-4 border-2 border-dashed border-slate-200 rounded-sm bg-slate-50">
+    <span class="text-[10px] font-black uppercase text-slate-400 tracking-widest italic flex items-center gap-2">
+        <span class="material-symbols-outlined !text-[16px] text-slate-300">hourglass_empty</span>
+        Nenhuma aplicação cadastrada
+    </span>
+</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOCO ESPECIAL: UPLOAD / IMAGEM PLACEHOLDER -->
+            <div id="upload" class="showcase-card break-inside-avoid">
+                <h3 class="showcase-block-title">Caixa de Upload (Imagens)</h3>
+                
+                <div class="group relative">
+                    <div class="absolute top-2 right-2">
+                        <button class="copy-trigger bg-white text-slate-500 rounded p-1 hover:bg-emerald-100 outline-none" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                    </div>
+                    <div class="sig-copyable-target w-full">
+<!-- Bloco tracejado para upload / vincular imagem -->
+<label class="w-full h-32 flex flex-col items-center justify-center px-4 border-2 border-dashed border-slate-300 rounded-sm bg-white hover:bg-blue-50 hover:border-blue-400 hover:text-blue-600 transition-colors cursor-pointer group-upload text-slate-400">
+    <span class="material-symbols-outlined !text-[32px] mb-2 opacity-50 group-hover:opacity-100">image</span>
+    <span class="text-[9px] font-black uppercase tracking-widest">Vincular Imagem</span>
+    <input type="file" class="hidden" accept="image/*" />
+</label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- BLOCO ESPECIAL: ACTION SUMMARY -->
+            <div class="showcase-card break-inside-avoid">
+                <h3 class="showcase-block-title">Bloco de Ação (Valores Destaque)</h3>
+                <div class="group relative">
+                    <div class="absolute top-2 right-2">
+                        <button class="copy-trigger bg-white text-slate-500 rounded p-1 hover:bg-emerald-100 outline-none" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                    </div>
+                    <div class="sig-copyable-target w-full flex flex-col gap-2">
+<!-- Resumo Financeiro Pesado (Em azul) -->
+<div class="bg-sig-blue text-white flex items-center justify-between px-4 py-2 rounded-sm shadow-sm hover:brightness-110 cursor-default transition-all">
+    <span class="text-[11px] font-black uppercase tracking-widest">Sugerido</span>
+    <span class="text-lg font-black font-mono tracking-tight drop-shadow-sm">R$ 0,00</span>
+</div>
+
+<!-- Input Monetário Destacado (Alinhado a direita) -->
+<div class="flex flex-col w-full mt-2 border-t border-slate-200 pt-2">
+    <label class="text-[9px] font-black uppercase text-blue-900 tracking-widest mb-1">PREÇO FINAL R$</label>
+    <div class="relative">
+        <input type="text" value="1.250,00" class="w-full h-8 text-right font-mono font-black text-[13px] text-slate-800 border border-slate-300 rounded-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 px-3 shadow-inner bg-white">
+    </div>
+</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PLACAS INFORMATIVAS (SUCCESS/WARNING) -->
+            <div id="placas" class="showcase-card break-inside-avoid">
+                <h3 class="showcase-block-title">Caixas Informativas (Placas)</h3>
+                <div class="group relative">
+                    <div class="absolute -right-2 -top-2 z-10">
+                        <button class="copy-trigger bg-white border text-slate-500 rounded p-1.5 hover:bg-emerald-50 outline-none" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                    </div>
+                    <div class="sig-copyable-target w-full flex flex-col gap-2">
+<!-- Mensagem de Sucesso (Estoque) -->
+<div class="flex items-center justify-between bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-2 rounded-sm shadow-sm">
+    <div class="flex items-center gap-2 font-black uppercase tracking-widest text-[11px]">
+        <span class="material-symbols-outlined !text-[18px] text-emerald-600">check_box</span>
+        DISPONÍVEL:
+    </div>
+    <div class="text-xl font-black font-mono tracking-tight text-emerald-700">18</div>
+</div>
+
+<!-- Aviso Localização Secundário -->
+<div class="flex items-center bg-[#fffbeb] border border-[#fef08a] text-yellow-800 px-4 py-1.5 rounded-sm shadow-sm">
+    <span class="text-[9px] font-black uppercase tracking-widest text-yellow-700 mr-2">LOCALIZAÇÃO:</span>
+    <span class="text-[10px] font-bold uppercase tracking-wide">RUA A-04 / BOX 12-B</span>
+</div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- BLOCO 7: LAYOUTS DE FORMULÁRIO (MODAIS) -->
+            <div class="showcase-card mt-8" style="column-span: all;">
+                <h3 class="showcase-block-title">Padronização de Formulários (Modal de Cadastro)</h3>
+                
+                <div class="group relative">
+                    <div class="absolute -right-2 -top-2">
+                        <button class="copy-trigger bg-white border border-slate-200 shadow-sm text-slate-500 rounded p-1.5 hover:bg-emerald-50 hover:text-emerald-700 outline-none z-10" title="Copiar Estrutura do Modal" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                    </div>
+                    
+                    <div class="sig-copyable-target bg-slate-100 p-8 rounded border border-slate-200 flex justify-center">
+                        <!-- Preview do Modal (Embebedado para visualização no Showcase) -->
+                        <div class="bg-white w-full max-w-[850px] rounded-md shadow-2xl overflow-hidden border border-slate-400">
+                            <!-- Header do Modal -->
+                            <div class="bg-slate-50 p-2 px-4 flex justify-between items-center border-b border-slate-300">
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-slate-500 text-sm">person</span>
+                                    <h3 class="text-slate-700 font-bold text-[11px] uppercase tracking-wider">Cadastro Completo de Operador / Usuário</h3>
+                                </div>
+                                <button class="sig-btn-close !w-7 !h-7">
+                                    <span class="material-symbols-outlined !text-base">close</span>
+                                </button>
+                            </div>
+
+                            <!-- Conteúdo do Modal -->
+                            <div class="p-6">
+                                <form class="space-y-6">
+                                    <div class="space-y-4">
+                                        <div class="grid grid-cols-12 gap-x-4 gap-y-4">
+                                            <!-- Exemplo de Campos de Alta Densidade -->
+                                            <div class="col-span-12 md:col-span-6">
+                                                <label class="sig-label-dense">Nome Completo</label>
+                                                <input type="text" class="sig-input-dense w-full" placeholder="Ex: João Silva">
+                                            </div>
+                                            <div class="col-span-12 md:col-span-3">
+                                                <label class="sig-label-dense">CPF/CNPJ</label>
+                                                <input type="text" class="sig-input-dense w-full">
+                                            </div>
+                                            <div class="col-span-12 md:col-span-3">
+                                                <label class="sig-label-dense">Status</label>
+                                                <select class="sig-input-dense w-full">
+                                                    <option>Ativo</option>
+                                                    <option>Inativo</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Footer do Modal -->
+                            <div class="p-3 bg-slate-50 border-t border-slate-200 flex justify-end gap-2 px-6">
+                                <button class="sig-btn text-slate-500 hover:bg-slate-200">Cancelar</button>
+                                <button class="sig-btn sig-btn-primary min-w-[180px]">Gravar Cadastro (F10)</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOCO 7E: PAINEL DE INVENTÁRIO (INDUSTRIAL) -->
+            <div id="painel_inventario" class="showcase-card break-inside-avoid">
+                <h3 class="showcase-block-title">Painel de Inventário Industrial (Ultra-Compacto)</h3>
+                <div class="group relative">
+                    <div class="absolute -right-2 -top-2 z-10">
+                        <button class="copy-trigger bg-white border border-slate-200 text-slate-500 rounded p-1.5 hover:bg-emerald-50 outline-none" title="Copiar Painel" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                    </div>
+                    <div class="sig-copyable-target bg-white p-4">
+                        <!-- Componente de Inventário / Saldo Compacto -->
+                        <div class="sig-fieldset-container w-full max-w-sm">
+                            <div class="sig-fieldset-header !bg-white !text-blue-900 border-b border-blue-100">
+                                <span class="material-symbols-outlined !text-[16px] text-blue-800">inventory</span>
+                                PAINEL DE INVENTÁRIO
+                            </div>
+                            <div class="sig-fieldset-content !p-0">
+                                <table class="w-full text-[10px] font-bold border-collapse">
+                                    <thead class="bg-blue-50/50 border-b border-blue-100 text-slate-500">
+                                        <tr>
+                                            <th class="text-left px-3 py-1.5 font-black tracking-widest uppercase border-r border-blue-100">LOCALIZAÇÃO</th>
+                                            <th class="text-right px-3 py-1.5 font-black tracking-widest uppercase">SALDO</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-blue-50">
+                                        <tr class="hover:bg-blue-50/20 transition-colors">
+                                            <td class="px-3 py-1.5 text-slate-600 uppercase border-r border-blue-50">ESTOQUE_01 (PRINCIPAL)</td>
+                                            <td class="px-3 py-1.5 text-right font-mono text-slate-800">22 UN</td>
+                                        </tr>
+                                        <tr class="hover:bg-blue-50/20 transition-colors">
+                                            <td class="px-3 py-1.5 text-slate-600 uppercase border-r border-blue-50">ESTOQUE_02 (RESERVA)</td>
+                                            <td class="px-3 py-1.5 text-right font-mono text-slate-800">03 UN</td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot class="bg-blue-50/50 border-t border-blue-200">
+                                        <tr class="border-t border-blue-100">
+                                            <td class="px-3 py-1.5 text-slate-700 uppercase font-black border-r border-blue-100 tracking-tighter">SALDO TOTAL EM ESTOQUE:</td>
+                                            <td class="px-3 py-1.5 text-right font-mono font-black text-blue-900">25 UN</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOCO 7F: MENSAGENS (TOAST) -->
+            <div id="toast" class="showcase-card break-inside-avoid">
+                <h3 class="showcase-block-title">Notificações Flutuantes (Toast)</h3>
+                <div class="group relative">
+                    <div class="absolute -right-2 -top-2 z-10">
+                        <button class="copy-trigger bg-white border border-slate-200 text-slate-500 rounded p-1.5 hover:bg-emerald-50 outline-none" title="Copiar Chamada (JS)" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                    </div>
+                    <div class="sig-copyable-target bg-slate-50 p-6 border border-slate-200 flex flex-col gap-3 rounded">
+                        <span class="text-xs text-slate-500 mb-2">Clique para testar (Requer <code>sig-toast.js</code> carregado no documento pai):</span>
+                        
+                        <button class="sig-btn border !border-blue-700 !text-blue-700 bg-white hover:!bg-blue-50 w-full" onclick="Toast.info('Operação em andamento. Aguarde...', 3000)">
+                            Disparar Info (Azul)
+                        </button>
+                        
+                        <button class="sig-btn border !border-emerald-700 !text-emerald-700 bg-white hover:!bg-emerald-50 w-full" onclick="Toast.success('Salvo! O registro FOi gravado com sucesso no ERP.')">
+                            Disparar Sucesso (Verde)
+                        </button>
+                        
+                        <button class="sig-btn border !border-orange-600 !text-orange-600 bg-white hover:!bg-orange-50 w-full" onclick="Toast.warning('Aviso: Certifique-se de preencher o CPF.')">
+                            Disparar Warning (Laranja)
+                        </button>
+                        
+                        <button class="sig-btn border !border-red-700 !text-red-700 bg-white hover:!bg-red-50 w-full" onclick="Toast.error('Erro Fatal 500: Não foi possível calcular o imposto (CFOP 5102).', 6000)">
+                            Disparar Erro (Vermelho)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOCO 7G: MENU LATERAL DE MÚLTIPLAS OPÇÕES (PERMISSÕES MESTRE-DETALHE) -->
+            <div id="permissoes_mestre" class="showcase-card break-inside-avoid" style="column-span: all;">
+                <h3 class="showcase-block-title">Matriz de Permissões Dinâmicas (Master/Detail V3)</h3>
+                <div class="group relative">
+                    <div class="absolute -right-2 -top-2 z-10">
+                        <button class="copy-trigger bg-white border border-slate-200 text-slate-500 rounded p-1.5 hover:bg-emerald-50 outline-none" title="Copiar Master-Detail Form" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                    </div>
+                    <div class="sig-copyable-target">
+<!-- Formulário de Permissões Estilo Layout Master/Detail -->
+<div class="border border-slate-200 rounded flex flex-col md:flex-row bg-white overflow-hidden min-h-[300px]">
+    <!-- Menu Esquerdo (Categorias Masters) -->
+    <div class="w-full md:w-1/3 border-r border-slate-200 flex flex-col bg-white">
+        <!-- Item Padrão -->
+        <label class="flex items-center gap-2 p-3 border-b border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors m-0 relative">
+            <input type="checkbox" class="sig-checkboxScale mestre-chk">
+            <span class="text-[10px] uppercase font-bold text-slate-700">NÚCLEO DE PRODUTOS / CATÁLOGO</span>
+        </label>
+        
+        <!-- Item ATIVO na Navegação (Aba Focada) -->
+        <label class="flex items-center gap-2 p-3 border-b border-slate-100 bg-slate-50 cursor-pointer transition-colors m-0 relative before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-blue-600">
+            <input type="checkbox" class="sig-checkboxScale mestre-chk" checked>
+            <span class="text-[10px] uppercase font-bold text-slate-800 tracking-wide">NÚCLEO DE AQUISIÇÕES E COMPRAS</span>
+        </label>
+
+        <!-- Item Padrão -->
+        <label class="flex items-center gap-2 p-3 border-b border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors m-0 relative">
+            <input type="checkbox" class="sig-checkboxScale mestre-chk">
+            <span class="text-[10px] uppercase font-bold text-slate-700">NÚCLEO DE ADMINISTRAÇÃO E PARÂMETROS</span>
+        </label>
+    </div>
+    
+    <!-- Lado Direito (Detalhes da Categoria Selecionada) -->
+    <div class="w-full md:w-2/3 p-5 bg-white relative">
+        <h4 class="text-blue-900 font-black text-[13px] tracking-wide mb-1">Permissões de Aquisições e Compras</h4>
+        <p class="text-[11px] text-slate-500 mb-6 border-b border-slate-200 border-dashed pb-3">Ative o módulo na lateral esquerda para liberar estas permissões.</p>
+        
+        <div class="flex flex-col gap-4">
+            <label class="sig-check-group cursor-pointer">
+                <input type="checkbox" class="sig-checkboxScale">
+                <span class="sig-check-label uppercase text-[11px] text-slate-600">VISUALIZAR TODAS AS SOLICITAÇÕES DE COMPRAS</span>
+            </label>
+            <label class="sig-check-group cursor-pointer">
+                <input type="checkbox" class="sig-checkboxScale">
+                <span class="sig-check-label uppercase text-[11px] text-slate-600">LANÇAR NOVA SOLICITAÇÃO</span>
+            </label>
+            <label class="sig-check-group cursor-pointer">
+                <input type="checkbox" class="sig-checkboxScale">
+                <span class="sig-check-label uppercase text-[11px] text-emerald-600 font-bold">GERENCIAR E APROVAR SOLICITAÇÕES (ACESSO DE GESTOR)</span>
+            </label>
+        </div>
+        
+        <!-- Tela de Bloqueio Visual para quando o Master Checkbox estiver Off -->
+        <!-- Condicionar class 'hidden' via JS! -->
+        <div class="absolute inset-0 bg-white/60 z-10 hidden"></div>
+    </div>
+</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOCO 7C: COMPONENTE DE TIMELINE / STEPPER -->
+            <div id="timeline" class="showcase-card break-inside-avoid" style="column-span: all;">
+                <h3 class="showcase-block-title">Linha do Tempo (Vertical Stepper / Status Tracker)</h3>
+                <div class="group relative">
+                    <div class="absolute -right-2 -top-2 z-10">
+                        <button class="copy-trigger bg-white border border-slate-200 text-slate-500 rounded p-1.5 hover:bg-emerald-50 outline-none" title="Copiar Timeline" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                    </div>
+                    <div class="sig-copyable-target bg-white p-6 border border-slate-200 rounded-sm">
+<!-- Stepper Vertical Dinâmico (Timeline) -->
+<div class="flex flex-col relative w-full pt-2 max-w-[400px]">
+    
+    <!-- Item 1: Concluído -->
+    <div class="flex gap-5 relative pb-8">
+        <!-- Linha conectora verde indicando fluxo completo -->
+        <div class="absolute left-[20px] top-[40px] bottom-0 w-[2px] bg-emerald-500 rounded"></div>
+        
+        <!-- Ícone / Círculo Verde -->
+        <div class="w-10 h-10 rounded-full flex items-center justify-center bg-emerald-500 border border-emerald-600 shadow-[0_0_0_3px_rgba(16,185,129,0.15)] relative z-10 shrink-0">
+            <span class="material-symbols-outlined text-white text-[20px]">assignment</span>
+        </div>
+        
+        <!-- Textos -->
+        <div class="pt-0.5">
+            <h4 class="text-[13px] font-black text-slate-700">Pedido realizado</h4>
+            <p class="text-[11px] text-slate-500 mt-0.5">Recebemos seu pedido</p>
+            <p class="text-[10px] text-slate-400 mt-1 font-mono">18 Nov, 2019 15h34</p>
+        </div>
+    </div>
+
+    <!-- Item 2: Em Atendimento / Assumido (Ação Modular de Usuário) -->
+    <div class="flex gap-5 relative pb-8 group/step">
+        <!-- Linha conectora Cinza (pois a próxima etapa ainda não começou) -->
+        <div class="absolute left-[20px] top-[40px] bottom-0 w-[2px] bg-slate-200 rounded"></div>
+        
+        <!-- Ícone / Círculo Azul (Minimalista) -->
+        <div class="w-10 h-10 rounded-full flex items-center justify-center bg-blue-50 border border-blue-200 relative z-10 shrink-0">
+            <span class="material-symbols-outlined text-blue-500 text-[20px]">person_check</span>
+        </div>
+        
+        <!-- Textos -->
+        <div class="pt-0.5 relative">
+            <div class="flex items-center gap-1 cursor-pointer w-max">
+                <h4 class="text-[13px] font-bold text-slate-700">Em Tratamento</h4>
+                <span class="material-symbols-outlined text-[14px] text-blue-400 hover:text-blue-600 transition-colors">info</span>
+            </div>
+            <p class="text-[11px] text-blue-600 mt-0.5 font-medium flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">support_agent</span>
+                Por Marcos
+            </p>
+            <p class="text-[10px] text-slate-400 mt-1 font-mono">18 Nov, 2019 16h10</p>
+            
+            <!-- Popover de Informação -->
+            <div class="absolute left-full top-0 ml-4 hidden group-hover/step:block w-48 bg-white border border-slate-200 shadow-xl rounded-sm p-3 z-50 animate-in fade-in zoom-in-95 duration-150">
+                <div class="absolute -left-1.5 top-2 w-3 h-3 bg-white border-l border-b border-slate-200 rotate-45 z-0"></div>
+                <h5 class="text-[10px] font-black uppercase text-slate-700 tracking-widest mb-1 relative z-10">Histórico de Atendimento</h5>
+                <p class="text-[11px] text-slate-500 leading-tight relative z-10">O analista de compras Marcos assumiu a tratativa. Tempo estimado: 2 dias úteis.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Item 3: Atual / Pendente de Ação / Destacado -->
+    <div class="flex gap-5 relative pb-8">
+        <!-- Linha conectora Cinza para os próximos passos inativos -->
+        <div class="absolute left-[20px] top-[40px] bottom-0 w-[2px] bg-slate-200 rounded"></div>
+        
+        <!-- Círculo Cinza com outline forte -->
+        <div class="w-10 h-10 rounded-full flex items-center justify-center bg-slate-100 border-2 border-slate-300 relative z-10 shrink-0">
+            <span class="material-symbols-outlined text-slate-600 text-[20px]">payments</span>
+        </div>
+        
+        <div class="pt-0.5">
+            <h4 class="text-[13px] font-black text-slate-700">Aguardando pagamento</h4>
+            <a href="#" class="text-[11px] text-slate-500 border-b border-slate-400 hover:text-slate-800 transition-colors pb-0.5 font-medium mt-1 inline-block">Informar pagamento</a>
+        </div>
+    </div>
+
+    <!-- Item 3: Negativo / Falha (Com Popover interativo) -->
+    <div class="flex gap-5 relative pb-8 group/step">
+        <div class="absolute left-[20px] top-[40px] bottom-0 w-[2px] bg-slate-200 rounded"></div>
+        
+        <!-- Ícone Vermeho -->
+        <div class="w-10 h-10 rounded-full flex items-center justify-center bg-red-500 border border-red-600 shadow-[0_0_0_3px_rgba(239,68,68,0.15)] relative z-10 shrink-0">
+            <span class="material-symbols-outlined text-white text-[20px]">close</span>
+        </div>
+        
+        <div class="pt-0.5 relative w-full">
+            <div class="flex items-center gap-1 cursor-pointer w-max">
+                <h4 class="text-[13px] font-black text-red-600">Erro no processamento</h4>
+                <span class="material-symbols-outlined text-[14px] text-red-400 hover:text-red-600 transition-colors">info</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-0.5">Falha de integração</p>
+            
+            <!-- Popover de Informação (Aparece no Hover da etapa) -->
+            <div class="absolute left-full top-0 ml-4 hidden group-hover/step:block w-48 bg-white border border-slate-200 shadow-xl rounded-sm p-3 z-50 animate-in fade-in zoom-in-95 duration-150">
+                <div class="absolute -left-1.5 top-2 w-3 h-3 bg-white border-l border-b border-slate-200 rotate-45 z-0"></div>
+                <h5 class="text-[10px] font-black uppercase text-slate-700 tracking-widest mb-1 relative z-10">Detalhes do Erro</h5>
+                <p class="text-[11px] text-slate-500 leading-tight relative z-10">O sistema financeiro rejeitou o token de autorização. Tentativa automática em 2 horas.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Item 4: Pendente Final / Fim de linha (Sem conector inferior) -->
+    <div class="flex gap-5 relative">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center bg-slate-50 border-2 border-slate-200 relative z-10 shrink-0">
+            <span class="material-symbols-outlined text-slate-400 text-[20px]">check</span>
+        </div>
+        
+        <div class="pt-0.5">
+            <h4 class="text-[13px] font-bold text-slate-400">Previsão de entrega</h4>
+            <p class="text-[11px] text-slate-400 mt-0.5">Entrega prevista para 19 Nov, 2019</p>
+        </div>
+    </div>
+
+</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOCO 7D: COMPONENTE DE TIMELINE HORIZONTAL -->
+            <div id="timeline-horizontal" class="showcase-card break-inside-avoid mt-8" style="column-span: all;">
+                <h3 class="showcase-block-title">Linha do Tempo (Horizontal Stepper / Progress)</h3>
+                <div class="group relative">
+                    <div class="absolute -right-2 -top-2 z-10">
+                        <button class="copy-trigger bg-white border border-slate-200 text-slate-500 rounded p-1.5 hover:bg-emerald-50 outline-none" title="Copiar Timeline Horizontal" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                    </div>
+                    <div class="sig-copyable-target bg-white p-6 border border-slate-200 rounded-sm overflow-x-auto">
+<!-- Stepper Horizontal Dinâmico (Timeline) -->
+<div class="flex items-start w-full min-w-[600px] pt-4">
+    
+    <!-- Item 1: Concluído -->
+    <div class="flex-1 relative group/step">
+        <!-- Linha conectora horizontal -->
+        <div class="absolute top-[20px] left-[50%] right-[-50%] h-[2px] bg-emerald-500 rounded z-0"></div>
+        
+        <div class="flex flex-col items-center text-center relative z-10">
+            <!-- Círculo Verde -->
+            <div class="w-10 h-10 rounded-full flex items-center justify-center bg-emerald-500 border border-emerald-600 shadow-[0_0_0_3px_rgba(16,185,129,0.15)]">
+                <span class="material-symbols-outlined text-white text-[20px]">assignment</span>
+            </div>
+            
+            <div class="mt-3 relative">
+                <div class="flex items-center justify-center gap-1 cursor-pointer inline-flex">
+                    <h4 class="text-[13px] font-black text-slate-700 leading-tight">Recebido</h4>
+                    <span class="material-symbols-outlined text-[14px] text-emerald-400 hover:text-emerald-600 transition-colors">info</span>
+                </div>
+                <p class="text-[10px] text-slate-400 mt-1 font-mono">18 Nov 15h34</p>
+                
+                <!-- Popover de Informação Flutuante em Topo -->
+                <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover/step:block w-48 bg-white border border-slate-200 shadow-xl rounded-sm p-3 z-50 animate-in fade-in slide-in-from-bottom-2 duration-150 rounded">
+                    <div class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-white border-r border-b border-slate-200 rotate-45 z-0"></div>
+                    <h5 class="text-[10px] font-black uppercase text-slate-700 tracking-widest mb-1 relative z-10 text-left">SISTEMA E-COMMERCE</h5>
+                    <p class="text-[11px] text-slate-500 leading-tight relative z-10 text-left">O pedido de origem Web entrou no terminal corporativo com sucesso.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Item 2: Em Atendimento / Assumido -->
+    <div class="flex-1 relative group/step">
+        <div class="absolute top-[20px] left-[50%] right-[-50%] h-[2px] bg-slate-200 rounded z-0"></div>
+        
+        <div class="flex flex-col items-center text-center relative z-10 w-full px-2">
+            <!-- Círculo Azul (Minimalista) -->
+            <div class="w-10 h-10 rounded-full flex items-center justify-center bg-blue-50 border border-blue-200">
+                <span class="material-symbols-outlined text-blue-500 text-[20px]">person_check</span>
+            </div>
+            
+            <div class="mt-3 relative w-full flex flex-col items-center">
+                <div class="flex items-center gap-1 cursor-pointer inline-flex">
+                    <h4 class="text-[13px] font-bold text-slate-700 leading-tight">Tratamento</h4>
+                    <span class="material-symbols-outlined text-[14px] text-blue-400 hover:text-blue-600 transition-colors">info</span>
+                </div>
+                <p class="text-[10px] text-blue-600 mt-1 font-medium flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[12px]">support_agent</span>
+                    Por Marcos
+                </p>
+                
+                <!-- Popover -->
+                <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover/step:block w-48 bg-white border border-slate-200 shadow-xl rounded-sm p-3 z-50 animate-in fade-in slide-in-from-bottom-2 duration-150 rounded">
+                    <div class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-white border-r border-b border-slate-200 rotate-45 z-0"></div>
+                    <h5 class="text-[10px] font-black uppercase text-blue-700 tracking-widest mb-1 relative z-10 text-left">Suporte Nível 2</h5>
+                    <p class="text-[11px] text-slate-500 leading-tight relative z-10 text-left">Tratativa iniciada pelo departamento de compras corporativo.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Item 3: Atual / Pendente de Ação -->
+    <div class="flex-1 relative group/step">
+        <div class="absolute top-[20px] left-[50%] right-[-50%] h-[2px] bg-slate-200 rounded z-0"></div>
+        
+        <div class="flex flex-col items-center text-center relative z-10">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center bg-slate-100 border-2 border-slate-300">
+                <span class="material-symbols-outlined text-slate-600 text-[20px]">payments</span>
+            </div>
+            
+            <div class="mt-3">
+                <h4 class="text-[13px] font-black text-slate-700 leading-tight">Pagamento</h4>
+                <a href="#" class="text-[11px] text-slate-500 border-b border-slate-400 hover:text-slate-800 transition-colors pb-0.5 font-medium mt-1 inline-block">Informar dados</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Item 3: Falha / Negativo -->
+    <div class="flex-1 relative group/step">
+        <!-- Linha finaliza no item 4, então mantemos a linha seguindo pela direita -->
+        <div class="absolute top-[20px] left-[50%] right-[-50%] h-[2px] bg-slate-200 rounded z-0"></div>
+        
+        <div class="flex flex-col items-center text-center relative z-10">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center bg-red-500 border border-red-600 shadow-[0_0_0_3px_rgba(239,68,68,0.15)]">
+                <span class="material-symbols-outlined text-white text-[20px]">close</span>
+            </div>
+            
+            <div class="mt-3 relative">
+                <div class="flex items-center justify-center gap-1 cursor-pointer inline-flex">
+                    <h4 class="text-[13px] font-black text-red-600 leading-tight">Falha Sistêmica</h4>
+                    <span class="material-symbols-outlined text-[14px] text-red-400 hover:text-red-600 transition-colors">info</span>
+                </div>
+                <p class="text-[10px] text-slate-500 mt-1">Revisão necessária</p>
+                
+                <!-- Popover p/ Falha -->
+                <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover/step:block w-48 bg-white border border-slate-200 shadow-xl rounded-sm p-3 z-50 animate-in fade-in slide-in-from-bottom-2 duration-150 text-left">
+                    <div class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-white border-r border-b border-slate-200 rotate-45 z-0"></div>
+                    <h5 class="text-[10px] font-black uppercase text-red-600 tracking-widest mb-1 relative z-10 text-left">ERRO NFE 505</h5>
+                    <p class="text-[11px] text-slate-500 leading-tight relative z-10 text-left">Servidor da SEFAZ rejeitou o lote de aprovação. Cheque os dados fiscais.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Item 4: Fim (Sem conector) -->
+    <div class="flex-1 relative group/step">
+        <div class="flex flex-col items-center text-center relative z-10">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center bg-slate-50 border-2 border-slate-200">
+                <span class="material-symbols-outlined text-slate-400 text-[20px]">check</span>
+            </div>
+            
+            <div class="mt-3">
+                <h4 class="text-[13px] font-bold text-slate-400 leading-tight">Entrega</h4>
+                <p class="text-[11px] text-slate-400 mt-0.5">Aguardando passos...</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOCO 7E: BOARD KANBAN (DRAG & DROP READY) -->
+            <div id="kanban" class="showcase-card break-inside-avoid mt-8" style="column-span: all;">
+                <h3 class="showcase-block-title">Quadro Kanban (Industrial / Alta Densidade)</h3>
+                <div class="group relative">
+                    <div class="absolute -right-2 -top-2 z-10">
+                        <button class="copy-trigger bg-white border border-slate-200 text-slate-500 rounded p-1.5 hover:bg-emerald-50 outline-none" title="Copiar Quadro Kanban" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                    </div>
+                    <div class="sig-copyable-target bg-slate-50 p-6 border border-slate-200 rounded-sm overflow-x-auto">
+                        <!-- Board Kanban (Industrial Blueprint V3 - Padrão SIG) -->
+                        <div class="flex gap-4 min-h-[400px] w-max font-sans pb-4">
+                            
+                            <!-- COLUNA 1: Nova / Pendente -->
+                            <div class="w-[300px] shrink-0 flex flex-col bg-[#f8fafc] border border-slate-200 rounded-sm shadow-sm transition-opacity">
+                                <div class="bg-slate-100 text-slate-500 text-[10px] font-black uppercase px-3 py-2.5 border-b border-slate-200 tracking-widest shadow-inner flex justify-between items-center rounded-t-sm">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-orange-400"></span>
+                                        <span>Pendentes</span>
+                                    </div>
+                                    <span class="bg-white border text-center border-slate-200 px-1.5 py-0.5 rounded-sm font-mono text-slate-500 shadow-sm leading-none">3</span>
+                                </div>
+                                
+                                <div class="p-2.5 flex flex-col gap-3 overflow-y-auto">
+                                    
+                                    <!-- Card Genérico/Dinâmico (Industrial V3 Padrão) -->
+                                    <div class="bg-white border border-slate-200 rounded-sm shadow-sm hover:border-[#1e40af] hover:shadow-md transition-all cursor-grab flex flex-col p-3 group relative sig-kanban-card" data-id="9201">
+                                        
+                                        <!-- Cabeçalho do Card (ID + Tags Dinâmicas) -->
+                                        <div class="flex justify-between items-start mb-2">
+                                            <!-- Identificador Único -->
+                                            <span class="font-mono text-[10px] font-bold text-slate-500 bg-slate-50 border border-slate-100 px-1.5 py-0.5 rounded-sm sig-card-id">ID-9201</span>
+                                            
+                                            <!-- Container dinâmico para Tags Criadas no Formulário -->
+                                            <div class="flex flex-wrap gap-1 justify-end sig-card-tags">
+                                                <span class="sig-badge sig-badge-error">URGENTE</span>
+                                                <span class="sig-badge sig-badge-primary">HARDWARE</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Corpo Principal Dinâmico (Recebe Qualquer Informação) -->
+                                        <h5 class="text-[12px] font-bold text-slate-700 leading-tight mb-1 pr-4 sig-card-title">Título Genérico Mapeável</h5>
+                                        <p class="text-[10px] text-slate-500 line-clamp-2 leading-snug sig-card-desc">Campo de descrição adaptável para exibir observações, detalhes de pedidos ou qualquer parâmetro de texto.</p>
+                                        
+                                        <!-- Footer Dinâmico (Métricas, Responsável, Data) -->
+                                        <div class="mt-3 pt-2 border-t border-slate-100 flex justify-between items-center">
+                                            <!-- Slot Esq (Informaçao Auxiliar 1) -->
+                                            <span class="flex items-center gap-1 text-slate-400 text-[9px] font-bold tracking-wider sig-card-info-1">
+                                                <span class="material-symbols-outlined !text-[12px]">calendar_today</span>
+                                                18/11/2026
+                                            </span>
+                                            
+                                            <!-- Slot Dir (Informaçao Auxiliar 2) -->
+                                            <div class="flex flex-col items-end sig-card-info-2">
+                                                <span class="text-[9px] font-bold text-orange-500 uppercase tracking-widest drop-shadow-sm">Aguardando</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!-- COLUNA 2: Em Tratamento -->
+                            <div class="w-[300px] shrink-0 flex flex-col bg-[#f8fafc] border border-slate-200 rounded-sm shadow-sm transition-opacity">
+                                <div class="bg-slate-100 text-slate-500 text-[10px] font-black uppercase px-3 py-2.5 border-b border-slate-200 tracking-widest shadow-inner flex justify-between items-center rounded-t-sm">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-sig-blue"></span>
+                                        <span class="text-sig-blue drop-shadow-sm">Em Processamento</span>
+                                    </div>
+                                    <span class="bg-white border text-center border-slate-200 px-1.5 py-0.5 rounded-sm font-mono text-slate-500 shadow-sm leading-none">1</span>
+                                </div>
+                                
+                                <div class="p-2.5 flex flex-col gap-3 overflow-y-auto">
+                                    <!-- Card Industrial V3 Active -->
+                                    <div class="bg-white border-l-[3px] border-l-sig-blue border-y border-r border-slate-200 rounded-sm shadow-sm hover:border-[#1e40af] hover:shadow-md transition-all cursor-grab flex flex-col p-3 group relative sig-kanban-card" data-id="9150">
+                                        <div class="flex justify-between items-start mb-2">
+                                            <span class="font-mono text-[10px] font-bold text-sig-blue bg-blue-50 border border-blue-100 px-1.5 py-0.5 rounded-sm sig-card-id">ID-9150</span>
+                                            
+                                            <!-- Lista de Tags Dinâmicas -->
+                                            <div class="flex flex-wrap gap-1 justify-end sig-card-tags">
+                                                <span class="sig-badge sig-badge-success">APROVADO C-LEVEL</span>
+                                                <span class="sig-badge sig-badge-primary">TI</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <h5 class="text-[12px] font-bold text-slate-700 leading-tight mb-1 pr-4 sig-card-title">Licenças Secundárias (Template)</h5>
+                                        <p class="text-[10px] text-slate-500 line-clamp-2 leading-snug sig-card-desc">Este layout flexível aceita N tags criadas dinamicamente via JS sem quebrar a proporção do box.</p>
+                                        
+                                        <div class="mt-3 pt-2 border-t border-slate-100 flex justify-between items-center">
+                                            <span class="flex items-center gap-1 text-slate-400 text-[9px] font-bold tracking-wider sig-card-info-1">
+                                                <span class="material-symbols-outlined !text-[12px]">store</span>
+                                                15/11/2026
+                                            </span>
+                                            <div class="flex flex-col items-end sig-card-info-2">
+                                                <span class="text-[9px] font-bold text-slate-600 flex items-center gap-1 uppercase tracking-widest"><span class="material-symbols-outlined !text-[12px]">person</span> MARCOS ASSIS</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- COLUNA 3: Aguardando Pagamento -->
+                            <div class="w-[300px] shrink-0 flex flex-col bg-[#f8fafc] border border-slate-200 rounded-sm shadow-sm transition-opacity">
+                                <div class="bg-slate-100 text-slate-500 text-[10px] font-black uppercase px-3 py-2.5 border-b border-slate-200 tracking-widest shadow-inner flex justify-between items-center rounded-t-sm">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+                                        <span>Aguardando Pgto</span>
+                                    </div>
+                                    <span class="bg-white border text-center border-slate-200 px-1.5 py-0.5 rounded-sm font-mono text-slate-500 shadow-sm leading-none opacity-50">0</span>
+                                </div>
+                                
+                                <div class="p-2.5 flex flex-col gap-3 overflow-y-auto w-full h-full">
+                                    <!-- Empty State Idêntico ao UIKit Bloco "Empty States" -->
+                                    <div class="w-full flex h-[100px] items-center justify-center p-4 border-2 border-dashed border-slate-200 rounded-sm bg-slate-50">
+                                        <span class="text-[9px] font-black uppercase text-slate-400 tracking-widest italic flex items-center gap-2">
+                                            <span class="material-symbols-outlined !text-[16px] text-slate-300">hourglass_empty</span>
+                                            Vazio
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- COLUNA 4: Finalizado -->
+                            <div class="w-[300px] shrink-0 flex flex-col bg-[#f8fafc] border border-slate-200 rounded-sm shadow-sm opacity-80">
+                                <div class="bg-slate-100 text-slate-500 text-[10px] font-black uppercase px-3 py-2.5 border-b border-slate-200 tracking-widest shadow-inner flex justify-between items-center rounded-t-sm">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                        <span class="text-emerald-700 drop-shadow-sm">Concluídos</span>
+                                    </div>
+                                    <span class="bg-white border text-center border-slate-200 px-1.5 py-0.5 rounded-sm font-mono text-slate-500 shadow-sm leading-none">45</span>
+                                </div>
+                                <div class="p-2.5 flex flex-col gap-3 overflow-y-auto">
+                                    
+                                    <!-- Card Industrial V3 Concluído -->
+                                    <div class="bg-white border border-slate-200 rounded-sm shadow-sm opacity-70 hover:opacity-100 transition-opacity cursor-pointer flex p-3 items-center gap-3">
+                                        <div class="bg-emerald-50 rounded-full p-1.5 border border-emerald-100 flex items-center justify-center">
+                                            <span class="material-symbols-outlined !text-[14px] text-emerald-600">check</span>
+                                        </div>
+                                        <div class="flex flex-col flex-1">
+                                            <div class="flex justify-between items-baseline mb-0.5">
+                                                <span class="font-mono text-[9px] font-bold text-slate-400">PC-9102</span>
+                                                <span class="text-[8px] font-bold text-slate-400 uppercase tracking-widest">10/11/2026</span>
+                                            </div>
+                                            <h5 class="text-[11px] font-bold text-slate-600 leading-tight">Mobiliário Escritório</h5>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOCO 8: COLOR SWATCHES DA IDENTIDADE VISUAL -->
+            <div class="showcase-card mt-8" style="column-span: all;">
+                <h3 class="showcase-block-title">Color Swatches (Tokens de Design Oficiais)</h3>
+                
+                <div class="group relative">
+                    <div class="absolute -right-2 -top-2">
+                        <button class="copy-trigger bg-white border border-slate-200 shadow-sm text-slate-500 rounded p-1.5 hover:bg-emerald-50 hover:text-emerald-700 outline-none z-10" title="Copiar Linha de Cores HTML" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                    </div>
+                    <div class="sig-copyable-target flex gap-4 w-full flex-wrap justify-between overflow-hidden">
+                        <!-- Paleta Oficial baseada em sig-tokens.css -->
+                        <div class="h-24 flex-1 min-w-[140px] border border-slate-200 flex flex-col items-start justify-end p-3 shadow-sm hover:-translate-y-1 transition-transform" style="background-color: var(--sig-brand-cyan);">
+                            <span class="font-black text-[10px] uppercase text-slate-900 opacity-90">Brand Cyan</span>
+                            <span class="font-mono text-[9px] font-bold text-slate-900 opacity-60">#00E5FF</span>
+                        </div>
+                        <div class="h-24 flex-1 min-w-[140px] border border-slate-200 flex flex-col items-start justify-end p-3 shadow-sm hover:-translate-y-1 transition-transform" style="background-color: var(--sig-brand-dark);">
+                            <span class="font-black text-[10px] uppercase text-white opacity-90">Brand Dark</span>
+                            <span class="font-mono text-[9px] font-bold text-white opacity-60">#001B2B</span>
+                        </div>
+                        <div class="h-24 flex-1 min-w-[140px] border border-slate-200 flex flex-col items-start justify-end p-3 shadow-sm hover:-translate-y-1 transition-transform" style="background-color: var(--sig-blue);">
+                            <span class="font-black text-[10px] uppercase text-white opacity-90">Sober Blue</span>
+                            <span class="font-mono text-[9px] font-bold text-white opacity-60">#1E40AF</span>
+                        </div>
+                        <div class="h-24 flex-1 min-w-[140px] border border-slate-200 flex flex-col items-start justify-end p-3 shadow-sm hover:-translate-y-1 transition-transform" style="background-color: var(--sig-green);">
+                            <span class="font-black text-[10px] uppercase text-white opacity-90">SIG Green</span>
+                            <span class="font-mono text-[9px] font-bold text-white opacity-60">#10B981</span>
+                        </div>
+                        <div class="h-24 flex-1 min-w-[140px] border border-slate-200 flex flex-col items-start justify-end p-3 shadow-sm hover:-translate-y-1 transition-transform" style="background-color: var(--sig-orange);">
+                            <span class="font-black text-[10px] uppercase text-white opacity-90">SIG Orange</span>
+                            <span class="font-mono text-[9px] font-bold text-white opacity-60">#F59E0B</span>
+                        </div>
+                        <div class="h-24 flex-1 min-w-[140px] border border-slate-200 flex flex-col items-start justify-end p-3 shadow-sm hover:-translate-y-1 transition-transform" style="background-color: var(--sig-red);">
+                            <span class="font-black text-[10px] uppercase text-white opacity-90">SIG Red</span>
+                            <span class="font-mono text-[9px] font-bold text-white opacity-60">#EF4444</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- Fim Grid -->
+    </div> <!-- Fim Wrap MAX -->
+</body>
+</html>

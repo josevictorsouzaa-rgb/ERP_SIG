@@ -6,6 +6,18 @@ export function AbrirModulo(arg1) {
   return window['go']['main']['App']['AbrirModulo'](arg1);
 }
 
+export function AlterarSenhaOperadorLogado(arg1) {
+  return window['go']['main']['App']['AlterarSenhaOperadorLogado'](arg1);
+}
+
+export function AutenticarLogin(arg1, arg2) {
+  return window['go']['main']['App']['AutenticarLogin'](arg1, arg2);
+}
+
+export function BuscarDescricaoCFOP(arg1) {
+  return window['go']['main']['App']['BuscarDescricaoCFOP'](arg1);
+}
+
 export function BuscarEmpresas() {
   return window['go']['main']['App']['BuscarEmpresas']();
 }
@@ -14,36 +26,36 @@ export function CheckStatusConexao() {
   return window['go']['main']['App']['CheckStatusConexao']();
 }
 
+export function ConfigurarMatrizPadrao(arg1) {
+  return window['go']['main']['App']['ConfigurarMatrizPadrao'](arg1);
+}
+
 export function ConfirmarEntrada(arg1) {
   return window['go']['main']['App']['ConfirmarEntrada'](arg1);
 }
 
-export function DeletarEmpresa(arg1) {
-  return window['go']['main']['App']['DeletarEmpresa'](arg1);
+export function ConfirmarSaida() {
+  return window['go']['main']['App']['ConfirmarSaida']();
 }
 
 export function DeletarEnderecamento(arg1) {
   return window['go']['main']['App']['DeletarEnderecamento'](arg1);
 }
 
-export function DesvincularSimilar(arg1, arg2) {
-  return window['go']['main']['App']['DesvincularSimilar'](arg1, arg2);
-}
-
 export function EscutarBanco() {
   return window['go']['main']['App']['EscutarBanco']();
 }
 
-export function ExcluirCategoria(arg1) {
-  return window['go']['main']['App']['ExcluirCategoria'](arg1);
+export function ExcluirAliquotaFiscal(arg1) {
+  return window['go']['main']['App']['ExcluirAliquotaFiscal'](arg1);
 }
 
-export function ExcluirFuncao(arg1) {
-  return window['go']['main']['App']['ExcluirFuncao'](arg1);
+export function ExcluirFornecedor(arg1) {
+  return window['go']['main']['App']['ExcluirFornecedor'](arg1);
 }
 
-export function ExcluirMarca(arg1) {
-  return window['go']['main']['App']['ExcluirMarca'](arg1);
+export function ExcluirMatrizFiscal(arg1) {
+  return window['go']['main']['App']['ExcluirMatrizFiscal'](arg1);
 }
 
 export function ExcluirPerfilFiscal(arg1) {
@@ -54,16 +66,28 @@ export function ExcluirProduto(arg1) {
   return window['go']['main']['App']['ExcluirProduto'](arg1);
 }
 
-export function ExcluirSubcategoria(arg1) {
-  return window['go']['main']['App']['ExcluirSubcategoria'](arg1);
-}
-
 export function ExcluirUsuario(arg1) {
   return window['go']['main']['App']['ExcluirUsuario'](arg1);
 }
 
+export function FazerLogout() {
+  return window['go']['main']['App']['FazerLogout']();
+}
+
 export function GetModuloInicial() {
   return window['go']['main']['App']['GetModuloInicial']();
+}
+
+export function GetOperadorLogado() {
+  return window['go']['main']['App']['GetOperadorLogado']();
+}
+
+export function GetPermissoesLogado() {
+  return window['go']['main']['App']['GetPermissoesLogado']();
+}
+
+export function GetProximoIDFornecedor() {
+  return window['go']['main']['App']['GetProximoIDFornecedor']();
 }
 
 export function GetProximoIDUsuario() {
@@ -86,8 +110,20 @@ export function ImportarXML() {
   return window['go']['main']['App']['ImportarXML']();
 }
 
+export function ListarAliquotasFiscais() {
+  return window['go']['main']['App']['ListarAliquotasFiscais']();
+}
+
+export function ListarAplicacoesDoProduto(arg1) {
+  return window['go']['main']['App']['ListarAplicacoesDoProduto'](arg1);
+}
+
 export function ListarCategorias() {
   return window['go']['main']['App']['ListarCategorias']();
+}
+
+export function ListarConversoesDoProduto(arg1) {
+  return window['go']['main']['App']['ListarConversoesDoProduto'](arg1);
 }
 
 export function ListarEnderecamentos(arg1) {
@@ -106,8 +142,24 @@ export function ListarFuncoes() {
   return window['go']['main']['App']['ListarFuncoes']();
 }
 
+export function ListarGruposAcesso() {
+  return window['go']['main']['App']['ListarGruposAcesso']();
+}
+
+export function ListarImagensProduto(arg1) {
+  return window['go']['main']['App']['ListarImagensProduto'](arg1);
+}
+
 export function ListarMarcas() {
   return window['go']['main']['App']['ListarMarcas']();
+}
+
+export function ListarMatrizesFiscais() {
+  return window['go']['main']['App']['ListarMatrizesFiscais']();
+}
+
+export function ListarMovimentacoesProduto(arg1) {
+  return window['go']['main']['App']['ListarMovimentacoesProduto'](arg1);
 }
 
 export function ListarPerfisFiscais() {
@@ -116,6 +168,10 @@ export function ListarPerfisFiscais() {
 
 export function ListarProdutos() {
   return window['go']['main']['App']['ListarProdutos']();
+}
+
+export function ListarSolicitacoesCompra() {
+  return window['go']['main']['App']['ListarSolicitacoesCompra']();
 }
 
 export function ListarSubcategorias() {
@@ -134,32 +190,92 @@ export function MaximizarJanela() {
   return window['go']['main']['App']['MaximizarJanela']();
 }
 
+export function MostrarAlerta(arg1, arg2) {
+  return window['go']['main']['App']['MostrarAlerta'](arg1, arg2);
+}
+
+export function NotificarSelecao(arg1) {
+  return window['go']['main']['App']['NotificarSelecao'](arg1);
+}
+
+export function ObterDescricaoCFOP(arg1) {
+  return window['go']['main']['App']['ObterDescricaoCFOP'](arg1);
+}
+
 export function ObterEntrada(arg1) {
   return window['go']['main']['App']['ObterEntrada'](arg1);
+}
+
+export function ObterMarcasVeiculos() {
+  return window['go']['main']['App']['ObterMarcasVeiculos']();
+}
+
+export function ObterModelosVeiculos(arg1) {
+  return window['go']['main']['App']['ObterModelosVeiculos'](arg1);
+}
+
+export function ObterPrimeiraImagemB64(arg1) {
+  return window['go']['main']['App']['ObterPrimeiraImagemB64'](arg1);
+}
+
+export function ObterProduto(arg1) {
+  return window['go']['main']['App']['ObterProduto'](arg1);
 }
 
 export function ObterProximoIdProduto() {
   return window['go']['main']['App']['ObterProximoIdProduto']();
 }
 
-export function ResetarSenha(arg1, arg2) {
-  return window['go']['main']['App']['ResetarSenha'](arg1, arg2);
+export function ObterVersoesAnosVeiculos(arg1, arg2) {
+  return window['go']['main']['App']['ObterVersoesAnosVeiculos'](arg1, arg2);
 }
 
-export function SalvarCategoria(arg1) {
-  return window['go']['main']['App']['SalvarCategoria'](arg1);
+export function PesquisarProdutosAvancado(arg1) {
+  return window['go']['main']['App']['PesquisarProdutosAvancado'](arg1);
+}
+
+export function RemoverVinculoUsuarioGrupo(arg1) {
+  return window['go']['main']['App']['RemoverVinculoUsuarioGrupo'](arg1);
+}
+
+export function ResetarSenhaUsuario(arg1) {
+  return window['go']['main']['App']['ResetarSenhaUsuario'](arg1);
+}
+
+export function ResolverAliquotas(arg1, arg2) {
+  return window['go']['main']['App']['ResolverAliquotas'](arg1, arg2);
+}
+
+export function ResolverMatrizFiscal(arg1) {
+  return window['go']['main']['App']['ResolverMatrizFiscal'](arg1);
+}
+
+export function SalvarAliquotaFiscal(arg1) {
+  return window['go']['main']['App']['SalvarAliquotaFiscal'](arg1);
 }
 
 export function SalvarEntrada(arg1) {
   return window['go']['main']['App']['SalvarEntrada'](arg1);
 }
 
-export function SalvarFuncao(arg1) {
-  return window['go']['main']['App']['SalvarFuncao'](arg1);
+export function SalvarFornecedor(arg1) {
+  return window['go']['main']['App']['SalvarFornecedor'](arg1);
+}
+
+export function SalvarGrupoAcesso(arg1) {
+  return window['go']['main']['App']['SalvarGrupoAcesso'](arg1);
+}
+
+export function SalvarImagensProduto(arg1, arg2) {
+  return window['go']['main']['App']['SalvarImagensProduto'](arg1, arg2);
 }
 
 export function SalvarMarca(arg1, arg2) {
   return window['go']['main']['App']['SalvarMarca'](arg1, arg2);
+}
+
+export function SalvarMatrizFiscal(arg1) {
+  return window['go']['main']['App']['SalvarMatrizFiscal'](arg1);
 }
 
 export function SalvarPerfilFiscal(arg1) {
@@ -170,14 +286,22 @@ export function SalvarProduto(arg1) {
   return window['go']['main']['App']['SalvarProduto'](arg1);
 }
 
-export function SalvarSubcategoria(arg1, arg2) {
-  return window['go']['main']['App']['SalvarSubcategoria'](arg1, arg2);
+export function SalvarSolicitacaoCompra(arg1) {
+  return window['go']['main']['App']['SalvarSolicitacaoCompra'](arg1);
 }
 
 export function SalvarUsuario(arg1) {
   return window['go']['main']['App']['SalvarUsuario'](arg1);
 }
 
-export function VincularSimilar(arg1, arg2) {
-  return window['go']['main']['App']['VincularSimilar'](arg1, arg2);
+export function SugerirFiscal(arg1, arg2, arg3, arg4) {
+  return window['go']['main']['App']['SugerirFiscal'](arg1, arg2, arg3, arg4);
+}
+
+export function VerificarSKUExistente(arg1, arg2) {
+  return window['go']['main']['App']['VerificarSKUExistente'](arg1, arg2);
+}
+
+export function VincularUsuariosGrupo(arg1, arg2) {
+  return window['go']['main']['App']['VincularUsuariosGrupo'](arg1, arg2);
 }

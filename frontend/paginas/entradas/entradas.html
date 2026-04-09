@@ -3,178 +3,162 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>SIG | ENTRADA DE NOTAS</title>
+    <title>SIG | ENTRADA DE NOTAS E XML</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'sig-blue': '#0056b3',
-                        'sig-dark': '#1e293b'
-                    }
-                }
-            }
-        }
-    </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="../../assets/css/sig-ui.css">
+    <link rel="stylesheet" href="../../assets/css/sig-ui-base.css">
+    <link rel="stylesheet" href="../../assets/css/sig-tokens.css">
     <style>
-        body { font-family: 'Inter', sans-serif; background: #f1f5f9; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
-        .grid-container { flex-grow: 1; overflow-y: auto; padding: 15px; }
-        .sig-table-container { background: white; border: 1px solid #e2e8f0; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .sticky-header { position: sticky; top: 0; background: #f8fafc; z-index: 10; border-bottom: 2px solid #0056b3; }
-        .sig-btn-primary { background: #0056b3; color: white; }
+        body { font-family: 'Inter', sans-serif; background: #eef2f6; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
     </style>
 </head>
 
 <body>
-    <!-- TOOLBAR CORPORATIVA -->
-    <div class="sig-toolbar p-2 border-b border-slate-300 gap-1">
-        <button class="sig-btn-icon" title="Confirmar Entrada e Gerar Estoque" onclick="window.confirmarNota()"><span class="material-symbols-outlined !text-emerald-600">check_circle</span></button>
-        <button class="sig-btn-icon" title="Gravar Rascunho" onclick="window.salvarRascunho()"><span class="material-symbols-outlined !text-blue-600">save</span></button>
-        <button class="sig-btn-icon" title="Nova Nota" onclick="window.novaNota()"><span class="material-symbols-outlined">add_box</span></button>
-        <div class="sig-divider"></div>
-        <button class="sig-btn-icon !bg-emerald-50 border-emerald-200" title="IMPORTAR XML DA NOTA FISCAL" onclick="window.importarXML()"><span class="material-symbols-outlined !text-emerald-700">upload_file</span></button>
-        <div class="sig-divider"></div>
-        <button class="sig-btn-icon" title="Voltar" onclick="window.voltar()"><span class="material-symbols-outlined">arrow_back</span></button>
+    <!-- TOOLBAR -->
+    <div class="sig-toolbar p-2 border-b border-slate-300 gap-1 flex items-center bg-white shadow-sm">
+        <button class="sig-btn-icon" title="Confirmar Entrada" id="btn-confirmar-entrada" onclick="window.confirmarNota()"><span class="material-symbols-outlined !text-emerald-600">check_circle</span></button>
+        <button class="sig-btn-icon" title="Voltar" onclick="if(window.runtime) window.runtime.Quit()"><span class="material-symbols-outlined">arrow_back</span></button>
+        <div class="sig-divider mx-1 border-l border-slate-300 h-6"></div>
+        <button class="sig-btn border border-sig-blue flex items-center gap-1 font-bold bg-sig-blue text-white hover:bg-blue-700 px-4 py-1 rounded" onclick="window.importarXML()">
+            <span class="material-symbols-outlined !text-[16px]">upload_file</span> IMPORTAR NFe (XML)
+        </button>
         <div class="flex-grow text-center text-blue-900">
-            <span class="text-[10px] font-black tracking-widest text-slate-400 uppercase">Gestão de Compras e Entradas (V58)</span>
-        </div>
-        <div class="sig-divider"></div>
-        <button class="sig-btn-icon" title="Configurações"><span class="material-symbols-outlined">settings</span></button>
-    </div>
-
-    <div class="grid-container">
-        <!-- SEÇÃO: CABEÇALHO DA NOTA -->
-        <div class="sig-fieldset mb-4">
-            <span class="sig-legend !text-sig-blue font-bold flex items-center gap-1">
-                <span class="material-symbols-outlined !text-[14px]">description</span> DADOS DA NOTA FISCAL
-            </span>
-            <div class="grid grid-cols-6 gap-3 p-1">
-                <div class="col-span-1">
-                    <label class="sig-label-dense">NÚMERO DA NOTA</label>
-                    <input type="text" id="ent-numero" class="sig-input-dense w-full font-bold" placeholder="000.000.000">
-                </div>
-                <div class="col-span-1">
-                    <label class="sig-label-dense">SÉRIE</label>
-                    <input type="text" id="ent-serie" class="sig-input-dense w-full text-center" value="1">
-                </div>
-                <div class="col-span-2">
-                    <label class="sig-label-dense">FORNECEDOR</label>
-                    <div class="flex gap-1">
-                        <select id="ent-fornecedor-id" class="sig-input-dense w-full uppercase font-bold text-blue-900 border-blue-200 bg-blue-50/30">
-                            <option value="0">SELECIONE O FORNECEDOR...</option>
-                        </select>
-                        <button class="sig-btn-icon !w-7 !h-7 bg-white"><span class="material-symbols-outlined !text-[16px]">person_add</span></button>
-                    </div>
-                </div>
-                <div class="col-span-1">
-                    <label class="sig-label-dense">DATA EMISSÃO</label>
-                    <input type="date" id="ent-data-emissao" class="sig-input-dense w-full">
-                </div>
-                <div class="col-span-1">
-                    <label class="sig-label-dense">SITUAÇÃO</label>
-                    <div id="ent-status" class="flex items-center justify-center h-6 px-3 bg-amber-100 text-amber-700 font-black text-[10px] rounded border border-amber-300 uppercase">Rascunho</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- SEÇÃO: ITENS DA NOTA -->
-        <div class="sig-fieldset mb-4 flex-grow flex flex-col min-h-[400px]">
-            <span class="sig-legend !text-sig-blue font-bold flex items-center gap-1">
-                <span class="material-symbols-outlined !text-[14px]">shopping_cart</span> ITENS E CONFERÊNCIA LOGÍSTICA
-            </span>
-            
-            <div class="flex gap-2 p-1 bg-slate-100/50 border-b border-slate-200 mb-2 items-end">
-                <div class="w-1/3">
-                    <label class="sig-label-dense font-bold text-blue-800">BUSCAR PRODUTO (SKU OU DESCRIÇÃO)</label>
-                    <div class="flex gap-1">
-                        <input type="text" id="busca-produto" class="sig-input-dense w-full font-bold uppercase" placeholder="Procurar peça ou ler código de barra...">
-                        <button class="sig-btn-icon !w-7 !h-7 bg-white border border-slate-300"><span class="material-symbols-outlined !text-[18px]">search</span></button>
-                    </div>
-                </div>
-                <div class="flex-grow"></div>
-                <button onclick="window.adicionarItem()" class="sig-btn sig-btn-primary !h-7 !px-4 hover:brightness-110 !font-bold flex items-center gap-1">
-                    <span class="material-symbols-outlined !text-[16px]">add_shopping_cart</span> INCLUIR ITEM
-                </button>
-            </div>
-
-            <div class="sig-table-container overflow-hidden flex-grow bg-white">
-                <div class="overflow-y-auto max-h-[500px]">
-                    <table class="sig-table text-[10px] w-full">
-                        <thead class="sticky-header">
-                            <tr>
-                                <th class="w-10">SEQ</th>
-                                <th class="w-[120px]">SKU / CÓDIGO</th>
-                                <th>DESCRIÇÃO DO PRODUTO</th>
-                                <th class="w-20">QTD</th>
-                                <th class="w-28 text-right">VALOR UNIT.</th>
-                                <th class="w-28 text-right">TOTAL ITEM</th>
-                                <th class="w-48">ENDEREÇO DESTINO</th>
-                                <th class="w-10 text-center">X</th>
-                            </tr>
-                        </thead>
-                        <tbody id="lista-itens-entrada">
-                            <tr><td colspan="8" class="text-center p-12 text-slate-400 italic">Nenhum item adicionado à nota ainda.</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- SEÇÃO: TOTAIS E RESUMO -->
-        <div class="grid grid-cols-4 gap-4">
-            <div class="col-span-3">
-                <div class="sig-fieldset h-full bg-white">
-                    <span class="sig-legend font-bold">OBSERVAÇÕES DA ENTRADA</span>
-                    <textarea id="ent-obs" class="sig-input w-full h-16 text-xs p-2 border-slate-200" placeholder="Ex: Frete pago por fora, nota com desconto especial..."></textarea>
-                </div>
-            </div>
-            <div class="col-span-1">
-                <div class="sig-fieldset bg-slate-50 !border-slate-400">
-                    <span class="sig-legend !bg-slate-700 !text-white font-black text-right pr-2">RESUMO FINANCEIRO (R$)</span>
-                    <div class="flex flex-col gap-1.5 p-1">
-                        <div class="flex justify-between border-b border-dotted border-slate-300 pb-1">
-                            <span class="text-[9px] font-bold text-slate-500 uppercase">Total Bruto</span>
-                            <span id="ent-tot-prod" class="text-[11px] font-bold text-slate-700">0,00</span>
-                        </div>
-                        <div class="flex justify-between border-b border-dotted border-slate-300 pb-1">
-                            <span class="text-[9px] font-bold text-slate-500 uppercase">Frete/IPI/ST</span>
-                            <span id="ent-tot-imp" class="text-[11px] font-bold text-slate-700">0,00</span>
-                        </div>
-                        <div class="flex justify-between pt-1">
-                            <span class="text-[10px] font-black text-sig-blue uppercase tracking-tighter">Total Líquido</span>
-                            <span id="ent-tot-geral" class="text-[16px] font-black text-sig-blue">0,00</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <span class="text-[10px] font-black tracking-widest text-slate-400 uppercase">Recepção de Mercadorias e Confronto (V70)</span>
         </div>
     </div>
 
-    <!-- STATUS BAR -->
-    <div class="sig-statusbar border-t !border-slate-300 bg-white">
-        <div class="sig-statusbar-left">
-            <span class="sig-statusbar-label uppercase">Módulo:</span>
-            <span class="sig-statusbar-value font-black">ENTRADA DE MERCADORIA v1.0 (V56)</span>
+    <!-- MAIN GRID CONTAINER -->
+    <div class="flex-grow flex flex-col p-2 gap-2 h-0">
+        
+        <!-- ROW 1: HEADER E RESUMO LADO A LADO -->
+        <div class="flex gap-2 min-h-[90px]">
+            <!-- DADOS DO DOCUMENTO -->
+            <fieldset class="sig-fieldset-blueprint flex-1 max-w-[70%] relative border-slate-300 bg-white">
+                <legend class="text-[9px] font-black tracking-widest text-sig-blue bg-white px-2">DADOS DA NOTA DE EMISSÃO</legend>
+                <div class="grid grid-cols-6 gap-2 pt-2 px-2 pb-1">
+                    <div class="col-span-3">
+                        <label class="text-[8px] font-bold text-slate-500 uppercase block mb-0.5">Emitente / Fornecedor</label>
+                        <input type="text" id="ent-fornecedor-nome" class="sig-input-dense w-full font-bold uppercase text-slate-700 bg-slate-50" readonly>
+                    </div>
+                    <div class="col-span-1">
+                        <label class="text-[8px] font-bold text-slate-500 uppercase block mb-0.5">Nº NF-e</label>
+                        <input type="text" id="ent-numero" class="sig-input-dense w-full text-center font-bold text-sig-blue bg-blue-50" readonly>
+                    </div>
+                    <div class="col-span-1">
+                        <label class="text-[8px] font-bold text-slate-500 uppercase block mb-0.5">Emissão</label>
+                        <input type="text" id="ent-data-emissao" class="sig-input-dense w-full text-center font-mono bg-slate-50" readonly>
+                    </div>
+                    <div class="col-span-1">
+                        <label class="text-[8px] font-bold text-slate-500 uppercase block mb-0.5">Série</label>
+                        <input type="text" id="ent-serie" class="sig-input-dense w-full text-center font-mono bg-slate-50" readonly>
+                    </div>
+                    <div class="col-span-2">
+                        <label class="text-[8px] font-bold text-slate-500 uppercase block mb-0.5">CNPJ Emitente</label>
+                        <input type="text" id="ent-cnpj" class="sig-input-dense w-full font-mono bg-slate-50" readonly>
+                    </div>
+                    <div class="col-span-3">
+                        <label class="text-[8px] font-bold text-slate-500 uppercase block mb-0.5">Chave de Acesso Sefaz</label>
+                        <input type="text" id="ent-chave" class="sig-input-dense w-full font-mono text-[10px] tracking-wider bg-slate-50" readonly>
+                    </div>
+                    <div class="col-span-1">
+                        <label class="text-[8px] font-bold text-slate-500 uppercase block mb-0.5">Data Movimento</label>
+                        <input type="text" id="ent-data-entrada" class="sig-input-dense w-full text-center font-mono bg-slate-50" readonly>
+                    </div>
+                </div>
+            </fieldset>
+
+            <!-- SUMÁRIO OPERACIONAL -->
+            <fieldset class="sig-fieldset-blueprint flex-1 border-slate-300 bg-slate-50 relative">
+                <legend class="text-[9px] font-black tracking-widest text-slate-600 bg-slate-50 px-2">STATUS E CONTAGENS</legend>
+                <div class="grid grid-cols-2 gap-2 pt-2 px-2">
+                    <div>
+                        <label class="text-[8px] font-bold text-slate-500 uppercase block">Qtd Lida</label>
+                        <input type="text" id="res-qtd-itens" class="sig-input-dense w-full text-center font-black" value="0" readonly>
+                    </div>
+                    <div>
+                        <label class="text-[8px] font-bold text-amber-600 uppercase block">Ref. Pendente</label>
+                        <input type="text" id="res-qtd-pendentes" class="sig-input-dense w-full text-center font-black text-amber-700 bg-amber-50 border-amber-300" value="0" readonly>
+                    </div>
+                    <div>
+                        <label class="text-[8px] font-bold text-slate-500 uppercase block">Produtos (R$)</label>
+                        <input type="text" id="res-total-produtos" class="sig-input-dense w-full text-right font-black font-mono text-slate-600" value="R$ 0,00" readonly>
+                    </div>
+                    <div>
+                        <label class="text-[8px] font-bold text-sig-blue uppercase block">NFe Base (R$)</label>
+                        <input type="text" id="res-total-nota" class="sig-input-dense w-full text-right font-black font-mono text-sig-blue bg-blue-100 border-blue-300" value="R$ 0,00" readonly>
+                    </div>
+                </div>
+            </fieldset>
         </div>
-        <div class="sig-statusbar-right divide-x divide-slate-300">
-            <div class="sig-statusbar-item px-3 flex items-center gap-1">
-                <span class="sig-statusbar-label">USUÁRIO:</span>
-                <span class="sig-statusbar-value font-bold text-slate-800">ADMINISTRADOR</span>
+
+        <!-- ROW 2: A GRID DE CONFERENCIA COMPLETA (20 COLUNAS) -->
+        <fieldset class="sig-fieldset-blueprint flex-1 flex flex-col min-h-0 border-slate-300 bg-white relative">
+            <legend class="text-[9px] font-black tracking-widest text-sig-blue bg-white px-2">GRADE MATRIZ (CONFRONTO DE XML E VMASTER)</legend>
+            <div class="flex-1 overflow-auto mt-1 border-t border-slate-200">
+                <table class="sig-table-sm w-[2000px]">
+                    <thead class="sticky top-0 shadow-sm z-10 border-b border-slate-300">
+                        <tr>
+                            <th colspan="15" class="bg-slate-100 text-center border-r border-slate-300 py-1 text-[9px] text-slate-500 uppercase font-black tracking-widest">ESPELHO BINÁRIO (DADOS GOVERNAMENTAIS - LADO CEGO)</th>
+                            <th colspan="5" class="bg-blue-50 text-center border-r-0 text-[9px] text-sig-blue py-1 uppercase font-black tracking-widest">RESPOSTA DO SISTEMA (PRODUTO OFICIAL E VMASTER ERP)</th>
+                        </tr>
+                        <tr class="bg-white">
+                            <!-- XML -->
+                            <th class="w-16 text-center border-r border-slate-200" title="CÓDIGO PRODUTO">CÓD.</th>
+                            <th class="min-w-[150px] border-r border-slate-200">DESCRIÇÃO XML</th>
+                            <th class="w-20 text-center border-r border-slate-200">NCM/SH</th>
+                            <th class="w-12 text-center border-r border-slate-200">O/CST</th>
+                            <th class="w-12 text-center border-r border-slate-200">CFOP</th>
+                            <th class="w-10 text-center border-r border-slate-200">UN</th>
+                            <th class="w-16 text-right border-r border-slate-200">QUANT</th>
+                            <th class="w-20 text-right border-r border-slate-200">V. UNIT</th>
+                            <th class="w-20 text-right border-r border-slate-200">V. TOTAL</th>
+                            <th class="w-16 text-right border-r border-slate-200">V. DESC</th>
+                            <th class="w-20 text-right border-r border-slate-200">B.C ICMS</th>
+                            <th class="w-16 text-right border-r border-slate-200">V. ICMS</th>
+                            <th class="w-16 text-right border-r border-slate-200">V. IPI</th>
+                            <th class="w-12 text-right border-r border-slate-200" title="ALÍQUOTA ICMS">A. ICMS</th>
+                            <th class="w-12 text-right border-r border-slate-300" title="ALÍQUOTA IPI">A. IPI</th>
+                            <!-- ERP -->
+                            <th class="min-w-[200px] border-r border-slate-200 bg-blue-50/30">PRODUTO SISTEMA</th>
+                            <th class="w-12 text-center border-r border-slate-200 bg-blue-50/30">CFOP</th>
+                            <th class="w-12 text-center border-r border-slate-200 bg-blue-50/30">CST</th>
+                            <th class="w-20 text-right border-r border-slate-200 bg-blue-50/30">V. FINAL(R$)</th>
+                            <th class="w-20 text-center border-r-0 bg-blue-50/30">VÍNCULO</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lista-itens-entrada">
+                        <tr>
+                            <td colspan="20" class="text-center p-8 text-slate-400 italic font-medium">O grid está vazio. Importe um XML estruturado para iniciar o confronto.</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            <div class="sig-statusbar-item px-3">
-                <span class="sig-statusbar-value text-emerald-600 font-extrabold flex items-center gap-1">
-                    <span class="material-symbols-outlined !text-[12px]">verified</span> CONECTADO
-                </span>
-            </div>
+        </fieldset>
+
+        <!-- ROW 3: PAINEIS DE AUDITORIA E MENSAGERIA -->
+        <div class="flex gap-2 min-h-[90px] h-[90px]">
+            <fieldset class="sig-fieldset-blueprint w-1/3 flex flex-col min-h-0 border-slate-300 bg-white relative">
+                <legend class="text-[9px] font-black tracking-widest text-slate-500 bg-white px-2">LOG VMASTER</legend>
+                <textarea id="log-tecnico" class="w-full h-full text-[9px] font-mono leading-tight p-1 bg-transparent border-none focus:ring-0 resize-none text-slate-500" readonly>Aguardando leitura de NFe...</textarea>
+            </fieldset>
+
+            <fieldset class="sig-fieldset-blueprint flex-1 flex flex-col min-h-0 border-slate-300 bg-slate-50 relative">
+                <legend class="text-[9px] font-black tracking-widest text-amber-600 bg-slate-50 px-2">PORTAL DE AUDITORIA E BLOQUEIOS</legend>
+                <div id="painel-validacao" class="flex-1 p-1 text-center flex items-center justify-center text-slate-400 text-xs italic">
+                    O laudo da nota fiscal aparecerá aqui após o processamento.
+                </div>
+            </fieldset>
         </div>
     </div>
+    
+    <!-- STATUS BAR INTERNO -->
+    <div class="h-6 flex-shrink-0 bg-white border-t border-slate-300 flex items-center px-3 text-[10px]">
+        <span class="font-black text-slate-400 tracking-wider">SIG.CORE MODULE</span>
+        <div class="flex-grow"></div>
+        <div id="status-nfe" class="sig-badge border border-slate-300 bg-slate-100 text-slate-600 !text-[8px] !px-1.5 ml-1 inline-block">NENHUM DOCUMENTO LIDO</div>
+    </div>
 
-    <!-- MODAL DE PRODUTO GLOBAL (Para pré-cadastro rápido) -->
-    <script src="../../componentes/modal_produto.js"></script>
     <script src="entradas.js"></script>
 </body>
 </html>

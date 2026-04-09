@@ -1,0 +1,325 @@
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>SISTEMA CORE - HUB</title>
+    <!-- Tailwind CSS v3 -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="stylesheet" href="../../assets/css/sig-ui.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes cardEntrance {
+            0% { opacity: 0; transform: scale(0.8) translateY(10px); }
+            80% { opacity: 1; transform: scale(1.05) translateY(0); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; overflow: hidden; height: 100vh; display: flex; flex-direction: column; animation: fadeIn 0.25s ease-in-out forwards; }
+        
+        .sig-hub-card-blueprint {
+            opacity: 0; /* Começa invisível para não piscar */
+            animation: cardEntrance 350ms ease-out forwards;
+        }
+    </style>
+    <script src="../../componentes/blueprint/sig-statusbar.js"></script>
+</head>
+
+<body>
+
+    <!-- Cabeçalho Estilo Omie (Largura Final 100%) -->
+    <header class="bg-[#001b2b] text-white w-full px-6 py-2 flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+            <div class="flex items-center space-x-1">
+                <span class="text-[#00e5ff] font-extrabold text-2xl tracking-tighter uppercase">sig</span>
+                <span class="text-slate-400 text-[10px] mt-1 font-bold">| SISTEMA CORE ERP</span>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-6 text-slate-300">
+            <div class="flex items-center space-x-4 border-r border-slate-700 pr-4">
+                <span class="material-symbols-outlined cursor-pointer hover:text-[#00e5ff] text-xl">search</span>
+                <span class="material-symbols-outlined cursor-pointer hover:text-[#00e5ff] text-xl">grid_view</span>
+                <span class="material-symbols-outlined cursor-pointer hover:text-[#00e5ff] text-xl">verified_user</span>
+                <button title="Meu Perfil - Perfil do Usuário" onclick="abrirJanela('perfil')"
+                    class="flex items-center">
+                    <span class="material-symbols-outlined cursor-pointer hover:text-[#00e5ff] text-xl">settings</span>
+                </button>
+                <span class="material-symbols-outlined cursor-pointer hover:text-[#00e5ff] text-xl">notifications</span>
+            </div>
+
+            <div class="flex items-center space-x-3 pl-2">
+                <div class="text-right">
+                    <div id="hub-header-nome" class="text-[11px] font-semibold leading-none uppercase">CARREGANDO...</div>
+                    <div id="hub-header-funcao" class="text-[9px] text-[#00e5ff] font-bold uppercase">...</div>
+                </div>
+                <div id="hub-header-inicial"
+                    class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold ring-1 ring-[#00e5ff] uppercase">
+                    ?</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Linha de detalhe 100% largura -->
+    <div class="w-full h-[2px] bg-[#00e5ff] opacity-80 shadow-md"></div>
+
+    <main class="flex-grow overflow-y-auto p-8">
+        <div class="max-w-[1700px] mx-auto">
+
+            <section class="mb-10">
+                <h2 class="text-xl font-light mb-4 text-slate-700 uppercase tracking-wide">Mais Acessados</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 lg:grid-cols-7">
+                    <button onclick="abrirJanela('produtos')" data-mod="MOD_PRODUTO"
+                        class="sig-hub-card-blueprint sig-hub-bg-indigo">
+                        <span class="material-symbols-outlined self-start">inventory_2</span>
+                        <span class="text-[10px] font-black text-right uppercase">Produtos</span>
+                    </button>
+                    <button onclick="abrirJanela('parametros')" data-mod="MOD_PARAMETRO"
+                        class="sig-hub-card-blueprint sig-hub-bg-dark-grey">
+                        <span class="material-symbols-outlined self-start">settings</span>
+                        <span class="text-[10px] font-black text-right uppercase">Parâmetros</span>
+                    </button>
+                </div>
+            </section>
+
+            <div class="grid grid-cols-1 lg:grid-cols-7 gap-8">
+                <!-- Operacional -->
+                <section class="lg:col-span-3">
+                    <h2 class="text-xl font-light mb-4 text-slate-700 uppercase tracking-wide">Operacional</h2>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="abrirJanela('produtos')" data-mod="MOD_PRODUTO"
+                            class="sig-hub-card-blueprint sig-hub-bg-indigo !h-32 !p-4">
+                            <span class="material-symbols-outlined text-4xl self-start">inventory_2</span>
+                            <span class="font-black text-right text-sm uppercase">Produtos</span>
+                        </button>
+                        <button onclick="abrirJanela('compras')" data-mod="MOD_PEDIDOS_COMPRA"
+                            class="sig-hub-card-blueprint sig-hub-bg-blue !h-32 !p-4">
+                            <span class="material-symbols-outlined text-4xl self-start">shopping_cart_checkout</span>
+                            <span class="font-black text-right text-sm uppercase">Pedidos de Compra</span>
+                        </button>
+                        <button onclick="abrirJanela('solicitacao_compras')" data-mod="MOD_SOLICITACAO_COMPRAS"
+                            class="sig-hub-card-blueprint sig-hub-bg-blue !h-32 !p-4">
+                            <span class="material-symbols-outlined text-4xl self-start">add_shopping_cart</span>
+                            <span class="font-black text-right text-sm uppercase">Solicitações de Compra</span>
+                        </button>
+                        <button onclick="abrirJanela('enderecamento')" data-mod="MOD_ENDERECAMENTO"
+                            class="sig-hub-card-blueprint sig-hub-bg-dark-grey !h-32 !p-4">
+                            <span class="material-symbols-outlined text-4xl self-start">location_on</span>
+                            <span class="font-black text-right text-sm uppercase">Endereçamento</span>
+                        </button>
+                        <button onclick="abrirJanela('entradas')" data-mod="MOD_ENTRADA_MERCADORIA"
+                            class="sig-hub-card-blueprint sig-hub-bg-emerald !h-32 !p-4">
+                            <span class="material-symbols-outlined text-4xl self-start">shopping_bag</span>
+                            <span class="font-black text-right text-sm uppercase">Entrada de Mercadoria</span>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Fiscal -->
+                <section class="lg:col-span-2">
+                    <h2 class="text-xl font-light mb-4 text-slate-700 uppercase tracking-wide">Fiscal</h2>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="abrirJanela('fiscal')" data-mod="MOD_FISCAL"
+                            class="sig-hub-card-blueprint sig-hub-bg-orange !h-32 !p-4">
+                            <span class="material-symbols-outlined text-4xl self-start">account_balance</span>
+                            <span class="font-black text-right text-sm uppercase">Parâmetros Fiscais</span>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Utilitários -->
+                <section class="lg:col-span-2">
+                    <h2 class="text-xl font-light mb-4 text-slate-700 uppercase tracking-wide">Utilitários</h2>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="abrirJanela('parametros')" data-mod="MOD_PARAMETRO"
+                            class="sig-hub-card-blueprint sig-hub-bg-blue !h-32 !p-4">
+                            <span class="material-symbols-outlined text-4xl self-start">admin_panel_settings</span>
+                            <span class="font-black text-right text-sm uppercase">Parâmetros</span>
+                        </button>
+                        <button onclick="abrirJanela('acessos')" data-mod="MOD_ACESSOS"
+                            class="sig-hub-card-blueprint !bg-slate-800 hover:!bg-slate-700 !h-32 !p-4">
+                            <span class="material-symbols-outlined text-4xl self-start text-emerald-400">security</span>
+                            <span class="font-black text-right text-sm uppercase text-white">Segurança / Acessos</span>
+                        </button>
+                    </div>
+                </section>
+            </div>
+
+        </div>
+    </main>
+
+    <div class="fixed bottom-12 right-6 z-50">
+        <button onclick="abrirModalSair()"
+            class="sig-hub-card-blueprint sig-hub-bg-red !h-auto !flex-row !items-center !px-6 !py-3 !w-auto !animate-none !opacity-100">
+            <span class="material-symbols-outlined mr-2">logout</span>
+            <span class="font-black uppercase tracking-widest text-sm">Sair do Sistema</span>
+        </button>
+    </div>
+
+    <!-- Modal Customizado de Saída -->
+    <div id="modal-sair-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; transition: opacity 0.2s ease-out; opacity: 0; align-items: center; justify-content: center;">
+        <div id="modal-sair-box" style="background: white; width: 400px; border-radius: 12px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); padding: 24px; transition: transform 0.2s ease-out; transform: scale(0.95);">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                <span class="material-symbols-outlined" style="color: #ef4444; font-size: 28px;">logout</span>
+                <h3 style="font-size: 20px; font-weight: 800; color: #0f172a; margin: 0; letter-spacing: -0.5px;">Encerramento de Sessão</h3>
+            </div>
+            <p style="font-size: 14px; color: #64748b; font-weight: 500; margin-bottom: 24px; line-height: 1.5;">Deseja realmente sair do sistema? Todas as suas janelas de módulos abertas serão permanentemente fechadas.</p>
+            
+            <div style="display: flex; justify-content: flex-end; gap: 12px;">
+                <button onclick="fecharModalSair()" style="padding: 10px 20px; border-radius: 6px; background: #f1f5f9; color: #475569; font-weight: 700; font-size: 13px; border: none; cursor: pointer; transition: background 0.2s;">Cancelar</button>
+                <button onclick="confirmarSair()" style="padding: 10px 20px; border-radius: 6px; background: #ef4444; color: white; font-weight: 700; font-size: 13px; border: none; cursor: pointer; transition: background 0.2s;">Sim, Desconectar</button>
+            </div>
+        </div>
+    </div>    <sig-statusbar terminal="HUB"></sig-statusbar>
+
+    <script>
+
+        // CONTROLE DE CARREGAMENTO (PROGRESS BAR)
+        function setLoading(isLoading) {
+            const bar = document.getElementById('footer-progress');
+            if (!bar) return;
+            if (isLoading) {
+                bar.classList.add('loading');
+                bar.style.width = '30%';
+            } else {
+                bar.classList.remove('loading');
+                bar.style.width = '0%';
+            }
+        }
+
+        // Função para abrir janelas nativas independentes via Go
+        function abrirJanela(nome) {
+            if (window.parent && window.parent.go) {
+                window.parent.go.main.App.AbrirModulo(nome);
+            } else if (window.go) {
+                window.go.main.App.AbrirModulo(nome);
+            } else {
+                alert("Erro: Motor Wails (Go) não foi detectado no Frontend.");
+            }
+        }
+
+        // Controle do Modal Customizado
+        function abrirModalSair() {
+            const overlay = document.getElementById('modal-sair-overlay');
+            const box = document.getElementById('modal-sair-box');
+            overlay.style.display = 'flex';
+            
+            // Força reflow para ativar animação CSS
+            overlay.offsetHeight; 
+            
+            overlay.style.opacity = '1';
+            box.style.transform = 'scale(1)';
+        }
+
+        function fecharModalSair() {
+            const overlay = document.getElementById('modal-sair-overlay');
+            const box = document.getElementById('modal-sair-box');
+            
+            overlay.style.opacity = '0';
+            box.style.transform = 'scale(0.95)';
+            
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 200); // 200ms duration matching ease-out
+        }
+
+        async function confirmarSair() {
+            const goEngine = window.parent.go || window.go;
+            
+            // Transição Suave de Retorno (Crossfade Out)
+            document.body.style.transition = "opacity 0.25s ease-in-out";
+            document.body.style.opacity = "0";
+
+            if (goEngine) {
+                goEngine.main.App.FazerLogout(); // Notifica via postgres que todo sub-processo deve morrer
+            }
+
+            setTimeout(() => {
+                if (window.parent) {
+                    window.parent.document.getElementById('main-frame').src = './paginas/login/login.html?v=' + Date.now();
+                } else {
+                    window.location.href = '../login/login.html';
+                }
+            }, 250); // Crossfade duration
+        }
+        async function carregarOperador() {
+            try {
+                const goEngine = window.parent.go || window.go;
+                if (!goEngine) return;
+                
+                const usr = await goEngine.main.App.GetOperadorLogado();
+                if (usr && usr.nome) {
+                    const primeiroNome = usr.nome.split(' ')[0];
+                    document.getElementById('hub-header-nome').innerText = primeiroNome;
+                    document.getElementById('hub-header-funcao').innerText = usr.nome_funcao || 'OPERADOR';
+                    document.getElementById('hub-header-inicial').innerText = primeiroNome.charAt(0);
+                }
+                
+                // Aplicar Permissões Visuais
+                const permString = await goEngine.main.App.GetPermissoesLogado();
+                const permissoes = JSON.parse(permString || "[]");
+                
+                // Limpar estados anteriores caso seja um recarregamento via evento
+                document.querySelectorAll('[data-mod]').forEach(btn => {
+                    btn.style.removeProperty('display');
+                    btn.classList.remove('hidden-by-auth');
+                });
+                document.querySelectorAll('section').forEach(sec => {
+                    sec.style.removeProperty('display');
+                });
+                
+                if (!permissoes.includes("MOD_ADM_TOTAL")) {
+                    document.querySelectorAll('[data-mod]').forEach(btn => {
+                        const reqMod = btn.getAttribute('data-mod');
+                        if (reqMod && !permissoes.includes(reqMod)) {
+                            // Oculta o botao e adiciona flag pra verificarmos se a Section ficou vazia
+                            btn.style.setProperty('display', 'none', 'important');
+                            btn.classList.add('hidden-by-auth');
+                        }
+                    });
+                    
+                    // Ocultar Sections (H2 e Grid) se todos os módulos dentro estiverem ocultos
+                    document.querySelectorAll('section').forEach(sec => {
+                        const btns = sec.querySelectorAll('[data-mod]');
+                        if (btns.length > 0) {
+                            const btnsOcultos = sec.querySelectorAll('[data-mod].hidden-by-auth');
+                            if (btns.length === btnsOcultos.length) {
+                                sec.style.setProperty('display', 'none', 'important');
+                            }
+                        }
+                    });
+                }
+                
+            } catch (e) { console.error(e); }
+        }
+
+        // Staggered Delay Calculation
+        document.addEventListener('DOMContentLoaded', () => {
+             // Aplica o atraso apenas aos cards dentro da tag <main> (Grids operacionais) ignorando botões fixos
+             const allCards = document.querySelectorAll('main .sig-hub-card-blueprint');
+             allCards.forEach((card, index) => {
+                  card.style.animationDelay = `${index * 45}ms`;
+             });
+        });
+
+        carregarOperador();
+        
+        // Listener de Atualização de Permissões em tempo real via PostgreSQL Listen/Notify!
+        const runtimeTools = window.parent.runtime || window.runtime;
+        if (runtimeTools) {
+            runtimeTools.EventsOn("db_event", (payload) => {
+                if (payload === "atualizacao_permissoes") {
+                    console.log("Evento Inter-processos: Permissões atualizadas. Recarregando HUB...");
+                    carregarOperador();
+                }
+            });
+        }
+    </script>
+
+</body>
+
+</html>

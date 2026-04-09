@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>SIG | ENTRADA DE NOTA FISCAL XML</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'sig-blue': '#1E40AF',
+                        'sig-brand-cyan': '#00E5FF',
+                        'sig-brand-dark': '#001B2B',
+                        'sig-green': '#10B981',
+                        'sig-red': '#EF4444',
+                        'sig-orange': '#F59E0B'
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/css/sig-ui.css">
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f1f5f9; 
+            overflow: hidden; 
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. TOOLBAR -->
+    <div class="bg-white border-b border-slate-200 p-1 flex items-center justify-between shadow-sm z-30">
+        <div class="sig-toolbar">
+            <button id="btn-importar-xml" class="sig-btn-icon" title="Importar XML" onclick="window.importarXML()">
+                <span class="material-symbols-outlined text-[18px] text-sig-blue">upload_file</span>
+            </button>
+            <div class="sig-divider"></div>
+            <button class="sig-btn-icon" title="Vincular Produtos ERP">
+                <span class="material-symbols-outlined text-[18px]">link</span>
+            </button>
+            <button class="sig-btn-icon" title="Validar Regra Fiscal">
+                <span class="material-symbols-outlined text-[18px]">fact_check</span>
+            </button>
+            <div class="sig-divider"></div>
+            <button id="btn-confirmar-entrada" class="sig-btn-icon opacity-50 pointer-events-none" title="Confirmar Entrada" onclick="window.confirmarNota()">
+                <span class="material-symbols-outlined text-[18px] font-bold">check_circle</span>
+            </button>
+            <button class="sig-btn-icon" title="Cancelar Entrada" onclick="window.history.back()">
+                <span class="material-symbols-outlined text-[18px]">cancel</span>
+            </button>
+        </div>
+        
+        <div class="pr-4">
+            <nav aria-label="Breadcrumb">
+                <ol class="flex items-center gap-2 text-[9px] font-black w-full uppercase text-slate-400 tracking-widest whitespace-nowrap overflow-hidden text-ellipsis">
+                    <li><a href="#" class="hover:text-sig-blue transition-colors">COMPRAS</a></li>
+                    <li><span class="text-slate-300">/</span></li>
+                    <li class="text-slate-700" aria-current="page">RECEBIMENTO (XML)</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- ÁREA DE OPERAÇÃO -->
+    <div class="flex-1 overflow-auto p-2 flex flex-col gap-2">
+        
+        <!-- ROW 1: DADOS DA NOTA (Cabeçalho) + RESUMO -->
+        <div class="grid grid-cols-12 gap-2 shrink-0">
+            <!-- 2. BLOCO - DADOS DA NOTA -->
+            <div class="col-span-12 lg:col-span-9">
+                <div class="sig-fieldset-blueprint w-full h-full pb-1 bg-white">
+                    <span class="sig-legend-blueprint w-auto font-black px-2 text-sig-blue">DADOS DA NOTA FISCAL (XML)</span>
+                    <div class="grid grid-cols-12 gap-x-2 gap-y-1 px-2 pb-1 relative">
+                        <div class="col-span-12 md:col-span-5">
+                            <label class="sig-label-dense">FORNECEDOR</label>
+                            <input type="text" id="ent-fornecedor-nome" class="sig-input-dense w-full bg-slate-50 font-bold uppercase" readonly>
+                        </div>
+                        <div class="col-span-6 md:col-span-2">
+                            <label class="sig-label-dense">CNPJ</label>
+                            <input type="text" id="ent-cnpj" class="sig-input-dense w-full bg-slate-50 font-mono text-center" readonly>
+                        </div>
+                        <div class="col-span-3 md:col-span-1">
+                            <label class="sig-label-dense">Nº NOTA</label>
+                            <input type="text" id="ent-numero" class="sig-input-dense w-full text-center font-bold text-sig-blue bg-blue-50 border-blue-200" readonly>
+                        </div>
+                        <div class="col-span-3 md:col-span-1">
+                            <label class="sig-label-dense">SÉRIE</label>
+                            <input type="text" id="ent-serie" class="sig-input-dense w-full text-center bg-slate-50 font-bold" readonly>
+                        </div>
+                        <div class="col-span-6 md:col-span-3">
+                            <label class="sig-label-dense">DATA DE EMISSÃO</label>
+                            <input type="text" id="ent-data-emissao" class="sig-input-dense w-full bg-slate-50 font-mono text-center" readonly>
+                        </div>
+                        <div class="col-span-12 pt-1 flex items-center gap-2">
+                            <div class="flex-1">
+                                <label class="sig-label-dense">CHAVE DE ACESSO</label>
+                                <input type="text" id="ent-chave" class="sig-input-dense w-full bg-slate-50 font-mono tracking-widest text-center text-slate-500" readonly>
+                            </div>
+                            <div class="w-40 shrink-0">
+                                <label class="sig-label-dense">DATA DE ENTRADA (SISTEMA)</label>
+                                <input type="text" id="ent-data-entrada" class="sig-input-dense w-full bg-white font-mono text-center border-sig-blue font-bold text-sig-blue" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. BLOCO - RESUMO DA NOTA -->
+            <div class="col-span-12 lg:col-span-3">
+                <div class="sig-fieldset-blueprint w-full h-full pb-1 bg-white">
+                    <span class="sig-legend-blueprint w-auto font-black px-2 text-sig-blue">RESUMO OPERACIONAL</span>
+                    <div class="grid grid-cols-2 gap-x-2 gap-y-1 px-2 pb-1 relative">
+                        <div>
+                            <label class="sig-label-dense">ITENS (QTD)</label>
+                            <input type="text" id="res-qtd-itens" class="sig-input-dense w-full bg-slate-50 text-center font-bold" value="0" readonly>
+                        </div>
+                        <div>
+                            <label class="sig-label-dense">PENDENTES</label>
+                            <input type="text" id="res-qtd-pendentes" class="sig-input-dense w-full bg-amber-50 border-sig-orange text-sig-orange text-center font-bold" value="0" readonly>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="sig-label-dense">TOTAL DE PRODUTOS</label>
+                            <input type="text" id="res-total-produtos" class="sig-input-dense w-full bg-slate-50 text-right font-mono font-bold" value="R$ 0,00" readonly>
+                        </div>
+                        <div class="col-span-2 flex items-end">
+                            <div class="w-full">
+                                <label class="sig-label-dense text-sig-green font-bold">VALOR TOTAL DA NOTA</label>
+                                <input type="text" id="res-total-nota" class="sig-input-dense w-full text-right font-mono font-black border-sig-green text-sig-green bg-emerald-50" value="R$ 0,00" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROW 2 (FLEX-1): 4. GRID DE ITENS -->
+        <div class="flex-1 flex flex-col min-h-[250px] relative mt-1">
+            <div class="sig-fieldset-blueprint w-full h-full flex flex-col pt-4 pb-0 px-0 bg-white">
+                <span class="sig-legend-blueprint px-2 ml-2 mt-[-12px] bg-white font-black text-slate-700">CONFERÊNCIA DE ITENS (LADO A LADO)</span>
+                
+                <div class="flex-1 overflow-auto border-t border-slate-200 min-h-0">
+                    <table class="sig-table sig-table-sm w-full border-collapse whitespace-nowrap">
+                        <thead class="sticky top-0 shadow-sm z-10 border-b border-slate-300">
+                            <!-- Cabeçalho Agrupador Visual Clássico -->
+                            <tr>
+                                <th colspan="15" class="bg-slate-100 text-center border-r border-slate-300 py-1 text-[9px] text-slate-500">DADOS DO ARQUIVO XML</th>
+                                <th colspan="5" class="bg-blue-50 text-center text-[9px] text-sig-blue py-1">DADOS NO ERP (VINCULAÇÃO E MOTOR)</th>
+                            </tr>
+                            <tr class="bg-white">
+                                <!-- XML -->
+                                <th class="w-16 text-center border-r border-slate-200" title="CÓDIGO PRODUTO">CÓD.</th>
+                                <th class="min-w-[150px] border-r border-slate-200">DESCRIÇÃO XML</th>
+                                <th class="w-20 text-center border-r border-slate-200">NCM/SH</th>
+                                <th class="w-12 text-center border-r border-slate-200">O/CST</th>
+                                <th class="w-12 text-center border-r border-slate-200">CFOP</th>
+                                <th class="w-10 text-center border-r border-slate-200">UN</th>
+                                <th class="w-16 text-right border-r border-slate-200">QUANT</th>
+                                <th class="w-20 text-right border-r border-slate-200">V. UNIT</th>
+                                <th class="w-20 text-right border-r border-slate-200">V. TOTAL</th>
+                                <th class="w-16 text-right border-r border-slate-200">V. DESC</th>
+                                <th class="w-20 text-right border-r border-slate-200">B.CÁLC ICMS</th>
+                                <th class="w-16 text-right border-r border-slate-200">V. ICMS</th>
+                                <th class="w-16 text-right border-r border-slate-200">V. IPI</th>
+                                <th class="w-12 text-right border-r border-slate-200" title="ALÍQUOTA ICMS">ALQ. ICMS</th>
+                                <th class="w-12 text-right border-r border-slate-300" title="ALÍQUOTA IPI">ALQ. IPI</th>
+                                <!-- ERP -->
+                                <th class="min-w-[200px] border-r border-slate-200 bg-blue-50/30">PRODUTO ERP</th>
+                                <th class="w-12 text-center border-r border-slate-200 bg-blue-50/30">CFOP</th>
+                                <th class="w-12 text-center border-r border-slate-200 bg-blue-50/30">CST</th>
+                                <th class="w-20 text-right border-r border-slate-200 bg-blue-50/30">CUSTO UNIT</th>
+                                <th class="w-24 text-center bg-blue-50/30">STATUS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lista-itens-entrada" class="bg-white">
+                            <tr>
+                                <td colspan="20" class="text-center p-8 text-slate-400 italic">O grid está vazio. Importe um XML para iniciar a conferência.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROW 3: PENDÊNCIAS E LOG TÉCNICO -->
+        <div class="grid grid-cols-12 gap-2 h-36 shrink-0 mt-1">
+            <!-- 5. PAINEL DE PENDÊNCIAS / VALIDAÇÃO -->
+            <div class="col-span-12 lg:col-span-8">
+                <div class="sig-fieldset-blueprint w-full h-full flex flex-col p-2 bg-white relative">
+                    <span class="sig-legend-blueprint px-2 text-slate-700">AUDITORIA E VALIDAÇÃO DA NOTA</span>
+                    
+                    <div id="painel-validacao" class="flex-1 flex flex-col items-center justify-center p-2 rounded border border-dashed border-slate-300 bg-slate-50 mt-1">
+                        <!-- Conteúdo injetado via JS -->
+                        <div class="text-center opacity-50">
+                            <span class="material-symbols-outlined text-4xl mb-1">checklist</span>
+                            <p class="text-[10px] font-black uppercase">Aguardando importação para auditar as regras.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. LOG TÉCNICO (Reduzido) -->
+            <div class="col-span-12 lg:col-span-4">
+                <div class="sig-fieldset-blueprint w-full h-full flex flex-col p-1 bg-white relative">
+                    <span class="sig-legend-blueprint px-2 text-slate-500">LOG TÉCNICO (MOTOR FISCAL)</span>
+                    <textarea id="log-tecnico" class="flex-1 w-full bg-[#f8fafc] text-slate-500 font-mono text-[9px] p-2 resize-none border-none outline-none mt-2" readonly></textarea>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 7. STATUS BAR -->
+    <div class="sig-statusbar border-t border-slate-300 relative z-30">
+        <div class="sig-statusbar-left">
+            <span class="sig-statusbar-label">OPERADOR:</span>
+            <span class="sig-statusbar-value font-black">ADMINISTRADOR</span>
+            <div class="h-4 w-px bg-slate-300 mx-2"></div>
+            <span class="sig-statusbar-label">STATUS XML:</span>
+            <span id="status-nfe" class="sig-badge sig-badge-neutral !text-[8px] !px-1.5 ml-1 inline-block">AGUARDANDO IMPORTAÇÃO</span>
+        </div>
+        <div class="sig-statusbar-right">
+            <div class="sig-statusbar-item">
+                <span class="sig-statusbar-label">VERSÃO DA TELA:</span>
+                <span class="sig-statusbar-value font-bold">V-CONFERÊNCIA (EST. DELPHI)</span>
+            </div>
+            <div class="sig-statusbar-item">
+                <span class="material-symbols-outlined !text-[12px] text-sig-blue mr-1">bolt</span>
+                <span class="sig-statusbar-value font-black text-sig-blue">SIG VMASTER ONLINE</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="entradas.js"></script>
+</body>
+</html>

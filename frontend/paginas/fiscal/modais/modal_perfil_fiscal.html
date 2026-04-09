@@ -1,0 +1,288 @@
+<div id="modal-fiscal" class="sig-modal-overlay hidden">
+    <div class="sig-modal-blueprint-container w-[850px]">
+        
+        <!-- Header Modular Blueprint -->
+        <div class="sig-modal-header-blueprint">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-sig-blue !text-base">account_balance_wallet</span>
+                <h3 id="modal-titulo" class="text-slate-700 font-bold text-[11px] uppercase tracking-wider">Arquitetura de Perfil Fiscal</h3>
+            </div>
+            <button onclick="fecharModal()" class="sig-btn-close !w-7 !h-7">
+                <span class="material-symbols-outlined !text-base">close</span>
+            </button>
+        </div>
+
+        <!-- Conteúdo em 3 Colunas Lean -->
+        <div class="p-4 bg-slate-50 overflow-y-auto max-h-[75vh]">
+            <form id="form-fiscal" class="flex flex-col gap-4">
+                <input type="hidden" id="fis-id" value="0">
+
+                <!-- NOVO BLOCO: ASSISTENTE DE PERFIL (SIMPLIFICADO) -->
+                <div class="sig-fieldset-blueprint w-full !bg-indigo-50/50 border-indigo-200">
+                    <div class="flex justify-between items-center mb-1 pr-1">
+                        <span class="sig-legend-blueprint !text-indigo-700 !static !m-0 uppercase font-black">ASSISTENTE DE CONSTRUÇÃO DE PERFIL</span>
+                        <button type="button" onclick="limparAssistente()" class="sig-btn-sec h-6 px-3 !text-[9px] flex items-center gap-1 hover:!bg-red-50 hover:!text-red-600 hover:!border-red-200 transition-all">
+                            <span class="material-symbols-outlined !text-sm">backspace</span>
+                            REINICIAR FORMULÁRIO
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-1">
+                        <div>
+                            <label class="sig-label-dense text-indigo-900 font-black" title="Escolha o cenário de negócio que mais se aproxima da sua necessidade operacional.">01. QUAL O PERFIL BASE DE NEGÓCIO?</label>
+                            <select id="fis-as-perfil-base" class="sig-input-dense w-full font-black text-indigo-800 border-indigo-300 !h-9 text-xs" onchange="aplicarPerfilBase()">
+                                <option value="">--- SELECIONE UM CENÁRIO ---</option>
+                                <option value="COMPRA" title="Entrada de mercadoria para estoque. gera financeiro a pagar e atualiza custo médio.">COMPRA PARA REVENDA</option>
+                                <option value="VENDA" title="Saída de mercadoria para cliente. gera financeiro a receber e baixa estoque.">VENDA DE MERCADORIA</option>
+                                <option value="DEV_COMPRA" title="Devolução de mercadoria comprada (saída para o fornecedor). estorna estoque.">DEVOLUÇÃO DE COMPRA (SAÍDA)</option>
+                                <option value="DEV_VENDA" title="Devolução de mercadoria vendida (entrada do cliente). retorna ao estoque físico.">DEVOLUÇÃO DE VENDA (ENTRADA)</option>
+                                <option value="TRANSFERENCIA" title="Movimentação entre suas próprias filiais. não gera financeiro por padrão.">TRANSFERÊNCIA ENTRE FILIAIS</option>
+                                <option value="MGER_ENTRADA" title="Entrada interna (ajuste, inventário, etc) sem impacto fiscal ou financeiro.">MOVIMENTAÇÃO GERENCIAL (ENTRADA)</option>
+                                <option value="MGER_SAIDA" title="Saída interna (ajuste, brinde, etc) sem impacto fiscal ou financeiro.">MOVIMENTAÇÃO GERENCIAL (SAÍDA)</option>
+                            </select>
+                        </div>
+                        <div id="wrapper-subtipo" class="opacity-30 pointer-events-none transition-all">
+                            <label class="sig-label-dense" title="Define o comportamento tributário de ICMS da operação.">02. POSSUI INCIDÊNCIA DE ST?</label>
+                            <select id="fis-as-subtipo" class="sig-input-dense w-full font-bold !h-9" onchange="aplicarPerfilBase()">
+                                <option value="NORMAL" title="Operação simples de ICMS (Débito/Crédito normal).">NÃO - OPERAÇÃO NORMAL (S/ ST)</option>
+                                <option value="ST" title="Operação com Substituição Tributária (Retenção antecipada do imposto).">SIM - COM SUBSTITUIÇÃO TRIBUTÁRIA</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-2 bg-indigo-100/50 p-2 rounded border border-indigo-200">
+                            <span class="material-symbols-outlined text-indigo-600 !text-xl">info</span>
+                            <p class="text-[9px] text-indigo-900 font-bold leading-tight uppercase">
+                                Selecione o cenário base. O sistema preencherá as regras técnicas automaticamente. você poderá ajustar qualquer campo abaixo se necessário.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    
+                    <!-- COLUNA 1 -->
+                    <div class="flex flex-col gap-3">
+                        <!-- BLOCO 01: IDENTIDADE DO PERFIL -->
+                        <div class="sig-fieldset-blueprint w-full !bg-white">
+                            <span class="sig-legend-blueprint">01. IDENTIDADE DO PERFIL</span>
+                            <div class="flex flex-col gap-2">
+                                <div>
+                                    <label class="sig-label-dense">NOME DO PERFIL</label>
+                                    <input type="text" id="fis-nome" class="sig-input-dense w-full uppercase font-bold" placeholder="EX: VENDA MERCADORIA PADRÃO">
+                                </div>
+                                <label class="sig-check-group cursor-pointer mt-1">
+                                    <input type="checkbox" id="fis-perfil-ativo" class="sig-checkboxScale" checked>
+                                    <span class="sig-check-label">PERFIL ATIVO NO SISTEMA</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- BLOCO 02: CLASSIFICAÇÃO E REGRAS DE MATRIZ -->
+                        <div class="sig-fieldset-blueprint w-full !bg-white">
+                            <span class="sig-legend-blueprint">01. REGRAS DE CLASSIFICAÇÃO</span>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="sig-label-dense">OPERAÇÃO</label>
+                                    <select id="fis-tipo-operacao" class="sig-input-dense w-full font-bold">
+                                        <option value="ENTRADA">ENTRADA</option>
+                                        <option value="SAIDA">SAÍDA</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="sig-label-dense">MOVIMENTAÇÃO</label>
+                                    <select id="fis-tipo-movimentacao" class="sig-input-dense w-full font-bold">
+                                        <option value="COMPRA">COMPRA</option>
+                                        <option value="VENDA">VENDA</option>
+                                        <option value="DEVOLUCAO">DEVOLUÇÃO</option>
+                                        <option value="TRANSFERENCIA">TRANSFERÊNCIA</option>
+                                        <option value="AJUSTE">AJUSTE</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="sig-label-dense text-[8px]">TIPO DOCUMENTO</label>
+                                    <select id="fis-com-nota-fiscal" class="sig-input-dense w-full">
+                                        <option value="true">FISCAL</option>
+                                        <option value="false">GERENCIAL</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="sig-label-dense">INCIDÊNCIA ST</label>
+                                    <select id="fis-incide-st" class="sig-input-dense w-full">
+                                        <option value="false">NÃO</option>
+                                        <option value="true">SIM</option>
+                                    </select>
+                                </div>
+                                <div class="col-span-2">
+                                    <label class="sig-label-dense">NATUREZA DA OPERAÇÃO (DESC.)</label>
+                                    <select id="fis-natureza-operacao" class="sig-input-dense w-full uppercase">
+                                        <option value="FISCAL">FISCAL</option>
+                                        <option value="NÃO FISCAL">NÃO FISCAL</option>
+                                        <option value="DEVOLUÇÃO">DEVOLUÇÃO</option>
+                                        <option value="TRANSFERÊNCIA">TRANSFERÊNCIA</option>
+                                        <option value="AJUSTE">AJUSTE</option>
+                                    </select>
+                                </div>
+                                <div class="col-span-2">
+                                    <label class="sig-label-dense">FINALIDADE / TIPO ITEM</label>
+                                    <div class="grid grid-cols-2 gap-1">
+                                        <select id="fis-finalidade" class="sig-input-dense w-full">
+                                            <option value="NORMAL">NORMAL</option>
+                                            <option value="DEVOLUÇÃO">DEVOLUÇÃO</option>
+                                            <option value="TRANSFERÊNCIA">TRANSFERÊNCIA</option>
+                                            <option value="AJUSTE">AJUSTE</option>
+                                        </select>
+                                        <select id="fis-tipo-item" class="sig-input-dense w-full">
+                                            <option value="REVENDA">REVENDA</option>
+                                            <option value="USO">USO/CONSUMO</option>
+                                            <option value="ATIVO">ATIVO IMOB.</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- BLOCO 03: CLASSIFICAÇÃO FISCAL -->
+                        <div class="sig-fieldset-blueprint w-full">
+                            <span class="sig-legend-blueprint">02. CLASSIFICAÇÃO FISCAL (CFOP)</span>
+                            <div class="flex flex-col gap-2">
+                                <div class="grid grid-cols-4 gap-1">
+                                    <div class="col-span-1">
+                                        <label class="sig-label-dense">CFOP BASE</label>
+                                        <input type="text" id="fis-cfop" class="sig-input-dense w-full text-center font-black" maxlength="4" placeholder="0000" onchange="buscarDescricaoCFOP(this.value)">
+                                    </div>
+                                    <div class="col-span-3">
+                                        <label class="sig-label-dense">DESCRIÇÃO SUGERIDA</label>
+                                        <input type="text" id="fis-cfop-descricao" class="sig-input-dense w-full text-[9px] uppercase italic bg-slate-100 font-bold border-none" readonly>
+                                    </div>
+                                </div>
+                                <div class="bg-amber-50 p-2 rounded border border-amber-100 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-amber-600 !text-sm">lightbulb</span>
+                                    <p class="text-[8px] text-amber-800 leading-tight uppercase font-medium">
+                                        O CFOP e sua descrição são preenchidos automaticamente pelo assistente superior.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COLUNA 2 -->
+                    <div class="flex flex-col gap-3">
+                        <!-- BLOCO 03: COMPORTAMENTO OPERACIONAL -->
+                        <div class="sig-fieldset-blueprint w-full h-full">
+                            <span class="sig-legend-blueprint">03. COMPORTAMENTO OPERACIONAL</span>
+                            <div class="flex flex-col gap-3">
+                                <div class="p-2 rounded bg-white shadow-sm border border-slate-200 flex flex-col gap-2">
+                                    <label class="sig-check-group cursor-pointer">
+                                        <input type="checkbox" id="fis-atualiza-estoque" class="sig-checkboxScale">
+                                        <span class="sig-check-label font-bold" title="Se marcado, a operação somará ou subtrairá saldo físico do estoque geral.">ATUALIZA ESTOQUE FÍSICO</span>
+                                    </label>
+                                    <label class="sig-check-group cursor-pointer">
+                                        <input type="checkbox" id="fis-reserva-estoque" class="sig-checkboxScale">
+                                        <span class="sig-check-label" title="Utilizado para reservar mercadoria do estoque (ex: pré-venda) sem baixar o saldo real de imediato.">GERA RESERVA DE ESTOQUE</span>
+                                    </label>
+                                    <label class="sig-check-group cursor-pointer">
+                                        <input type="checkbox" id="fis-baixa-estoque" class="sig-checkboxScale">
+                                        <span class="sig-check-label" title="Diferente da baixa de faturamento, este marca se a mercadoria já sai fisicamente no momento da emissão (Balcão).">BAIXA IMEDIATA (CONCLUÍDO)</span>
+                                    </label>
+                                </div>
+
+                                <div class="p-2 rounded bg-white shadow-sm border border-slate-200 flex flex-col gap-2">
+                                    <label class="sig-check-group cursor-pointer">
+                                        <input type="checkbox" id="fis-gera-financeiro" class="sig-checkboxScale" checked>
+                                        <span class="sig-check-label font-bold" title="Se marcado, gera um lançamento automático no Contas a Pagar (Entradas) ou Receber (Saídas).">GERA FINANCEIRO (PAG/REC)</span>
+                                    </label>
+                                    <label class="sig-check-group cursor-pointer">
+                                        <input type="checkbox" id="fis-forma-custo-medio" class="sig-checkboxScale" checked>
+                                        <span class="sig-check-label font-bold" title="Crucial para Entradas: Recalcula o valor médio do estoque baseado no preço de compra e impostos.">RECALCULA CUSTO MÉDIO</span>
+                                    </label>
+                                    <label class="sig-check-group cursor-pointer">
+                                        <input type="checkbox" id="fis-permite-venda-negativa" class="sig-checkboxScale">
+                                        <span class="sig-check-label" title="Permite faturar produtos mesmo se o saldo no sistema estiver zerado (não recomendado para autopeças rigorosas).">PERMITE SALDO NEGATIVO</span>
+                                    </label>
+                                </div>
+
+                                <div class="mt-auto">
+                                    <label class="sig-label-dense">MODO DE MOVIMENTAÇÃO TÉCNICO</label>
+                                    <select id="fis-tipo-mov-estoque" class="sig-input-dense w-full">
+                                        <option value="REAL">MOVIMENTAÇÃO REAL</option>
+                                        <option value="RESERVA">SÓ RESERVA</option>
+                                        <option value="SIMBOLICA">ENTREGA SIMBÓLICA</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COLUNA 3 -->
+                    <div class="flex flex-col gap-3">
+                        <!-- BLOCO 04: COMPOSIÇÃO DE CUSTO -->
+                        <div id="section-composicao-custo" class="sig-fieldset-blueprint w-full">
+                            <span class="sig-legend-blueprint">04. COMPOSIÇÃO DE CUSTO</span>
+                            <div class="flex flex-col gap-2">
+                                <div class="bg-indigo-50/50 p-2 rounded border border-indigo-100 flex flex-col gap-2">
+                                    <label class="sig-check-group cursor-pointer">
+                                        <input type="checkbox" id="fis-soma-st-custo" class="sig-checkboxScale">
+                                        <span class="sig-check-label font-bold text-indigo-900 text-[10px]" title="Soma o valor do ICMS-ST recolhido na nota ao custo unitário do produto.">SOMAR ICMS-ST AO CUSTO</span>
+                                    </label>
+                                    <label class="sig-check-group cursor-pointer">
+                                        <input type="checkbox" id="fis-soma-ipi-custo" class="sig-checkboxScale">
+                                        <span class="sig-check-label font-bold text-indigo-900 text-[10px]" title="Soma o valor do IPI (não recuperável em autopeças varejo) ao custo operacional.">SOMAR IPI AO CUSTO</span>
+                                    </label>
+                                </div>
+                                <div class="bg-slate-50 p-2 rounded flex flex-col gap-2 border border-slate-200">
+                                    <label class="sig-check-group cursor-pointer">
+                                        <input type="checkbox" id="fis-soma-frete-custo" class="sig-checkboxScale">
+                                        <span class="sig-check-label" title="Distribui o valor do frete da nota proporcionalmente ao custo de cada item.">SOMAR FRETE AO CUSTO</span>
+                                    </label>
+                                    <label class="sig-check-group cursor-pointer">
+                                        <input type="checkbox" id="fis-soma-despesas-custo" class="sig-checkboxScale">
+                                        <span class="sig-check-label" title="Soma outras despesas acessórias (seguro, embalagem) ao custo dos itens.">SOMAR DESPESAS AO CUSTO</span>
+                                    </label>
+                                    <label class="sig-check-group cursor-pointer">
+                                        <input type="checkbox" id="fis-soma-difal-custo" class="sig-checkboxScale">
+                                        <span class="sig-check-label" title="Soma a Diferença de Alíquota (DIFAL) para compras interestaduais ao custo final.">SOMAR DIFAL AO CUSTO</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- BLOCO 05: REGRAS DE TRIBUTAÇÃO -->
+                        <div class="sig-fieldset-blueprint w-full">
+                            <span class="sig-legend-blueprint">05. REGRAS DE TRIBUTAÇÃO</span>
+                            <div class="flex flex-col gap-2">
+                                <div>
+                                    <label class="sig-label-dense">REGIME TRIBUTÁRIO EMPRESA</label>
+                                    <select id="fis-regime-empresa" class="sig-input-dense w-full font-bold">
+                                        <option value="SIMPLES">SIMPLES NACIONAL</option>
+                                        <option value="PRESUMIDO">LUCRO PRESUMIDO</option>
+                                        <option value="REAL">LUCRO REAL</option>
+                                    </select>
+                                </div>
+                                <div class="grid grid-cols-1 gap-2 mt-1">
+                                    <label class="sig-check-group cursor-pointer">
+                                        <input type="checkbox" id="fis-destaca-icms" class="sig-checkboxScale" checked>
+                                        <span class="sig-check-label" title="Define se o sistema deve imprimir o valor de ICMS no corpo da NF-e e no XML.">DESTACA ICMS NA NOTA</span>
+                                    </label>
+                                    <label class="sig-check-group cursor-pointer">
+                                        <input type="checkbox" id="fis-gera-credito-icms" class="sig-checkboxScale">
+                                        <span class="sig-check-label" title="Indica se a empresa está apta a se creditar do ICMS destacado nesta operação (Lucro Real/Presumido).">GERA CRÉDITO DE ICMS</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+
+        <!-- Footer Modular Blueprint -->
+        <div class="p-3 bg-slate-100 border-t border-slate-300 flex justify-end gap-2 px-6">
+            <button onclick="fecharModal()" class="sig-btn sig-btn-neutral min-w-[100px]">
+                CANCELAR
+            </button>
+            <button onclick="salvar()" class="sig-btn sig-btn-primary min-w-[220px] shadow-md">
+                <span class="material-symbols-outlined !text-base">save</span>
+                EFETIVAR PERFIL FISCAL (F10)
+            </button>
+        </div>
+    </div>
+</div>

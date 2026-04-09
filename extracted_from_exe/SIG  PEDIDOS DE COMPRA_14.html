@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>SIG - PEDIDOS DE COMPRA</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'sig-blue': '#1e40af',
+                        'sig-blue-dark': '#001b2b',
+                        'sig-brand-cyan': '#00e5ff',
+                        'sig-border': '#cbd5e1',
+                        'sig-bg-light': '#f8fafc'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="../../assets/css/sig-ui.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@300..700,0..1&display=swap"
+        rel="stylesheet" />
+    <style>
+        .aba-ativa {
+            background-color: white !important;
+            border-bottom-color: white !important;
+            color: #1e40af !important;
+            font-weight: 800 !important;
+        }
+
+        .sig-input-dense {
+            height: 28px !important;
+            font-size: 11px !important;
+            padding: 0 8px !important;
+        }
+
+        .sig-fieldset-bloqueado {
+            opacity: 0.6;
+            pointer-events: none;
+            background-color: #f1f5f9 !important;
+        }
+
+        /* Estilo para o Toggle de Tipo (J/F) */
+        .toggle-tipo-btn {
+            flex: 1;
+            height: 28px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .toggle-tipo-btn.active {
+            background-color: white;
+            color: #1e40af;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-color: #cbd5e1;
+            border-radius: 1px;
+        }
+
+        .toggle-tipo-btn:not(.active) {
+            color: #64748b;
+        }
+
+        .toggle-tipo-btn:not(.active):hover {
+            color: #1e40af;
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .btn-search-blue {
+            background: linear-gradient(180deg, #1e40af 0%, #1e3a8a 100%);
+            color: white !important;
+            border: 1px solid #1e3a8a !important;
+            box-shadow: 1px 1px 0px #0f172a !important;
+        }
+
+        .btn-search-blue:hover {
+            filter: brightness(1.1);
+        }
+
+        /* Botão Incluir Verde (Definitivo) */
+        .btn-incluir-verde {
+            background: #10b981 !important;
+            color: white !important;
+            border: 1px solid #065f46 !important;
+            box-shadow: 1px 1px 0px #064e3b !important;
+            transition: all 0.2s;
+        }
+
+        .btn-incluir-verde:hover {
+            background: #059669 !important;
+            transform: translateY(-1px);
+        }
+
+        .btn-incluir-verde:active {
+            transform: translateY(1px);
+            box-shadow: none !important;
+        }
+
+        /* Alta Performance: Seleção de Linha de Alto Contraste com Harmonia */
+        .sig-row-selected {
+            background-color: #1e40af !important;
+            color: #ffffff !important;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .sig-row-selected td {
+            color: #ffffff !important;
+            border-right-color: rgba(255, 255, 255, 0.1) !important;
+            border-bottom-color: rgba(255, 255, 255, 0.05) !important;
+        }
+
+        .sig-row-selected .font-mono {
+            color: #ffffff !important;
+            font-weight: 800;
+        }
+
+        .sig-row-selected .material-symbols-outlined {
+            color: #ffffff !important;
+        }
+    </style>
+</head>
+
+<body class="flex flex-col h-screen overflow-hidden text-slate-800 bg-slate-200">
+
+    <!-- ÁREA DE TRABALHO UNIFICADA -->
+    <main class="flex-1 overflow-hidden relative flex flex-col bg-[#f1f5f9] p-2">
+
+        <!-- ABAS DE NAVEGAÇÃO / RASCUNHOS ATIVOS -->
+        <div id="container-abas-rascunhos"
+            class="flex items-end gap-1 px-1 pt-1 shrink-0 overflow-x-auto custom-scrollbar">
+            <!-- Abas Dinâmicas Injetadas Aqui -->
+        </div>
+
+        <div id="aba-workspace"
+            class="flex-1 border border-slate-300 border-t-0 rounded-b-md rounded-tr-md flex flex-col min-h-0 bg-white relative overflow-hidden">
+
+            <!-- BARRA DE AÇÕES OFICIAL -->
+            <div class="sig-toolbar bg-white border-b border-slate-300 w-full shrink-0 flex items-center px-4 py-1.5 gap-1">
+                <button class="sig-btn-icon" title="Gravar (F10)"><span class="material-symbols-outlined text-[18px]">save</span></button>
+                <button class="sig-btn-icon" title="Novo (F3)" onclick="criarNovoRascunho()"><span class="material-symbols-outlined text-[18px]">add</span></button>
+                <button class="sig-btn-icon" title="Editar"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+                <button class="sig-btn-icon" title="Excluir" onclick="excluirRascunhoAtual()"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+                <div class="sig-divider mx-2 w-px h-[20px] bg-slate-300"></div>
+                <button class="sig-btn-icon" title="Atualizar Lista"><span class="material-symbols-outlined text-[18px]">refresh</span></button>
+                <button class="sig-btn-icon" title="Imprimir"><span class="material-symbols-outlined text-[18px]">print</span></button>
+                <div class="sig-divider mx-2 w-px h-[20px] bg-slate-300"></div>
+                <button class="sig-btn-icon" title="Configurações"><span class="material-symbols-outlined text-[18px]">settings</span></button>
+                <button class="sig-btn-icon" title="Ajuda"><span class="material-symbols-outlined text-[18px]">help</span></button>
+            </div>
+
+            <!-- VIEW DA LISTA DE PEDIDOS (HOME) -->
+            <div id="view-lista-pedidos" class="w-full h-full p-4 flex flex-col gap-4 bg-[#f8fafc] overflow-hidden">
+                <div class="flex items-center justify-between shrink-0">
+                    <div class="flex items-center gap-2">
+                        <input type="text" placeholder="Pesquisar pedido ou fornecedor..." class="sig-input w-80">
+                        <button class="sig-btn sig-btn-primary h-[34px]">
+                            <span class="material-symbols-outlined !text-base">search</span>
+                        </button>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] font-bold text-slate-400">STATUS:</span>
+                        <select class="sig-input h-[34px] w-40">
+                            <option>TODOS</option>
+                            <option>PENDENTE</option>
+                            <option>APROVADO</option>
+                            <option>CONCLUÍDO</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- CONTAINER SPLIT (LISTA / DETALHES) -->
+                <div class="flex-1 flex flex-col gap-4 overflow-hidden">
+                    <!-- PARTE SUPERIOR: LISTA PRINCIPAL -->
+                    <div class="h-[60%] overflow-auto border border-slate-300 rounded-sm bg-white shadow-sm">
+                        <table class="sig-table w-full">
+                            <thead class="sticky top-0 z-10">
+                                <tr>
+                                    <th class="w-20">Pedido</th>
+                                    <th class="w-28 text-center">Data</th>
+                                    <th>Fornecedor</th>
+                                    <th class="w-32 text-right">Valor Total</th>
+                                    <th class="w-20 text-center">Itens</th>
+                                    <th class="w-32 text-center">Status</th>
+                                    <th class="w-32 text-center">Prev. Entrega</th>
+                                    <th class="w-16 text-center">...</th>
+                                </tr>
+                            </thead>
+                            <tbody id="lista-pedidos-f2">
+                                <!-- Injetado via Mock/JS -->
+                                <tr class="hover:bg-blue-50 cursor-pointer transition-colors"
+                                    onclick="exibirDetalhesPedido(0)">
+                                    <td class="text-center font-mono font-bold">000125</td>
+                                    <td class="text-center">10/03/2026</td>
+                                    <td class="font-bold text-slate-700">DISTRIBUIDORA AUTOMOTIVA S.A.</td>
+                                    <td class="text-right font-mono text-blue-700 font-bold">R$ 12.450,00</td>
+                                    <td class="text-center font-bold">12</td>
+                                    <td class="text-center">
+                                        <span class="sig-badge sig-badge-warning">PENDENTE</span>
+                                    </td>
+                                    <td class="text-center text-slate-500">15/03/2026</td>
+                                    <td class="text-center">
+                                        <span
+                                            class="material-symbols-outlined text-slate-400 hover:text-blue-600 text-sm">visibility</span>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-blue-50 cursor-pointer transition-colors border-t border-slate-100"
+                                    onclick="exibirDetalhesPedido(1)">
+                                    <td class="text-center font-mono font-bold">000128</td>
+                                    <td class="text-center">09/03/2026</td>
+                                    <td class="font-bold text-slate-700">COFAP FABRICACAO LTDA</td>
+                                    <td class="text-right font-mono text-blue-700 font-bold">R$ 4.200,00</td>
+                                    <td class="text-center font-bold">08</td>
+                                    <td class="text-center">
+                                        <span class="sig-badge sig-badge-success">CONCLUÍDO</span>
+                                    </td>
+                                    <td class="text-center text-slate-500">12/03/2026</td>
+                                    <td class="text-center">
+                                        <span
+                                            class="material-symbols-outlined text-slate-400 hover:text-blue-600 text-sm">visibility</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- PARTE INFERIOR: DETALHES -->
+                    <div id="painel-detalhes-pedido"
+                        class="h-[40%] bg-white border border-slate-300 rounded-sm shadow-inner flex flex-col overflow-hidden">
+                        <div
+                            class="bg-slate-100 p-2 px-4 flex justify-between items-center border-b border-slate-300 shrink-0">
+                            <div class="flex items-center gap-3">
+                                <span class="material-symbols-outlined text-sig-blue !text-base">assignment</span>
+                                <span class="text-[11px] font-black text-slate-700 uppercase tracking-widest">Detalhes
+                                    do Pedido Selecionado</span>
+                                <span id="detalhe-pedido-label"
+                                    class="bg-sig-blue text-white px-3 py-0.5 rounded-sm text-[10px] font-black ml-2 shadow-sm">#--</span>
+                            </div>
+                            <div class="flex gap-4 items-center">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase">Fornecedor: <span
+                                        id="detalhe-fornecedor-nome" class="text-slate-700">Selecione um
+                                        pedido</span></span>
+                            </div>
+                        </div>
+
+                        <div class="flex-1 flex overflow-hidden">
+                            <div class="w-1/3 p-4 border-r border-slate-200 bg-slate-50/50 flex flex-col gap-3">
+                                <div>
+                                    <label class="sig-label !mb-0 opacity-50">Documento Beneficiário</label>
+                                    <span id="detalhe-fornecedor-doc"
+                                        class="text-xs font-bold text-slate-800">--.---.---/----.--</span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="sig-label !mb-0 opacity-50">Cond. Pagamento</label>
+                                        <span id="detalhe-cond-pagto" class="text-xs font-bold text-slate-700">30/60
+                                            DIAS</span>
+                                    </div>
+                                    <div>
+                                        <label class="sig-label !mb-0 opacity-50">Transporte</label>
+                                        <span id="detalhe-transporte" class="text-xs font-bold text-slate-700">CIF
+                                            (PRÓPRIO)</span>
+                                    </div>
+                                </div>
+                                <div class="mt-auto pt-2 border-t border-slate-200">
+                                    <label class="sig-label !mb-0 opacity-50 italic">Observação Interna</label>
+                                    <p id="detalhe-obs" class="text-[10px] text-slate-500 italic leading-tight">Não há
+                                        observações para este pedido.</p>
+                                </div>
+                            </div>
+                            <div class="flex-1 overflow-auto">
+                                <table class="sig-table sig-table-sm w-full border-none">
+                                    <thead class="sticky top-0 bg-white shadow-sm z-10 border-b border-slate-200">
+                                        <tr>
+                                            <th class="w-10 text-center">SEQ</th>
+                                            <th class="w-24 text-center">CÓDIGO</th>
+                                            <th>DESCRIÇÃO DO ITEM</th>
+                                            <th class="w-16 text-center">UN</th>
+                                            <th class="w-20 text-center">QTD</th>
+                                            <th class="w-32 text-right">VALOR UNIT.</th>
+                                            <th class="w-32 text-right">TOTAL</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="detalhe-itens-tabela">
+                                        <tr>
+                                            <td colspan="7"
+                                                class="py-10 text-center text-slate-300 font-bold uppercase text-[10px] tracking-widest italic">
+                                                Aguardando seleção de pedido...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW DE RASCUNHO/EDITOR (Oculto por padrão, ativado ao selecionar uma tab de rascunho) -->
+            <div id="view-editor-rascunho"
+                class="w-full h-full p-3 flex flex-col gap-2 bg-white overflow-y-auto hidden">
+                <!-- CABEÇALHO DO PEDIDO ATIVO -->
+                <div class="flex justify-between items-center px-4 py-2 bg-slate-50 border border-slate-200 rounded-sm">
+                    <div class="flex items-center gap-6">
+                        <div class="flex flex-col">
+                            <span class="sig-label !mb-0 opacity-70">Número do Pedido</span>
+                            <span id="rascunho-header-numero"
+                                class="text-xl font-black text-slate-800 tracking-tight">--</span>
+                        </div>
+                        <div class="h-8 w-px bg-slate-300"></div>
+                        <div class="flex flex-col">
+                            <span class="sig-label !mb-0 opacity-70">Data de Abertura</span>
+                            <span id="rascunho-header-data"
+                                class="text-xs font-bold text-slate-700 mt-1 uppercase">--/--/----</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span
+                            class="bg-yellow-100 text-yellow-800 border border-yellow-300 px-3 py-1 rounded-sm text-[10px] font-black uppercase tracking-wider flex items-center gap-1 shadow-sm">
+                            <span class="material-symbols-outlined text-sm">edit_note</span> RASCUNHO ABERTO
+                        </span>
+                    </div>
+                </div>
+
+                <!-- SEÇÃO FORNECEDOR -->
+                <div class="sig-fieldset-container w-full">
+                    <div class="sig-fieldset-header">
+                        <span class="material-symbols-outlined">badge</span>
+                        IDENTIFICAÇÃO DO FORNECEDOR
+                    </div>
+                    <div class="sig-fieldset-content">
+                        <div class="grid grid-cols-12 gap-3">
+                        <div class="col-span-1">
+                            <label class="sig-label">Cód. (F1)</label>
+                            <div class="flex gap-1">
+                                <input type="text" id="forn-codigo" class="sig-input-dense w-full font-mono"
+                                    placeholder="0000">
+                                <button
+                                    class="sig-btn-icon bg-slate-100 border-slate-300 !h-[28px] !w-[28px] flex items-center justify-center"
+                                    onclick="abrirPesquisaFornecedor()">
+                                    <span class="material-symbols-outlined !text-[14px]">search</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-span-4">
+                            <label class="sig-label">Razão Social / Nome Fantasia</label>
+                            <input type="text" id="forn-razao" class="sig-input-dense w-full bg-slate-50" readonly>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="sig-label">CPF/CNPJ</label>
+                            <input type="text" id="forn-documento" class="sig-input-dense w-full bg-slate-50" readonly>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="sig-label text-blue-800 font-bold">Tipo de Pedido *</label>
+                            <select id="forn-tipo-pedido" class="sig-input-dense w-full disabled-field border-blue-400" disabled>
+                                <option>COMPRA NORMAL</option>
+                                <option>BONIFICAÇÃO</option>
+                                <option>GARANTIA</option>
+                            </select>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="sig-label text-blue-800 font-bold">Prev. Entrega *</label>
+                            <input type="date" id="forn-previsao" class="sig-input-dense w-full disabled-field border-blue-400" disabled>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SEÇÃO ITENS -->
+                <div id="section-itens-pedido" class="sig-fieldset-container flex-1 flex flex-col min-h-0 bg-white opacity-50 pointer-events-none transition-opacity">
+                    <div class="sig-fieldset-header shrink-0">
+                        <span class="material-symbols-outlined">inventory_2</span>
+                        ITENS DO PEDIDO
+                    </div>
+                    <div class="sig-fieldset-content flex-1 flex flex-col overflow-hidden">
+
+                    <!-- INSERT ITENS -->
+                    <div
+                        class="grid grid-cols-12 gap-2 bg-slate-50 p-2 border border-slate-200 rounded-sm shrink-0">
+                        <div class="col-span-2">
+                            <label class="sig-label">Cód. Prod. (F2)</label>
+                            <div class="flex gap-1">
+                                <input type="text" id="item-codigo" class="sig-input-dense flex-1 font-mono"
+                                    oninput="buscarProdutoPorCodigo(this.value)">
+                                <button
+                                    class="sig-btn-icon bg-slate-100 border-slate-300 !h-[28px] !w-[28px] flex items-center justify-center"
+                                    onclick="abrirPesquisaProdutosPedido()">
+                                    <span class="material-symbols-outlined !text-[14px]">search</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-span-4">
+                            <label class="sig-label">Descrição do Produto</label>
+                            <input type="text" id="item-descricao"
+                                class="sig-input-dense w-full bg-slate-50 uppercase font-bold" readonly>
+                        </div>
+                        <div class="col-span-1">
+                            <label class="sig-label">Emb.</label>
+                            <input type="text" id="item-un" class="sig-input-dense w-full text-center bg-slate-50"
+                                readonly>
+                        </div>
+                        <div class="col-span-1 text-blue-800">
+                            <label class="sig-label">Qtd. Compra</label>
+                            <input type="text" id="item-qtd" class="sig-input-dense w-full text-center font-black" oninput="formatarMoedaInput(this, 2); calcularSubtotalItem()">
+                        </div>
+                        <div class="col-span-2 text-emerald-800">
+                            <label class="sig-label">Vlr. Unitário (Últ. Compra)</label>
+                            <input type="text" id="item-valor" class="sig-input-dense w-full text-right font-black" oninput="formatarMoedaInput(this, 2); calcularSubtotalItem()">
+                        </div>
+                        <div class="col-span-1">
+                            <label class="sig-label">Subtotal</label>
+                            <input type="text" id="item-subtotal"
+                                class="sig-input-dense w-full text-right bg-slate-50 font-bold" readonly>
+                        </div>
+                        <div class="col-span-1">
+                            <label class="sig-label">Ação</label>
+                            <button onclick="adicionarItemPedido()"
+                                class="btn-incluir-verde w-full !h-[28px] flex items-center justify-center rounded-sm">
+                                <span class="material-symbols-outlined !text-sm">add</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- TABELA DE ITENS -->
+                    <div class="flex-1 mt-2 overflow-auto border border-slate-200">
+                        <table class="sig-table sig-table-sm w-full">
+                            <thead class="sticky top-0 bg-slate-100 shadow-sm z-10 border-b border-slate-300">
+                                <tr>
+                                    <th class="w-10 text-center">Seq.</th>
+                                    <th class="w-24 text-center">Código</th>
+                                    <th>Descrição do Item</th>
+                                    <th class="w-16 text-center">Emb.</th>
+                                    <th class="w-20 text-center">Qtd.</th>
+                                    <th class="w-28 text-right">Vlr. Unit.</th>
+                                    <th class="w-28 text-right">Total Item</th>
+                                    <th class="w-12 text-center">...</th>
+                                </tr>
+                            </thead>
+                            <tbody id="lista-itens-pedido">
+                                <!-- Itens adicionados aparecerão aqui -->
+                                <tr class="hover:bg-slate-50 cursor-default">
+                                    <td class="text-center font-mono opacity-50">01</td>
+                                    <td class="text-center font-mono">001259</td>
+                                    <td class="font-bold uppercase">AMORTECEDOR DIANTEIRO DIREITO - TURBOGÁS</td>
+                                    <td class="text-center">UN</td>
+                                    <td class="text-center font-black td-qtd">10,00</td>
+                                    <td class="text-right font-mono text-emerald-700">R$ 192,00</td>
+                                    <td class="text-right font-mono font-black text-blue-800 td-total">R$ 1.920,00</td>
+                                    <td class="text-center"><span
+                                            class="material-symbols-outlined text-red-500 !text-sm cursor-pointer"
+                                            onclick="this.closest('tr').remove(); calcularTotalGeral();">delete</span></td>
+                                </tr>
+                            </tbody>
+                            <tfoot class="sticky bottom-0 bg-slate-100 z-10 border-t-2 border-slate-300 font-black">
+                                <tr>
+                                    <td colspan="4" class="text-right text-slate-500 uppercase text-[10px] tracking-widest pr-4 py-1.5">Totais do Pedido:</td>
+                                    <td class="text-center font-mono text-blue-900 border-x border-slate-200 text-[11px]" id="rodape-qtd-total">10,00</td>
+                                    <td></td>
+                                    <td class="text-right font-mono text-blue-900 border-l border-slate-200 text-[12px] px-2" id="rodape-valor-total">R$ 1.920,00</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <!-- TFOOT REPOSICIONADO PARA LARGAR O BOTÃO DE TOTAIS E COLOCÁ-LO NAS COLUNAS -->
+                </div>
+
+                <!-- SEÇÃO DADOS FINAIS TABS -->
+                <div id="section-dados-finais" class="h-32 bg-white border border-slate-300 rounded-sm flex flex-col overflow-hidden opacity-50 pointer-events-none transition-opacity">
+                    <div class="flex bg-slate-100 border-b border-slate-300">
+                        <button
+                            class="px-4 py-1.5 text-[9px] font-black uppercase bg-white border-r border-slate-300 text-blue-700">Dados
+                            Gerais</button>
+                        <button
+                            class="px-4 py-1.5 text-[9px] font-black uppercase text-slate-500 hover:bg-slate-50 border-r border-slate-300">Financeiro</button>
+                        <button
+                            class="px-4 py-1.5 text-[9px] font-black uppercase text-slate-500 hover:bg-slate-50">Aprovador
+                            Adicional</button>
+                    </div>
+                    <div class="p-3 grid grid-cols-12 gap-3 flex-1">
+                        <div class="col-span-3">
+                            <label class="sig-label">Transportadora</label>
+                            <select class="sig-input-dense w-full">
+                                <option>... SELECIONE ...</option>
+                            </select>
+                        </div>
+                        <div class="col-span-1">
+                            <label class="sig-label">Prazo</label>
+                            <input type="text" class="sig-input-dense w-full text-center" value="0">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="sig-label">Responsável</label>
+                            <input type="text" class="sig-input-dense w-full" value="ADMINISTRADOR" readonly>
+                        </div>
+                        <div class="col-span-4">
+                            <label class="sig-label">Observação do Pedido</label>
+                            <input type="text" class="sig-input-dense w-full">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="sig-label">Frete por conta</label>
+                            <div class="flex items-center gap-4 h-[24px]">
+                                <label class="flex items-center gap-1 text-[10px] font-bold cursor-pointer"><input
+                                        type="radio" name="frete" checked> COMPRADOR</label>
+                                <label class="flex items-center gap-1 text-[10px] font-bold cursor-pointer"><input
+                                        type="radio" name="frete"> FORNECEDOR</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- /FIM WORKSPACE DO PEDIDO ATUAL -->
+
+        </div> <!-- FIM CONTAINER CENTRAL BRANCO -->
+
+        <!-- RODAPÉ DE AÇÕES (Para o Editor) -->
+        <footer id="rodape-acoes-editor"
+            class="h-[52px] bg-[#f8fafc] border-t border-slate-300 flex items-center justify-between px-6 shrink-0 mt-auto hidden">
+            <div class="flex gap-2">
+                <button onclick="selecionarRascunho(0)" class="sig-btn sig-btn-neutral w-[200px] h-9">
+                    <span class="material-symbols-outlined !text-lg">close</span> CANCELAR / OCULTAR
+                </button>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="setLoading(true); setTimeout(()=>setLoading(false), 1500)"
+                    class="sig-btn sig-btn-success w-[200px] h-9">
+                    <span class="material-symbols-outlined !text-lg">save</span> SALVAR (F5)
+                </button>
+                <button class="sig-btn sig-btn-primary w-[200px] h-9">
+                    <span class="material-symbols-outlined !text-lg">send</span> ENVIAR PEDIDO
+                </button>
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- STATUS BAR PADRÃO -->
+    <footer class="bg-slate-200 border-t border-slate-300 shrink-0 z-50">
+        <div class="sig-progress-bar-container">
+            <div id="footer-progress" class="sig-progress-bar-fill" style="width: 0%;"></div>
+        </div>
+        <div
+            class="flex flex-wrap items-center justify-between px-4 py-1 text-[10px] text-slate-600 font-bold uppercase tracking-tight">
+            <div class="flex items-center space-x-4">
+                <span class="flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">terminal</span> TERMINAL: 01 (COMPRAS)
+                </span>
+                <span class="text-slate-400">|</span>
+                <span>F2 PESQUISAR</span>
+                <span>F3 NOVO</span>
+                <span>F5 GRAVAR</span>
+                <span>ESC SAIR</span>
+            </div>
+            <div class="flex items-center space-x-4 divide-x divide-slate-400">
+                <div class="px-3">Usuário: Admin</div>
+                <div class="px-3" id="data-hora-footer">--/--/---- --:--:--</div>
+                <div class="px-3">Banco: <span class="text-emerald-600 font-extrabold">PostgreSQL</span></div>
+                <div class="px-3 text-slate-400 font-medium lowercase">v2.1.20</div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL PESQUISA FORNECEDOR (ESTILO SIG OFICIAL) -->
+    <div id="modal-pesquisa-fornecedor"
+        class="fixed inset-0 z-[100] bg-black/60 hidden items-center justify-center">
+        <div
+            class="bg-white w-[800px] h-[500px] rounded-sm shadow-2xl overflow-hidden border border-slate-400 flex flex-col animate-in fade-in zoom-in duration-150">
+            <!-- CABEÇALHO PADRÃO SIG -->
+            <div class="bg-[#f8fafc] p-2 px-4 flex justify-between items-center border-b border-slate-300 shrink-0">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-slate-500 text-sm">search</span>
+                    <h3 class="text-slate-700 font-bold text-[11px] uppercase tracking-wider">Localizar Fornecedor
+                        Acadastrado</h3>
+                </div>
+                <button onclick="fecharPesquisaFornecedor()" class="sig-btn-close !w-7 !h-7">
+                    <span class="material-symbols-outlined !text-base">close</span>
+                </button>
+            </div>
+
+            <!-- FILTROS -->
+            <div class="p-4 bg-slate-50 border-b border-slate-200 shrink-0">
+                <div class="flex gap-2">
+                    <div class="flex-1">
+                        <label class="sig-label">Pesquisa Global (Nome Fantasia, Razão Social ou CPF/CNPJ)</label>
+                        <div class="relative">
+                            <input type="text" id="forn-pesquisa-filtro" class="sig-input w-full !pl-10"
+                                placeholder="Digite para filtrar os resultados..."
+                                oninput="filtrarPesquisaFornecedor(this.value)">
+                            <span
+                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 !text-xl">filter_list</span>
+                        </div>
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="transicaoPesquisaParaNovo()"
+                            class="sig-btn sig-btn-primary h-[38px] !bg-emerald-600 !border-emerald-700 px-6 flex items-center gap-2">
+                            <span class="material-symbols-outlined !text-sm">add</span> NOVO (F4)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TABELA DE RESULTADOS (ALTURA FIXA VIA FLEX-1) -->
+            <div class="flex-1 overflow-y-auto bg-white">
+                <table class="sig-table w-full">
+                    <thead class="sticky top-0 z-10 bg-slate-100 shadow-sm">
+                        <tr>
+                            <th class="w-24 text-center">ID</th>
+                            <th>Fornecedor / Razão Social</th>
+                            <th class="w-48 text-center">CPF / CNPJ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lista-pesquisa-fornecedor">
+                        <!-- Itens renderizados via JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- RODAPÉ DO MODAL -->
+            <div class="bg-slate-100 px-4 py-2 border-t border-slate-300 flex justify-between items-center shrink-0">
+                <span class="text-[10px] text-slate-500 font-bold uppercase tracking-widest"
+                    id="forn-total-registros">Aguardando pesquisa...</span>
+                <button onclick="fecharPesquisaFornecedor()"
+                    class="sig-btn text-slate-500 hover:bg-slate-200 px-6 h-8 text-[11px] font-bold">Fechar Janela
+                    (ESC)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PESQUISA PRODUTOS (IFRAME PARA A TELA DUPLICADA) -->
+    <div id="modal-pesquisa-produtos" class="fixed inset-0 z-[100] bg-black/60 hidden items-center justify-center p-4">
+        <div class="bg-white w-[95%] h-[95%] rounded-md shadow-2xl overflow-hidden border border-slate-400 flex flex-col animate-in fade-in zoom-in duration-150">
+            <div class="flex-1">
+                <iframe src="pesquisa_produtos_pedido.html" class="w-full h-full border-none"></iframe>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // RELÓGIO
+        setInterval(() => {
+            const agora = new Date();
+            const el = document.getElementById('data-hora-footer');
+            if (el) el.innerText = agora.toLocaleString('pt-br');
+        }, 1000);
+
+        // CONTROLE DE CARREGAMENTO
+        function setLoading(isLoading) {
+            const bar = document.getElementById('footer-progress');
+            if (!bar) return;
+            if (isLoading) {
+                bar.classList.add('loading');
+                bar.style.width = '30%';
+            } else {
+                bar.classList.remove('loading');
+                bar.style.width = '0%';
+            }
+        }
+
+        // Exposição desativada por não existirem mais as Abas antigas
+        function mudarAba(aba) {
+            if (aba === 'F2') selecionarRascunho(0); // 0 É o ID interno da view da Home
+            if (aba === 'F3') criarNovoRascunho();
+        }
+        // CONTROLE MODAL FORNECEDOR RÁPIDO
+        let proximoIdSistema = 156;
+
+        function abrirCadastroRapidoFornecedor() {
+            limparCamposFornecedor();
+            document.getElementById('modal-fornecedor-rapido').classList.remove('hidden');
+            document.getElementById('modal-fornecedor-rapido').classList.add('flex');
+            document.getElementById('forn-completo-id').value = String(proximoIdSistema).padStart(4, '0');
+            document.getElementById('forn-completo-documento').focus();
+            bloquearCampos(true);
+        }
+
+        function fecharCadastroRapidoFornecedor() {
+            document.getElementById('modal-fornecedor-rapido').classList.add('hidden');
+            document.getElementById('modal-fornecedor-rapido').classList.remove('flex');
+            limparCamposFornecedor();
+        }
+
+        function bloquearCampos(lock) {
+            const sections = ['section-nomes', 'section-endereco', 'section-contatos'];
+            sections.forEach(id => {
+                const el = document.getElementById(id);
+                if (lock) el.classList.add('sig-fieldset-bloqueado');
+                else el.classList.remove('sig-fieldset-bloqueado');
+            });
+            document.getElementById('forn-completo-ie').disabled = lock;
+        }
+
+        function setTipoFornecedor(tipo) {
+            document.getElementById('forn-completo-tipo').value = tipo;
+
+            // UI Toggle
+            const btnJ = document.getElementById('btn-tipo-j');
+            const btnF = document.getElementById('btn-tipo-f');
+
+            if (tipo === 'J') {
+                btnJ.classList.add('active');
+                btnF.classList.remove('active');
+            } else {
+                btnF.classList.add('active');
+                btnJ.classList.remove('active');
+            }
+
+            ajustarMascaraDocumento();
+        }
+
+        function ajustarMascaraDocumento() {
+            const tipo = document.getElementById('forn-completo-tipo').value;
+            const input = document.getElementById('forn-completo-documento');
+            input.value = '';
+            input.placeholder = tipo === 'J' ? '00.000.000/0000-00' : '000.000.000-00';
+            bloquearCampos(true);
+        }
+
+        function formatarDocumento(input) {
+            let v = input.value.replace(/\D/g, '');
+            const tipo = document.getElementById('forn-completo-tipo').value;
+
+            if (tipo === 'J') {
+                if (v.length > 14) v = v.slice(0, 14);
+                if (v.length > 12) v = v.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2}).*/, '$1.$2.$3/$4-$5');
+                else if (v.length > 8) v = v.replace(/^(\d{2})(\d{3})(\d{3})(\d{4}).*/, '$1.$2.$3/$4');
+                else if (v.length > 5) v = v.replace(/^(\d{2})(\d{3})(\d{3}).*/, '$1.$2.$3');
+                else if (v.length > 2) v = v.replace(/^(\d{2})(\d{3}).*/, '$1.$2');
+            } else {
+                if (v.length > 11) v = v.slice(0, 11);
+                if (v.length > 9) v = v.replace(/^(\d{3})(\d{3})(\d{3})(\d{2}).*/, '$1.$2.$3-$4');
+                else if (v.length > 6) v = v.replace(/^(\d{3})(\d{3})(\d{3}).*/, '$1.$2.$3');
+                else if (v.length > 3) v = v.replace(/^(\d{3})(\d{3}).*/, '$1.$2');
+            }
+            input.value = v;
+
+            // Se atingir o tamanho, abre campos (mesmo sem consulta, caso seja CPF)
+            if ((tipo === 'J' && v.replace(/\D/g, '').length === 14) ||
+                (tipo === 'F' && v.replace(/\D/g, '').length === 11)) {
+                // No caso de CPF, apenas liberamos
+                if (tipo === 'F') bloquearCampos(false);
+            }
+        }
+
+        function formatarTelefone(input) {
+            let v = input.value.replace(/\D/g, '');
+            if (v.length > 11) v = v.slice(0, 11);
+            if (v.length > 10) v = v.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
+            else if (v.length > 6) v = v.replace(/^(\d{2})(\d{4})(\d{4}).*/, '($1) $2-$3');
+            else if (v.length > 2) v = v.replace(/^(\d{2})(\d+).*/, '($1) $2');
+            input.value = v;
+        }
+
+        function limparCamposFornecedor() {
+            document.querySelectorAll('#modal-fornecedor-rapido input').forEach(input => input.value = '');
+            document.getElementById('forn-logo-preview').classList.add('hidden');
+            document.getElementById('forn-logo-placeholder').classList.remove('hidden');
+            document.getElementById('lista-contatos-fornecedor').innerHTML = '';
+            document.getElementById('forn-completo-tipo').value = 'J';
+            ajustarMascaraDocumento();
+        }
+
+        function previewLogoFornecedor(input) {
+            const preview = document.getElementById('forn-logo-preview');
+            const placeholder = document.getElementById('forn-logo-placeholder');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.classList.remove('hidden');
+                    placeholder.classList.add('hidden');
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        async function consultarCNPJ() {
+            const doc = document.getElementById('forn-completo-documento').value.replace(/\D/g, '');
+            const tipo = document.getElementById('forn-completo-tipo').value;
+
+            if (tipo === 'F') {
+                alert("Consulta automática disponível apenas para CNPJ. Preencha os dados manualmente.");
+                bloquearCampos(false);
+                return;
+            }
+
+            if (doc.length < 14) {
+                alert("Por favor, digite um CNPJ completo.");
+                return;
+            }
+
+            setLoading(true);
+            try {
+                const response = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${doc}`);
+                if (!response.ok) throw new Error("CNPJ não encontrado.");
+
+                const data = await response.json();
+
+                bloquearCampos(false);
+                document.getElementById('forn-completo-razao').value = data.razao_social;
+                document.getElementById('forn-completo-fantasia').value = data.nome_fantasia || data.razao_social;
+                document.getElementById('forn-completo-cep').value = data.cep;
+                document.getElementById('forn-completo-endereco').value = data.logradouro;
+                document.getElementById('forn-completo-numero').value = data.numero;
+                document.getElementById('forn-completo-bairro').value = data.bairro;
+                document.getElementById('forn-completo-cidade').value = data.municipio;
+                document.getElementById('forn-completo-uf').value = data.uf;
+
+                if (data.ddd_telefone_1) {
+                    adicionarContatoManual('PRINCIPAL (FEDERAL)', '', data.ddd_telefone_1, 'GERAL');
+                }
+            } catch (err) {
+                alert("Erro: " + err.message);
+                bloquearCampos(false); // Libera mesmo se der erro para cadastro manual
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        function adicionarContato() {
+            const nome = document.getElementById('contato-nome').value;
+            const tel = document.getElementById('contato-tel').value;
+            const dept = document.getElementById('contato-dept').value;
+
+            if (!nome || !tel) return;
+
+            adicionarContatoManual(nome, '', tel, dept);
+
+            document.getElementById('contato-nome').value = '';
+            document.getElementById('contato-tel').value = '';
+            document.getElementById('contato-dept').value = '';
+        }
+
+        function adicionarContatoManual(nome, email, tel, dept) {
+            const tbody = document.getElementById('lista-contatos-fornecedor');
+            const tr = document.createElement('tr');
+            tr.className = 'group hover:bg-slate-50';
+            tr.innerHTML = `
+                <td class="font-bold uppercase text-[9px]">${nome}</td>
+                <td class="text-center font-mono text-[9px]">${tel}</td>
+                <td class="text-center text-[8px] font-black uppercase text-slate-500">${dept}</td>
+                <td class="text-center"><span class="material-symbols-outlined text-[14px] text-red-500 cursor-pointer opacity-0 group-hover:opacity-100" onclick="this.closest('tr').remove()">delete</span></td>
+            `;
+            tbody.appendChild(tr);
+        }
+
+        function salvarFornecedorRapido() {
+            setLoading(true);
+            const nome = document.getElementById('forn-completo-fantasia').value || document.getElementById('forn-completo-razao').value;
+            const id = document.getElementById('forn-completo-id').value;
+
+            if (!nome) {
+                alert("Preencha a Razão Social ou Nome Fantasia.");
+                setLoading(false);
+                return;
+            }
+
+            setTimeout(() => {
+                setLoading(false);
+                fecharCadastroRapidoFornecedor();
+                selecionarFornecedor({
+                    id: id,
+                    nome: nome.toUpperCase(),
+                    documento: document.getElementById('forn-completo-documento').value || '00.000.000/0001-00'
+                });
+                proximoIdSistema++;
+            }, 800);
+        }
+
+        // LÓGICA DE PESQUISA DE FORNECEDOR (JANELA)
+        const mockFornecedores = [
+            { id: '0001', nome: 'DISTRIBUIDORA AUTOMOTIVA S.A.', documento: '00.345.987/0001-22' },
+            { id: '0012', nome: 'COFAP FABRICACAO LTDA', documento: '12.444.555/0001-99' },
+            { id: '0045', nome: 'METAL LEVE COMPONENTES', documento: '45.123.321/0001-33' },
+            { id: '0089', nome: 'NAKATA IND. AUTOMOTIVA', documento: '89.666.777/0001-44' },
+            { id: '0125', nome: 'BOSCH SERVICE BRASIL', documento: '05.999.888/0001-11' }
+        ];
+
+        // LÓGICA DE ITENS
+        const mockProdutos = [
+            { id: '001259', cod_fab: 'AL-548', descricao: 'AMORTECEDOR DIANTEIRO DIREITO - TURBOGÁS', marca: 'COFAP', un: 'UN', valor: '192,00' },
+            { id: '889-AB', cod_fab: '889-AB', descricao: 'AMORTECEDOR DIANTEIRO COFAP TURBOGAS', marca: 'COFAP', un: 'PC', valor: '245,00' }
+        ];
+
+        function buscarProdutoPorCodigo(cod) {
+            const p = mockProdutos.find(item => item.id === cod);
+            if (p) {
+                receberProdutoSelecionado(p);
+            }
+        }
+
+        function abrirPesquisaProdutosPedido() {
+            document.getElementById('modal-pesquisa-produtos').classList.remove('hidden');
+            document.getElementById('modal-pesquisa-produtos').classList.add('flex');
+        }
+
+        function fecharPesquisaProdutos() {
+            document.getElementById('modal-pesquisa-produtos').classList.add('hidden');
+            document.getElementById('modal-pesquisa-produtos').classList.remove('flex');
+        }
+
+        window.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'FECHAR_MODAL_PESQUISA') {
+                fecharPesquisaProdutos();
+            }
+            if (event.data && event.data.type === 'ABRIR_CADASTRO_PRODUTO') {
+                fecharPesquisaProdutos();
+                if (window.abrirCadastroProduto) {
+                    window.abrirCadastroProduto();
+                }
+            }
+        });
+
+        // MASCARES E CÁLCULO DE SUBTOTAL
+        function formatarMoedaInput(input, casas = 2) {
+            let val = input.value.replace(/\D/g, "");
+            if (val === "") {
+                input.value = "";
+                return;
+            }
+            // Retira leading zeros e formata
+            val = (parseFloat(val) / Math.pow(10, casas)).toFixed(casas);
+            input.value = val.replace(".", ",").replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
+        }
+
+        function parseMoedaBrToFloat(str) {
+            if (!str) return 0;
+            return parseFloat(str.replace(/\./g, "").replace(",", ".")) || 0;
+        }
+
+        function calcularTotalGeral() {
+            let somaQtd = 0;
+            let somaTotal = 0;
+            
+            const trs = document.querySelectorAll('#lista-itens-pedido tr');
+            trs.forEach(tr => {
+                const tdQ = tr.querySelector('.td-qtd');
+                const tdT = tr.querySelector('.td-total');
+                if (tdQ && tdT) {
+                    somaQtd += parseMoedaBrToFloat(tdQ.innerText);
+                    somaTotal += parseMoedaBrToFloat(tdT.innerText.replace('R$', '').trim());
+                }
+            });
+            
+            const elQ = document.getElementById('rodape-qtd-total');
+            const elV = document.getElementById('rodape-valor-total');
+            if (elQ) elQ.innerText = somaQtd.toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+            if (elV) elV.innerText = "R$ " + somaTotal.toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+        }
+
+        function calcularSubtotalItem() {
+            const vInput = document.getElementById('item-valor');
+            const qInput = document.getElementById('item-qtd');
+            const tInput = document.getElementById('item-subtotal');
+            
+            const v = parseMoedaBrToFloat(vInput.value);
+            const q = parseMoedaBrToFloat(qInput.value);
+            
+            const total = v * q;
+            let val = total.toFixed(2);
+            tInput.value = val.replace(".", ",").replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
+        }
+
+        // Função chamada pelo Iframe da pesquisa de produtos
+        window.receberProdutoSelecionado = function (p) {
+            document.getElementById('item-codigo').value = p.id;
+            document.getElementById('item-descricao').value = p.descricao;
+            document.getElementById('item-un').value = p.un;
+            
+            // Tratamento do valor (remover espaços, etc. se p.valor ja for string '150,00')
+            // Aplica mascara se nao tiver
+            const valEl = document.getElementById('item-valor');
+            valEl.value = p.valor || "0,00";
+            if(valEl.value !== "") formatarMoedaInput(valEl);
+
+            document.getElementById('item-qtd').value = "1,00";
+
+            calcularSubtotalItem();
+            fecharPesquisaProdutos();
+            
+            document.getElementById('item-qtd').focus();
+            document.getElementById('item-qtd').select();
+        };
+
+        function adicionarItemPedido() {
+            const cod = document.getElementById('item-codigo').value;
+            const desc = document.getElementById('item-descricao').value || "PRODUTO TESTE";
+            const un = document.getElementById('item-un').value || "UN";
+            const qtd = document.getElementById('item-qtd').value || "1,00";
+            const valor = document.getElementById('item-valor').value || "0,00";
+            const total = document.getElementById('item-subtotal').value || "0,00";
+
+            if (!cod) return;
+
+            const tbody = document.getElementById('lista-itens-pedido');
+            const seq = tbody.rows.length + 1;
+            const tr = document.createElement('tr');
+            tr.className = 'hover:bg-slate-50 cursor-default';
+            tr.innerHTML = `
+                <td class="text-center font-mono opacity-50">${seq.toString().padStart(2, '0')}</td>
+                <td class="text-center font-mono">${cod}</td>
+                <td class="font-bold uppercase">${desc}</td>
+                <td class="text-center">${un}</td>
+                <td class="text-center font-black td-qtd">${qtd}</td>
+                <td class="text-right font-mono text-emerald-700">R$ ${valor}</td>
+                <td class="text-right font-mono font-black text-blue-800 td-total">R$ ${total}</td>
+                <td class="text-center"><span class="material-symbols-outlined text-red-500 !text-sm cursor-pointer" onclick="this.closest('tr').remove(); calcularTotalGeral();">delete</span></td>
+            `;
+            tbody.appendChild(tr);
+
+            calcularTotalGeral();
+
+            // Limpa campos
+            document.getElementById('item-codigo').value = '';
+            document.getElementById('item-descricao').value = '';
+            document.getElementById('item-un').value = '';
+            document.getElementById('item-qtd').value = '';
+            document.getElementById('item-valor').value = '';
+            document.getElementById('item-subtotal').value = '';
+            document.getElementById('item-codigo').focus();
+        }
+
+        function abrirPesquisaFornecedor() {
+            document.getElementById('modal-pesquisa-fornecedor').classList.remove('hidden');
+            document.getElementById('modal-pesquisa-fornecedor').classList.add('flex');
+            document.getElementById('forn-pesquisa-filtro').value = '';
+            document.getElementById('forn-pesquisa-filtro').focus();
+            renderListaTabelaFornecedor(mockFornecedores);
+        }
+
+        function fecharPesquisaFornecedor() {
+            document.getElementById('modal-pesquisa-fornecedor').classList.add('hidden');
+            document.getElementById('modal-pesquisa-fornecedor').classList.remove('flex');
+        }
+
+        function transicaoPesquisaParaNovo() {
+            const filtro = document.getElementById('forn-pesquisa-filtro').value;
+            fecharPesquisaFornecedor();
+            abrirCadastroRapidoFornecedor();
+            if (filtro) {
+                document.getElementById('forn-completo-fantasia').value = filtro.toUpperCase();
+            }
+        }
+
+        function filtrarPesquisaFornecedor(query) {
+            const filtrados = mockFornecedores.filter(f =>
+                f.nome.toUpperCase().includes(query.toUpperCase()) ||
+                f.documento.includes(query) ||
+                f.id.includes(query)
+            );
+            renderListaTabelaFornecedor(filtrados);
+        }
+
+        function renderListaTabelaFornecedor(lista) {
+            const tbody = document.getElementById('lista-pesquisa-fornecedor');
+            const total = document.getElementById('forn-total-registros');
+            tbody.innerHTML = '';
+
+            lista.forEach(f => {
+                const tr = document.createElement('tr');
+                tr.className = 'group hover:bg-blue-50 cursor-pointer transition-colors';
+                tr.innerHTML = `
+                    <td class="text-center font-mono text-slate-400 border-r border-slate-100">${f.id}</td>
+                    <td class="font-bold uppercase text-slate-700">${f.nome}</td>
+                    <td class="text-slate-500 font-mono text-center">${f.documento}</td>
+                `;
+                tr.onclick = () => selecionarFornecedor(f);
+                tbody.appendChild(tr);
+            });
+            total.innerText = `${lista.length} REGISTROS ENCONTRADOS`;
+        }
+
+        function bloquearFormularioPedido(bloquear) {
+            const tipoPedido = document.getElementById('forn-tipo-pedido');
+            const previsao = document.getElementById('forn-previsao');
+            const sectionItens = document.getElementById('section-itens-pedido');
+            const sectionDadosFinais = document.getElementById('section-dados-finais');
+
+            if (tipoPedido) {
+                tipoPedido.disabled = bloquear;
+                if(bloquear) tipoPedido.classList.add('disabled-field');
+                else tipoPedido.classList.remove('disabled-field');
+            }
+            if (previsao) {
+                previsao.disabled = bloquear;
+                if(bloquear) previsao.classList.add('disabled-field');
+                else previsao.classList.remove('disabled-field');
+            }
+
+            if (bloquear) {
+                if(sectionItens) sectionItens.classList.add('opacity-50', 'pointer-events-none');
+                if(sectionDadosFinais) sectionDadosFinais.classList.add('opacity-50', 'pointer-events-none');
+            } else {
+                if(sectionItens) sectionItens.classList.remove('opacity-50', 'pointer-events-none');
+                if(sectionDadosFinais) sectionDadosFinais.classList.remove('opacity-50', 'pointer-events-none');
+            }
+        }
+
+        function selecionarFornecedor(f) {
+            document.getElementById('forn-codigo').value = f.id;
+            document.getElementById('forn-razao').value = f.nome;
+            document.getElementById('forn-documento').value = f.documento;
+            fecharPesquisaFornecedor();
+
+            // Desbloqueia os campos
+            bloquearFormularioPedido(false);
+
+            // Highlight visual no código
+            const inputCodigo = document.getElementById('forn-codigo');
+            inputCodigo.classList.add('ring-2', 'ring-emerald-400', 'bg-emerald-50');
+            setTimeout(() => {
+                inputCodigo.classList.remove('ring-2', 'ring-emerald-400', 'bg-emerald-50');
+            }, 800);
+        }
+
+        // ATALHOS TECLADO ATUALIZADOS
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'F1') {
+                e.preventDefault();
+                abrirPesquisaFornecedor();
+            }
+            if (e.key === 'F2') { e.preventDefault(); mudarAba('F2'); }
+            if (e.key === 'F3') { e.preventDefault(); mudarAba('F3'); }
+
+            if (e.key === 'F4') {
+                const modalPesquisa = document.getElementById('modal-pesquisa-fornecedor');
+                if (!modalPesquisa.classList.contains('hidden')) {
+                    e.preventDefault();
+                    transicaoPesquisaParaNovo();
+                }
+            }
+
+            if (e.key === 'F10') {
+                const modalForn = document.getElementById('modal-fornecedor-rapido');
+                if (!modalForn.classList.contains('hidden')) {
+                    e.preventDefault();
+                    salvarFornecedorRapido();
+                }
+            }
+
+            if (e.key === 'F5') {
+                const modalForn = document.getElementById('modal-fornecedor-rapido');
+                if (!modalForn.classList.contains('hidden')) {
+                    e.preventDefault();
+                    salvarFornecedorRapido();
+                    return;
+                }
+
+                const abaF3 = document.getElementById('view-editor-rascunho'); // Changed from aba-F3 to view-editor-rascunho
+                if (!abaF3.classList.contains('hidden')) {
+                    e.preventDefault();
+                    setLoading(true);
+                    setTimeout(() => setLoading(false), 2000);
+                }
+            }
+
+            if (e.key === 'Escape') {
+                const modalProd = document.getElementById('modal-pesquisa-produtos');
+                if (!modalProd.classList.contains('hidden')) {
+                    fecharPesquisaProdutos();
+                    return;
+                }
+                const modalForn = document.getElementById('modal-fornecedor-rapido');
+                if (!modalForn.classList.contains('hidden')) {
+                    fecharCadastroRapidoFornecedor();
+                    return;
+                }
+                const modalPesq = document.getElementById('modal-pesquisa-fornecedor');
+                if (!modalPesq.classList.contains('hidden')) {
+                    fecharPesquisaFornecedor();
+                    return;
+                }
+                window.close();
+            }
+        });
+
+        // LÓGICA DE DETALHES DO PEDIDO
+        const mockHistoricoPedidos = [
+            {
+                id: '000125',
+                data: '10/03/2026',
+                fornecedor: 'DISTRIBUIDORA AUTOMOTIVA S.A.',
+                doc: '00.345.987/0001-22',
+                total: '12.450,00',
+                status: 'Pendente',
+                entrega: '15/03/2026',
+                itens: [
+                    { cod: '001259', desc: 'AMORTECEDOR DIANTEIRO DIREITO - TURBOGÁS', un: 'UN', qtd: '10,00', valor: '192,00', total: '1.920,00' },
+                    { cod: 'KB-885', desc: 'KIT BATENTE AMORTECEDOR DIANTEIRO', un: 'JG', qtd: '05,00', valor: '45,00', total: '225,00' }
+                ]
+            },
+            {
+                id: '000128',
+                data: '09/03/2026',
+                fornecedor: 'COFAP FABRICACAO LTDA',
+                doc: '12.444.555/0001-99',
+                total: '4.200,00',
+                status: 'Concluído',
+                entrega: '12/03/2026',
+                itens: [
+                    { cod: 'B-470', desc: 'BUCHA BANDEJA DIANTEIRA (MAIOR)', un: 'PC', qtd: '20,00', valor: '22,50', total: '450,00' },
+                    { cod: 'P-123', desc: 'PIVO SUSPENSAO DIREITO', un: 'UN', qtd: '04,00', valor: '68,00', total: '272,00' }
+                ]
+            }
+        ];
+
+        function exibirDetalhesPedido(index) {
+            const pedido = mockHistoricoPedidos[index];
+            if (!pedido) return;
+
+            // Highlight visual na linha clicada (Alto Contraste)
+            const rows = document.querySelectorAll('#lista-pedidos-f2 tr');
+            rows.forEach(r => r.classList.remove('sig-row-selected'));
+            rows[index].classList.add('sig-row-selected');
+
+            // Preenche painel
+            document.getElementById('detalhe-pedido-label').innerText = `#${pedido.id}`;
+            document.getElementById('detalhe-fornecedor-nome').innerText = pedido.fornecedor;
+            document.getElementById('detalhe-fornecedor-doc').innerText = pedido.doc;
+
+            // Preenche tabela de itens do detalhe
+            const tbody = document.getElementById('detalhe-itens-tabela');
+            tbody.innerHTML = '';
+
+            pedido.itens.forEach((it, idx) => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 border-b border-slate-100';
+                tr.innerHTML = `
+                    <td class="text-center font-mono opacity-50 text-[10px]">${(idx + 1).toString().padStart(2, '0')}</td>
+                    <td class="text-center font-mono text-[10px]">${it.cod}</td>
+                    <td class="font-bold uppercase text-[10px] text-slate-700">${it.desc}</td>
+                    <td class="text-center text-[10px]">${it.un}</td>
+                    <td class="text-center font-black text-[10px]">${it.qtd}</td>
+                    <td class="text-right font-mono text-emerald-700 text-[10px]">R$ ${it.valor}</td>
+                    <td class="text-right font-mono font-black text-blue-800 text-[10px]">R$ ${it.total}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // --- SISTEMA MULTI-PEDIDOS (RASCUNHOS EM ABAS) ---
+        let rascunhoAtivoId = 0; // 0 Significa a Aba HOME (Listagem de Pedidos)
+        let rascunhoSeq = 2;
+        let mockRascunhos = [
+            {
+                id: 0,
+                numeroFormat: 'PEDIDOS',
+                dataOuNome: 'Histórico Completo',
+                fornecedorNome: 'Visualizar',
+                fornecedorCodigo: '',
+                totalItens: 0,
+                ativo: true,
+                isHome: true
+            },
+            {
+                id: 1,
+                numeroFormat: '#000125',
+                dataOuNome: '10/03/2026',
+                fornecedorNome: 'DISTRIB. AUTOMOTIVA S.A.',
+                fornecedorCodigo: '0001',
+                totalItens: 2,
+                ativo: false
+            },
+            {
+                id: 2,
+                numeroFormat: 'NOVO #02',
+                dataOuNome: '10/03/2026',
+                fornecedorNome: 'Sem fornecedor...',
+                fornecedorCodigo: '',
+                totalItens: 0,
+                ativo: false
+            }
+        ];
+
+        function renderizarAbasRascunhos() {
+            const container = document.getElementById('container-abas-rascunhos');
+            container.innerHTML = '';
+
+            mockRascunhos.forEach(rascunho => {
+                const isActive = rascunho.id === rascunhoAtivoId;
+
+                const baseClasses = isActive
+                    ? `bg-white border text-sig-blue border-slate-300 border-b-transparent rounded-t-md px-4 py-2 flex items-center gap-2 cursor-pointer relative shadow-[0_-2px_4px_rgba(0,0,0,0.02)] pt-3 pb-2 z-10 min-w-40 shrink-0 font-bold opacity-100 transition-all`
+                    : `bg-slate-200 border border-slate-300 border-b-slate-300 rounded-t-md px-4 py-2 flex items-center gap-2 cursor-pointer hover:bg-slate-100 text-slate-500 shadow-none z-0 min-w-40 shrink-0 transition-colors`;
+
+                const iconVariant = rascunho.isHome ? 'home' : (isActive ? 'shopping_cart' : 'draft');
+                const textColorClasses = isActive ? 'text-[11px] uppercase tracking-wider truncate' : 'text-[11px] uppercase font-bold tracking-wider truncate';
+                const subTextColorClasses = isActive ? 'text-[9px] text-slate-500 font-normal truncate' : 'text-[9px] text-slate-400 font-normal truncate';
+
+                const divTab = document.createElement('div');
+                divTab.className = baseClasses + (rascunho.isHome ? ' mr-3 ml-1' : ''); // Dá o respiro entre o Home e os rascunhos
+
+                divTab.innerHTML = `
+                    <span class="material-symbols-outlined text-sm" onclick="selecionarRascunho(${rascunho.id})">${iconVariant}</span>
+                    <div class="flex flex-col overflow-hidden w-full" onclick="selecionarRascunho(${rascunho.id})">
+                        <span class="${textColorClasses}">${rascunho.numeroFormat}</span>
+                        <span class="${subTextColorClasses}">${rascunho.isHome ? rascunho.dataOuNome : rascunho.fornecedorNome}</span>
+                    </div>
+                    ${rascunho.isHome ? '<div class="absolute -right-[7px] top-1/2 -translate-y-1/2 w-px h-[60%] bg-slate-300 rounded-full cursor-default"></div>' : ''}
+                `;
+
+                if (!isActive && !rascunho.isHome) {
+                    const btnClose = document.createElement('span');
+                    btnClose.className = "material-symbols-outlined text-sm opacity-50 hover:text-red-500 transition-colors ml-auto";
+                    btnClose.innerText = "close";
+                    btnClose.title = "Fechar Rascunho";
+                    btnClose.onclick = (e) => {
+                        e.stopPropagation();
+                        fecharRascunho(rascunho.id);
+                    };
+                    divTab.appendChild(btnClose);
+                }
+
+                container.appendChild(divTab);
+            });
+
+            // Botao Adicionar nova aba (Rascunho)
+            const btnAdd = document.createElement('button');
+            btnAdd.className = "bg-slate-200 border border-slate-300 rounded-t-md w-10 py-2 flex items-center justify-center cursor-pointer hover:bg-slate-100 text-slate-500 hover:text-sig-blue font-bold ml-1 transition-colors group";
+            btnAdd.onclick = criarNovoRascunho;
+            btnAdd.innerHTML = `<span class="material-symbols-outlined text-base group-hover:scale-110 transition-transform">add</span>`;
+
+            container.appendChild(btnAdd);
+
+            atualizarWorkspaceRascunhoAtivo();
+        }
+
+        function criarNovoRascunho() {
+            rascunhoSeq++;
+            const novoId = rascunhoSeq;
+            mockRascunhos.push({
+                id: novoId,
+                numeroFormat: `NOVO #${novoId.toString().padStart(2, '0')}`,
+                dataOuNome: new Date().toLocaleDateString('pt-BR'),
+                fornecedorNome: 'Sem fornecedor...',
+                fornecedorCodigo: '',
+                totalItens: 0,
+                ativo: false
+            });
+            selecionarRascunho(novoId);
+        }
+
+        function selecionarRascunho(id) {
+            rascunhoAtivoId = id;
+            mockRascunhos.forEach(r => r.ativo = (r.id === id));
+            renderizarAbasRascunhos();
+        }
+
+        function excluirRascunhoAtual() {
+            if (rascunhoAtivoId === 0) {
+                if (window.Toast) Toast.warning("Selecione um rascunho ativo para excluir.");
+                return;
+            }
+            fecharRascunho(rascunhoAtivoId);
+        }
+
+        function fecharRascunho(id) {
+            // Regra: Sempre deixaremos a Home viva.
+            if (id === 0) return;
+
+            // Criar Modal Customizado de Confirmação (Fade-in + Scale 95% -> 100%)
+            const overlay = document.createElement('div');
+            overlay.className = "fixed inset-0 bg-black/60 z-[9999] flex items-center justify-center transition-opacity duration-200 opacity-0";
+            
+            const modalBox = document.createElement('div');
+            modalBox.className = "bg-white w-[400px] rounded-lg shadow-2xl flex flex-col border border-slate-300 transform scale-95 transition-transform duration-200 ease-out p-6";
+            
+            modalBox.innerHTML = `
+                <div class="flex items-center gap-3 mb-4 text-red-600">
+                    <span class="material-symbols-outlined !text-4xl">warning</span>
+                    <h2 class="text-lg font-black tracking-tight flex-1 uppercase">Excluir Rascunho?</h2>
+                </div>
+                <p class="text-sm text-slate-600 font-medium mb-6">Deseja fechar esta aba? Todos os dados não salvos serão perdidos.</p>
+                <div class="flex justify-end gap-3 mt-auto">
+                    <button id="btn-cancel-draft" class="px-5 py-2 text-xs font-bold text-slate-600 bg-slate-100 border border-slate-300 rounded hover:bg-slate-200 transition-colors">CANCELAR</button>
+                    <button id="btn-confirm-draft" class="px-5 py-2 text-xs font-bold text-white bg-red-600 hover:bg-red-700 border border-red-700 rounded transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">EXCLUIR RASCUNHO</button>
+                </div>
+            `;
+            
+            overlay.appendChild(modalBox);
+            document.body.appendChild(overlay);
+            
+            // Trigger animation
+            setTimeout(() => {
+                overlay.classList.remove('opacity-0');
+                overlay.classList.add('opacity-100');
+                modalBox.classList.remove('scale-95');
+                modalBox.classList.add('scale-100');
+            }, 10);
+            
+            const fecharModal = () => {
+                overlay.classList.remove('opacity-100');
+                overlay.classList.add('opacity-0');
+                modalBox.classList.remove('scale-100');
+                modalBox.classList.add('scale-95');
+                setTimeout(() => overlay.remove(), 200);
+            };
+
+            modalBox.querySelector('#btn-cancel-draft').onclick = fecharModal;
+            modalBox.querySelector('#btn-confirm-draft').onclick = () => {
+                mockRascunhos = mockRascunhos.filter(r => r.id !== id);
+                if (rascunhoAtivoId === id) {
+                    selecionarRascunho(0);
+                } else {
+                    renderizarAbasRascunhos();
+                }
+                fecharModal();
+            };
+        }
+
+        function atualizarWorkspaceRascunhoAtivo() {
+            const rascunho = mockRascunhos.find(r => r.id === rascunhoAtivoId);
+            if (!rascunho) return;
+
+            const viewLista = document.getElementById('view-lista-pedidos');
+            const viewEditor = document.getElementById('view-editor-rascunho');
+            const rodapeEditor = document.getElementById('rodape-acoes-editor');
+
+            // Troca de Telas (Home x Editor)
+            if (rascunho.isHome) {
+                viewLista.classList.remove('hidden');
+                viewEditor.classList.add('hidden');
+                rodapeEditor.classList.add('hidden');
+            } else {
+                viewLista.classList.add('hidden');
+                viewEditor.classList.remove('hidden');
+                rodapeEditor.classList.remove('hidden');
+
+                // Atualiza campos do Editor
+                document.getElementById('rascunho-header-numero').innerText = rascunho.numeroFormat.replace('PED: #', '').replace('NOVO #', '');
+                document.getElementById('rascunho-header-data').innerText = rascunho.dataOuNome;
+                document.getElementById('forn-codigo').value = rascunho.fornecedorCodigo;
+                
+                if (rascunho.fornecedorCodigo && rascunho.fornecedorCodigo !== '') {
+                    document.getElementById('forn-razao').value = rascunho.fornecedorNome;
+                    document.getElementById('forn-documento').value = rascunho.fornecedorCodigo === '0001' ? '00.345.987/0001-22' : '00.000.000/0000-00';
+                    bloquearFormularioPedido(false);
+                } else {
+                    document.getElementById('forn-razao').value = '';
+                    document.getElementById('forn-documento').value = '';
+                    bloquearFormularioPedido(true); // Bloqueia tudo pois não tem fornecedor
+                }
+
+                // Simula troca de grade (MOCK limpa os itens se for um pedido novo)
+                const tbodyItens = document.getElementById('lista-itens-pedido');
+                if (rascunho.totalItens === 0) {
+                    tbodyItens.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-slate-400 font-bold uppercase track-wider text-[10px]">INICIE BUSCA DE PRODUTOS PARA ESTE PEDIDO...</td></tr>`;
+                    document.getElementById('item-subtotal').parentElement.parentElement.parentElement.nextElementSibling.querySelector('span:nth-child(2)').innerText = "R$ 0,00"; // Total Zero
+                } else {
+                    // Restaura mock padrao para testes apenas
+                    tbodyItens.innerHTML = `<tr class="hover:bg-slate-50 cursor-default">
+                                    <td class="text-center font-mono opacity-50">01</td>
+                                    <td class="text-center font-mono">001259</td>
+                                    <td class="font-bold uppercase">AMORTECEDOR DIANTEIRO DIREITO - TURBOGÁS</td>
+                                    <td class="text-center">UN</td>
+                                    <td class="text-center font-black">10,00</td>
+                                    <td class="text-right font-mono text-emerald-700">R$ 192,00</td>
+                                    <td class="text-right font-mono font-black text-blue-800">R$ 1.920,00</td>
+                                    <td class="text-center"><span class="material-symbols-outlined text-red-500 !text-sm cursor-pointer" onclick="this.closest('tr').remove()">delete</span></td>
+                                </tr>`;
+                }
+            }
+        }
+
+        // Initialize Call
+        document.addEventListener('DOMContentLoaded', () => {
+            renderizarAbasRascunhos();
+        });
+    </script>
+    <div id="modal-container-fornecedor"></div>
+    <script src="../../componentes/modal_fornecedor.js"></script>
+    <script>
+        if (window.ModalFornecedorHTML && document.getElementById("modal-container-fornecedor")) {
+            document.getElementById("modal-container-fornecedor").innerHTML = window.ModalFornecedorHTML;
+        }
+    </script>
+    <div id="modal-container-produto"></div>
+    <script src="../../componentes/modal_produto.js"></script>
+    <script>
+        if (window.ModalProdutoHTML) {
+            document.getElementById("modal-container-produto").innerHTML = window.ModalProdutoHTML;
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedidos de Compra - SIG V79</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/css/sig-ui-base.css">
+    <link rel="stylesheet" href="../../assets/css/sig-tokens.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #eef2f6; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
+    </style>
+</head>
+<body class="text-slate-700">
+
+    <!-- TOOLBAR -->
+    <div class="sig-toolbar p-2 border-b border-slate-300 gap-1 flex items-center bg-white shadow-sm">
+        <button class="sig-btn-icon" title="Aprovar Pedido" onclick="alert('Aprovando Pedido...')"><span class="material-symbols-outlined !text-emerald-600">check_circle</span></button>
+        <button class="sig-btn-icon" title="Reprovar / Cancelar" onclick="alert('Cancelando...')"><span class="material-symbols-outlined !text-red-600">block</span></button>
+        <div class="sig-divider mx-1 border-l border-slate-300 h-6"></div>
+        <button class="bg-sig-blue hover:bg-blue-700 text-white px-4 py-1.5 rounded flex items-center gap-2 text-xs font-bold tracking-wide transition-colors shadow-sm" onclick="alert('Imprimindo Pedido...')">
+            <span class="material-symbols-outlined !text-[16px]">print</span> IMPRIMIR PC
+        </button>
+        <button class="sig-btn-icon bg-blue-50 ml-1" title="Enviar E-mail Fornecedor" onclick="alert('Enviando E-mail')"><span class="material-symbols-outlined !text-sig-blue">mail</span></button>
+        
+        <div class="flex-grow flex justify-center">
+            <h1 class="text-xs font-black text-slate-700 uppercase tracking-widest flex items-center gap-2">
+                <span class="material-symbols-outlined text-blue-600">shopping_bag</span>
+                PEDIDOS DE COMPRA CERRADOS (WORKFLOW V79)
+            </h1>
+        </div>
+        <button class="sig-btn-icon" title="Voltar" onclick="location.href='../hub/hub.html'"><span class="material-symbols-outlined">arrow_back</span></button>
+    </div>
+
+    <!-- MAIN GRID CONTAINER -->
+    <div class="flex-grow flex flex-col p-2 gap-2 h-0">
+        
+        <!-- HEADER DO PEDIDO -->
+        <fieldset class="sig-fieldset-blueprint border-slate-300 bg-white shadow-sm p-3 relative shrink-0">
+            <legend class="text-[9px] font-black tracking-widest text-sig-blue bg-white px-2">DADOS DO PEDIDO DE COMPRA N° 2026/0045</legend>
+            
+            <!-- Badge de Status -->
+            <div class="absolute right-4 top-0 -mt-2 bg-emerald-100 text-emerald-800 border border-emerald-300 px-3 py-1 rounded shadow-sm text-xs font-black uppercase tracking-widest flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Aprovado
+            </div>
+
+            <div class="grid grid-cols-12 gap-3 mb-2 pt-2">
+                <div class="col-span-2">
+                    <label class="text-[9px] font-bold text-slate-500 uppercase block mb-1">Nº PC / Série</label>
+                    <input type="text" class="sig-input-dense w-full font-mono text-sig-blue font-black tracking-widest bg-blue-50 border-blue-200" value="PC-45" readonly>
+                </div>
+                <div class="col-span-8">
+                    <label class="text-[9px] font-bold text-slate-500 uppercase block mb-1">Fornecedor / Emitente</label>
+                    <div class="flex">
+                        <input type="text" class="sig-input-dense w-24 font-mono border-r-0 rounded-r-none text-center" value="1092" readonly>
+                        <input type="text" class="sig-input-dense w-full font-bold uppercase rounded-l-none" value="MOURA BATERIAS SOCIEDADE ANONIMA" readonly>
+                    </div>
+                </div>
+                <div class="col-span-2">
+                    <label class="text-[9px] font-bold text-slate-500 uppercase block mb-1">Emissão</label>
+                    <input type="text" class="sig-input-dense w-full font-mono text-center bg-slate-50" value="08/04/2026" readonly>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-12 gap-3">
+                <div class="col-span-3">
+                    <label class="text-[9px] font-bold text-slate-500 uppercase block mb-1">Transportadora</label>
+                    <input type="text" class="sig-input-dense w-full font-bold uppercase text-slate-600" value="EXPRESSO PRATA LOGISTICA">
+                </div>
+                <div class="col-span-3">
+                    <label class="text-[9px] font-bold text-slate-500 uppercase block mb-1">Condição de Pagamento</label>
+                    <input type="text" class="sig-input-dense w-full font-mono font-bold uppercase text-slate-600" value="30 / 60 / 90 DIAS">
+                </div>
+                <div class="col-span-3">
+                    <label class="text-[9px] font-bold text-slate-500 uppercase block mb-1">Origem (Referência SC)</label>
+                    <input type="text" class="sig-input-dense w-full font-mono text-amber-700 bg-amber-50 uppercase font-black tracking-widest" value="SC-2026/0401" readonly>
+                </div>
+                <div class="col-span-3">
+                    <label class="text-[9px] font-bold text-slate-500 uppercase block mb-1">Comprador Base</label>
+                    <input type="text" class="sig-input-dense w-full font-bold uppercase" value="ADMIN_SIG">
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- ITENS DO PEDIDO -->
+        <fieldset class="sig-fieldset-blueprint border-slate-300 bg-white flex-1 flex flex-col min-h-0 relative shadow-sm">
+            <legend class="text-[9px] font-black tracking-widest text-slate-600 bg-white px-2">DETALHAMENTO DE PRODUTOS COMPRADOS</legend>
+            <div class="flex-1 overflow-auto mt-2 border-t border-slate-200">
+                <table class="sig-table-sm w-full">
+                    <thead class="sticky top-0 shadow-sm z-10 border-b border-slate-300 bg-slate-100">
+                        <tr>
+                            <th class="w-16 text-center border-r border-slate-200">CÓD.</th>
+                            <th class="border-r border-slate-200 text-left">DESCRIÇÃO DO PRODUTO</th>
+                            <th class="w-12 text-center border-r border-slate-200">UN</th>
+                            <th class="w-20 text-right border-r border-slate-200">QTD</th>
+                            <th class="w-24 text-right border-r border-slate-200">UNIT. (R$)</th>
+                            <th class="w-24 text-right border-r border-slate-200">IPI (%)</th>
+                            <th class="w-24 text-right border-r border-slate-200">TOTAL C/ IPI</th>
+                            <th class="w-32 text-center bg-blue-50/50 text-sig-blue">HISTÓRICO ESTOQUE</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white">
+                        <tr class="hover:bg-slate-50">
+                            <td class="text-center font-bold text-slate-600 border-r border-slate-200">9912</td>
+                            <td class="font-bold text-slate-800 border-r border-slate-200 uppercase">BATERIA MOURA 60AH POLO DIREITO</td>
+                            <td class="text-center text-slate-500 border-r border-slate-200">UN</td>
+                            <td class="text-right font-mono font-black border-r border-slate-200">100,00</td>
+                            <td class="text-right font-mono border-r border-slate-200">310,00</td>
+                            <td class="text-right font-mono text-slate-500 border-r border-slate-200">5,00%</td>
+                            <td class="text-right font-mono font-black text-sig-blue border-r border-slate-200 bg-blue-50/30">32.550,00</td>
+                            <td class="text-center bg-transparent"><span class="bg-orange-100 text-orange-800 font-bold px-1 py-0.5 rounded text-[8px] uppercase tracking-widest">Saldo Baixo (12)</span></td>
+                        </tr>
+                        <tr class="hover:bg-slate-50">
+                            <td class="text-center font-bold text-slate-600 border-r border-slate-200">9914</td>
+                            <td class="font-bold text-slate-800 border-r border-slate-200 uppercase">BATERIA MOURA 70AH START/STOP</td>
+                            <td class="text-center text-slate-500 border-r border-slate-200">UN</td>
+                            <td class="text-right font-mono font-black border-r border-slate-200">50,00</td>
+                            <td class="text-right font-mono border-r border-slate-200">580,00</td>
+                            <td class="text-right font-mono text-slate-500 border-r border-slate-200">5,00%</td>
+                            <td class="text-right font-mono font-black text-sig-blue border-r border-slate-200 bg-blue-50/30">30.450,00</td>
+                            <td class="text-center bg-transparent"><span class="bg-emerald-100 text-emerald-800 font-bold px-1 py-0.5 rounded text-[8px] uppercase tracking-widest">Normal (40)</span></td>
+                        </tr>
+                    </tbody>
+                    <tfoot class="bg-slate-100 border-t-2 border-slate-300">
+                        <tr>
+                            <td colspan="6" class="text-right p-2 font-black text-slate-500 tracking-widest uppercase text-[10px]">Total Geral do Pedido:</td>
+                            <td class="text-right font-mono font-black text-emerald-700 p-2 text-lg">R$ 63.000,00</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </fieldset>
+
+    </div>
+
+    <!-- STATUS BAR -->
+    <div class="h-6 flex-shrink-0 bg-slate-900 text-slate-400 flex items-center px-4 text-[10px]">
+        <span class="font-bold tracking-wider opacity-70">SISTEMA INTEGRADO DE GESTÃO - PURCHASING MOD V79</span>
+        <div class="flex-grow"></div>
+        <span class="font-mono opacity-50">PEDIDO CONFIRMADO NO BANCO</span>
+    </div>
+
+</body>
+</html>

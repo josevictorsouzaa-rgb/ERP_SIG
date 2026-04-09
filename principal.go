@@ -37,14 +37,14 @@ func main() {
 	}
 
 	// 1. Criar o App (A Lógica Go)
-	app := NovoApp(modulo)
+	app := NovoApp(modulo, 0)
 
 	title := "SIG - LOGIN | TERMINAL ACESSO"
 	startState := options.Normal
-	width, height := 820, 560
+	width, height := 1100, 720
 
-	disableResize := true
-	isFrameless := true
+	disableResize := false // Allow user to resize!
+	isFrameless := false
 
 	if modulo != "" {
 		title = "SIG | " + strings.ToUpper(modulo)

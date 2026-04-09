@@ -4,35 +4,47 @@ import {motor} from '../models';
 
 export function AbrirModulo(arg1:string):Promise<void>;
 
+export function AlterarSenhaOperadorLogado(arg1:string):Promise<string>;
+
+export function AutenticarLogin(arg1:string,arg2:string):Promise<Record<string, any>>;
+
+export function BuscarDescricaoCFOP(arg1:string):Promise<string>;
+
 export function BuscarEmpresas():Promise<Array<motor.Empresa>>;
 
 export function CheckStatusConexao():Promise<Record<string, any>>;
 
+export function ConfigurarMatrizPadrao(arg1:string):Promise<string>;
+
 export function ConfirmarEntrada(arg1:number):Promise<string>;
 
-export function DeletarEmpresa(arg1:number):Promise<boolean>;
+export function ConfirmarSaida():Promise<string>;
 
 export function DeletarEnderecamento(arg1:number):Promise<string>;
 
-export function DesvincularSimilar(arg1:number,arg2:number):Promise<string>;
-
 export function EscutarBanco():Promise<void>;
 
-export function ExcluirCategoria(arg1:number):Promise<string>;
+export function ExcluirAliquotaFiscal(arg1:number):Promise<string>;
 
-export function ExcluirFuncao(arg1:number):Promise<string>;
+export function ExcluirFornecedor(arg1:number):Promise<string>;
 
-export function ExcluirMarca(arg1:number):Promise<string>;
+export function ExcluirMatrizFiscal(arg1:number):Promise<string>;
 
 export function ExcluirPerfilFiscal(arg1:number):Promise<string>;
 
 export function ExcluirProduto(arg1:number):Promise<string>;
 
-export function ExcluirSubcategoria(arg1:number):Promise<string>;
-
 export function ExcluirUsuario(arg1:number):Promise<string>;
 
+export function FazerLogout():Promise<void>;
+
 export function GetModuloInicial():Promise<string>;
+
+export function GetOperadorLogado():Promise<motor.Usuario>;
+
+export function GetPermissoesLogado():Promise<string>;
+
+export function GetProximoIDFornecedor():Promise<number>;
 
 export function GetProximoIDUsuario():Promise<number>;
 
@@ -44,7 +56,13 @@ export function ImportarMarcasCSV(arg1:string):Promise<string>;
 
 export function ImportarXML():Promise<motor.Entrada>;
 
+export function ListarAliquotasFiscais():Promise<Array<motor.AliquotaFiscal>>;
+
+export function ListarAplicacoesDoProduto(arg1:number):Promise<Array<motor.AplicacaoProduto>>;
+
 export function ListarCategorias():Promise<Array<motor.Categoria>>;
+
+export function ListarConversoesDoProduto(arg1:number):Promise<Array<motor.ProdutoConversao>>;
 
 export function ListarEnderecamentos(arg1:number):Promise<Array<motor.Enderecamento>>;
 
@@ -54,11 +72,21 @@ export function ListarFornecedores():Promise<Array<motor.Fornecedor>>;
 
 export function ListarFuncoes():Promise<Array<motor.Funcao>>;
 
+export function ListarGruposAcesso():Promise<Array<motor.GrupoAcesso>>;
+
+export function ListarImagensProduto(arg1:number):Promise<Array<string>>;
+
 export function ListarMarcas():Promise<Array<motor.Marca>>;
+
+export function ListarMatrizesFiscais():Promise<Array<motor.MatrizFiscal>>;
+
+export function ListarMovimentacoesProduto(arg1:number):Promise<Array<motor.MovimentacaoEstoqueDto>>;
 
 export function ListarPerfisFiscais():Promise<Array<motor.PerfilFiscal>>;
 
 export function ListarProdutos():Promise<Array<motor.Produto>>;
+
+export function ListarSolicitacoesCompra():Promise<Array<motor.SolicitacaoCompra>>;
 
 export function ListarSubcategorias():Promise<Array<motor.Subcategoria>>;
 
@@ -68,26 +96,60 @@ export function ListarUsuarios():Promise<Array<motor.Usuario>>;
 
 export function MaximizarJanela():Promise<void>;
 
+export function MostrarAlerta(arg1:string,arg2:string):Promise<void>;
+
+export function NotificarSelecao(arg1:string):Promise<void>;
+
+export function ObterDescricaoCFOP(arg1:string):Promise<string>;
+
 export function ObterEntrada(arg1:number):Promise<motor.Entrada>;
+
+export function ObterMarcasVeiculos():Promise<Array<string>>;
+
+export function ObterModelosVeiculos(arg1:string):Promise<Array<string>>;
+
+export function ObterPrimeiraImagemB64(arg1:number):Promise<string>;
+
+export function ObterProduto(arg1:number):Promise<motor.Produto>;
 
 export function ObterProximoIdProduto():Promise<number>;
 
-export function ResetarSenha(arg1:number,arg2:string):Promise<string>;
+export function ObterVersoesAnosVeiculos(arg1:string,arg2:string):Promise<Array<string>>;
 
-export function SalvarCategoria(arg1:string):Promise<string>;
+export function PesquisarProdutosAvancado(arg1:motor.FiltrosProdutos):Promise<Array<motor.Produto>>;
+
+export function RemoverVinculoUsuarioGrupo(arg1:number):Promise<string>;
+
+export function ResetarSenhaUsuario(arg1:number):Promise<string>;
+
+export function ResolverAliquotas(arg1:motor.ContextoFiscal,arg2:motor.MatrizFiscal):Promise<motor.AliquotaFiscal>;
+
+export function ResolverMatrizFiscal(arg1:motor.ContextoFiscal):Promise<motor.MatrizFiscal>;
+
+export function SalvarAliquotaFiscal(arg1:motor.AliquotaFiscal):Promise<string>;
 
 export function SalvarEntrada(arg1:motor.Entrada):Promise<string>;
 
-export function SalvarFuncao(arg1:motor.Funcao):Promise<string>;
+export function SalvarFornecedor(arg1:motor.Fornecedor):Promise<string>;
+
+export function SalvarGrupoAcesso(arg1:motor.GrupoAcesso):Promise<string>;
+
+export function SalvarImagensProduto(arg1:number,arg2:Array<string>):Promise<string>;
 
 export function SalvarMarca(arg1:string,arg2:number):Promise<string>;
+
+export function SalvarMatrizFiscal(arg1:motor.MatrizFiscal):Promise<string>;
 
 export function SalvarPerfilFiscal(arg1:motor.PerfilFiscal):Promise<string>;
 
 export function SalvarProduto(arg1:motor.Produto):Promise<string>;
 
-export function SalvarSubcategoria(arg1:number,arg2:string):Promise<string>;
+export function SalvarSolicitacaoCompra(arg1:motor.SolicitacaoCompra):Promise<string>;
 
 export function SalvarUsuario(arg1:motor.Usuario):Promise<string>;
 
-export function VincularSimilar(arg1:number,arg2:number):Promise<string>;
+export function SugerirFiscal(arg1:number,arg2:number,arg3:number,arg4:string):Promise<motor.MatrizFiscal>;
+
+export function VerificarSKUExistente(arg1:string,arg2:number):Promise<boolean>;
+
+export function VincularUsuariosGrupo(arg1:number,arg2:Array<number>):Promise<string>;

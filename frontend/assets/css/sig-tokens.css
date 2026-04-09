@@ -1,0 +1,41 @@
+:root {
+    /* Branding Oficial SIG (SINGLE SOURCE OF TRUTH) */
+    --sig-brand-cyan: #00E5FF;
+    --sig-brand-dark: #001B2B;
+    
+    /* Cores de Destaque / Ação */
+    --sig-blue: #1E40AF;        /* Sober Blue */
+    --sig-blue-dark: #1e3a8a;
+    --sig-blue-light: #eff6ff;
+    
+    --sig-red: #EF4444;
+    --sig-green: #10B981;
+    --sig-orange: #F59E0B;
+
+    /* Neutros Operacionais (Slate Series) */
+    --sig-slate-50: #F8FAFC;
+    --sig-slate-100: #F1F5F9;
+    --sig-slate-200: #E2E8F0;
+    --sig-slate-300: #CBD5E1;
+    --sig-slate-400: #94A3B8;
+    --sig-slate-500: #64748B;
+    --sig-slate-600: #4B5563;
+    --sig-slate-700: #334155;
+    --sig-slate-800: #1E293B;
+    --sig-slate-900: #0F172A;
+
+    /* Semantic Mappings */
+    --sig-border: var(--sig-slate-300);
+    --sig-bg-light: var(--sig-slate-50);
+    --sig-sidebar-bg: #ffffff;
+    --sig-text-main: var(--sig-slate-700);
+    --sig-text-muted: var(--sig-slate-500);
+    --sig-dark: var(--sig-slate-800);
+
+    /* INDICADORES (Matrix & Status) */
+    --sig-indicator-success: var(--sig-green);
+    --sig-indicator-error: var(--sig-red);
+    --sig-indicator-warning: var(--sig-orange);
+    --sig-indicator-neutral: var(--sig-slate-300);
+    --sig-indicator-active: var(--sig-blue);
+}

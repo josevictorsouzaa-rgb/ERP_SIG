@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP SIG - Login System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400&display=swap" rel="stylesheet" />
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #001b2b; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
+        .drag-region { -webkit-app-region: drag; }
+        .no-drag { -webkit-app-region: no-drag; }
+        .sig-glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .sig-input { background: rgba(0,0,0,0.2) !important; color: #fff !important; border: 1px solid rgba(255,255,255,0.1) !important; }
+        .sig-input:focus { border-color: #00e5ff !important; outline: none; box-shadow: 0 0 0 2px rgba(0,229,255,0.2); }
+        .glow-text { text-shadow: 0 0 10px rgba(0, 229, 255, 0.5); }
+    </style>
+</head>
+<body class="text-slate-300">
+    <!-- WINDOW CONTROLS -->
+    <div class="h-8 drag-region flex justify-end items-center px-2 z-50 absolute top-0 w-full">
+        <div class="flex gap-2 no-drag">
+            <button onclick="if(window.runtime) window.runtime.WindowMinimise()" class="w-6 h-6 rounded hover:bg-white/10 flex items-center justify-center transition-colors">
+                <span class="material-symbols-outlined !text-[14px]">remove</span>
+            </button>
+            <button onclick="if(window.runtime) window.runtime.Quit()" class="w-6 h-6 rounded hover:bg-red-500/80 hover:text-white flex items-center justify-center transition-colors text-slate-400">
+                <span class="material-symbols-outlined !text-[14px]">close</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN LOGIN -->
+    <div class="flex-1 flex drag-region">
+        <!-- LEFT SIDE - BRANDING -->
+        <div class="w-1/2 flex flex-col justify-center px-12 relative overflow-hidden bg-gradient-to-br from-[#001b2b] to-[#002f4a]">
+            <!-- Decorative Hexagons -->
+            <div class="absolute -left-20 -top-20 opacity-5">
+                <svg width="400" height="400" viewBox="0 0 100 100"><polygon points="50 0 93 25 93 75 50 100 7 75 7 25" fill="currentColor"/></svg>
+            </div>
+            
+            <h1 class="text-6xl font-black text-white tracking-tighter mb-2 glow-text">SIG <span class="text-[#00e5ff]">ERP</span></h1>
+            <p class="text-lg font-mono text-slate-400 tracking-widest uppercase mb-8 border-l-2 border-[#00e5ff] pl-3 py-1">V79 Core System</p>
+            
+            <div class="space-y-4">
+                <div class="flex items-center gap-3 opacity-60">
+                    <span class="material-symbols-outlined text-[#00e5ff]">api</span>
+                    <span class="text-xs font-mono tracking-widest uppercase">Motor VMASTER Integrado</span>
+                </div>
+                <div class="flex items-center gap-3 opacity-60">
+                    <span class="material-symbols-outlined text-[#00e5ff]">shield_lock</span>
+                    <span class="text-xs font-mono tracking-widest uppercase">RBAC Protocolo Seguro</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT SIDE - FORM -->
+        <div class="w-1/2 flex items-center justify-center px-12 z-10 no-drag bg-[#00111c] border-l border-white/5">
+            <div class="w-full max-w-sm sig-glass p-8 rounded-lg shadow-2xl">
+                <h2 class="text-2xl font-bold text-white mb-6">Autenticação</h2>
+                
+                <div class="space-y-4 mb-8">
+                    <div>
+                        <label class="block text-[10px] font-black tracking-widest text-[#00e5ff] uppercase mb-1">Id Operador / Login</label>
+                        <div class="relative">
+                            <span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-500">person</span>
+                            <input type="text" id="loginUsername" class="sig-input w-full rounded pl-10 pr-3 py-2 text-sm font-mono tracking-wider focus:bg-white/5 transition-all" placeholder="ADMIN_SIG" autocomplete="off" autofocus>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black tracking-widest text-[#00e5ff] uppercase mb-1">Credencial de Segurança</label>
+                        <div class="relative">
+                            <span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-500">key</span>
+                            <input type="password" id="loginPassword" class="sig-input w-full rounded pl-10 pr-3 py-2 text-sm focus:bg-white/5 transition-all" placeholder="••••••••">
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="realizarLogin()" class="w-full bg-[#00e5ff] text-[#001b2b] hover:bg-white hover:text-[#001b2b] font-black py-2.5 rounded text-sm tracking-widest uppercase transition-all shadow-[0_0_15px_rgba(0,229,255,0.3)]">
+                    Iniciar Sessão
+                </button>
+                <div id="loginError" class="mt-4 text-center text-red-400 text-xs font-bold hidden bg-red-900/30 p-2 rounded border border-red-500/30">
+                    Acesso Negado. Crendenciais Inválidas.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- STATUS BAR -->
+    <div class="h-6 flex-shrink-0 bg-[#000b14] border-t border-white/10 flex items-center px-3 text-[9px] drag-region">
+        <span class="font-black text-[#00e5ff] tracking-wider opacity-70">SISTEMA INTEGRADO DE GESTÃO</span>
+        <div class="flex-grow"></div>
+        <span class="opacity-50 tracking-widest font-mono">STATUS: AGUARDANDO AUTORIZAÇÃO</span>
+    </div>
+
+    <script>
+        function realizarLogin() {
+            // Mock Mypass Authentication for Recovery
+            const btn = document.querySelector('button');
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin !text-[16px]">sync</span> Autenticando...';
+            
+            setTimeout(() => {
+                location.href = '../hub/hub.html';
+            }, 600);
+        }
+        
+        // Enter binds
+        document.getElementById('loginPassword').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') realizarLogin();
+        });
+    </script>
+</body>
+</html>

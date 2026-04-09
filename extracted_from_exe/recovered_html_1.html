@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
+        }
+
+        .login-aside {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 80px;
+            position: relative;
+            overflow: hidden;
+            color: white;
+            box-sizing: border-box;
+        }
+
+        /* Elementos Decorativos da Referência (Bolhas, Círculos, Ondas) */
+        .pattern { position: absolute; pointer-events: none; z-index: 1; }
+        .circle-rim { border: 20px solid rgba(255, 255, 255, 0.05); border-radius: 50%; }
+        .circle-solid { background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent); border-radius: 50%; }
+
+        .c1 { width: 400px; height: 400px; top: -100px; left: -100px; }
+        .c2 { width: 300px; height: 300px; bottom: -50px; right: 10%; }
+        .c3 { width: 150px; height: 150px; top: 20%; right: -50px; }
+
+        .dots-grid {
+            width: 100px; height: 100px;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.2) 2px, transparent 2px);
+            background-size: 15px 15px; bottom: 40px; left: 40px;
+        }
+
+        .chevrons {
+            top: 40px; left: 40px; opacity: 0.2; display: flex; flex-direction: column; gap: 5px;
+        }
+        .chevron-unit { width: 20px; height: 4px; background: white; transform: skewY(-45deg); }
+
+        .wave-pattern {
+            width: 200px; height: 50px; border: 2px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 50%; top: 50%; right: -100px; transform: rotate(-30deg);
+        }
+
+        .aside-content { position: relative; z-index: 10; cursor: default; }
+
+        .sig-text-logo {
+            font-size: 86px; font-weight: 900; color: white; letter-spacing: -4px;
+            line-height: 0.8; margin: 0; text-transform: uppercase;
+        }
+
+        .sig-text-software {
+            font-size: 28px; font-weight: 700; color: rgba(255, 255, 255, 0.8);
+            text-transform: uppercase; letter-spacing: 6px; margin-top: 10px;
+        }
+
+        .sig-text-desc {
+            font-size: 15px; font-weight: 600; color: rgba(255, 255, 255, 0.5);
+            line-height: 1.6; margin-top: 40px; max-width: 320px;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <aside class="login-aside">
+        <div class="pattern circle-rim c1"></div>
+        <div class="pattern circle-solid c2"></div>
+        <div class="pattern circle-rim c3"></div>
+        <div class="pattern dots-grid"></div>
+        <div class="pattern wave-pattern"></div>
+        <div class="pattern chevrons">
+            <div class="chevron-unit"></div>
+            <div class="chevron-unit"></div>
+            <div class="chevron-unit"></div>
+        </div>
+
+        <div class="aside-content">
+            <h1 class="sig-text-logo">SIG</h1>
+            <div class="sig-text-software">SOFTWARE</div>
+            <p class="sig-text-desc">SISTEMA DE INFRA E GESTÃO</p>
+        </div>
+    </aside>
+</body>
+</html>
