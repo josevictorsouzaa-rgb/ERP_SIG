@@ -310,11 +310,37 @@ func (a *App) BuscarEmpresas() []motor.Empresa {
 	return empresas
 }
 
+func (a *App) ObterEmpresa(id int) motor.Empresa {
+	if a.banco == nil {
+		return motor.Empresa{}
+	}
+	e, err := a.banco.ObterEmpresa(id)
+	if err != nil {
+		fmt.Printf("❌ Erro ao obter empresa: %v\n", err)
+		return motor.Empresa{}
+	}
+	return e
+}
+
 func (a *App) GravarEmpresa(e motor.Empresa) string {
 	if a.banco == nil {
 		return "Erro: Conexão com o banco não inicializada."
 	}
 	err := a.banco.SalvarEmpresa(e)
+	if err != nil {
+		return err.Error()
+	}
+	if a.ctx != nil {
+		runtime.EventsEmit(a.ctx, "db_event", "empresas_changed")
+	}
+	return "OK"
+}
+
+func (a *App) DeletarEmpresa(id int) string {
+	if a.banco == nil {
+		return "Erro: Conexão com o banco não inicializada."
+	}
+	err := a.banco.ExcluirEmpresa(id)
 	if err != nil {
 		return err.Error()
 	}

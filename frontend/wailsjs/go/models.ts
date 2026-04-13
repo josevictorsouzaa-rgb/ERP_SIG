@@ -130,6 +130,7 @@ export namespace motor {
 	    matriz_id: number;
 	    usa_estoque_compartilhado: boolean;
 	    estoque_id: number;
+	    contatos: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Empresa(source);
@@ -158,6 +159,7 @@ export namespace motor {
 	        this.matriz_id = source["matriz_id"];
 	        this.usa_estoque_compartilhado = source["usa_estoque_compartilhado"];
 	        this.estoque_id = source["estoque_id"];
+	        this.contatos = source["contatos"];
 	    }
 	}
 	export class Enderecamento {

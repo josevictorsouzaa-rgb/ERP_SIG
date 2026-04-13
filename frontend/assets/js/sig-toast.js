@@ -56,3 +56,6 @@ const Toast = {
     error(msg, duration)   { this.show('error', msg, duration); },
     success(msg, duration) { this.show('success', msg, duration); }
 };
+
+// Exportar globalmente para o sistema
+window.Toast = Toast;

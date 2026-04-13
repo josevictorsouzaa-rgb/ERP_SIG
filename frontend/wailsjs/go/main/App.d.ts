@@ -20,6 +20,8 @@ export function ConfirmarEntrada(arg1:number):Promise<string>;
 
 export function ConfirmarSaida():Promise<string>;
 
+export function DeletarEmpresa(arg1:number):Promise<string>;
+
 export function DeletarEnderecamento(arg1:number):Promise<string>;
 
 export function EscutarBanco():Promise<void>;
@@ -101,6 +103,8 @@ export function MostrarAlerta(arg1:string,arg2:string):Promise<void>;
 export function NotificarSelecao(arg1:string):Promise<void>;
 
 export function ObterDescricaoCFOP(arg1:string):Promise<string>;
+
+export function ObterEmpresa(arg1:number):Promise<motor.Empresa>;
 
 export function ObterEntrada(arg1:number):Promise<motor.Entrada>;
 

@@ -37,6 +37,7 @@ type Empresa struct {
 	MatrizID               int    `json:"matriz_id"`
 	UsaEstoqueCompartilhado bool   `json:"usa_estoque_compartilhado"`
 	EstoqueID               int    `json:"estoque_id"`
+	Contatos                string `json:"contatos"`
 }
 
 // Enderecamento representa um nível da árvore logística (Galpão, Rua, etc)
@@ -155,6 +156,7 @@ func (m *MotorBD) CriarTabelasIniciais(schema string) error {
 	m.Conexao.Exec("ALTER TABLE empresas ADD COLUMN IF NOT EXISTS matriz_id INTEGER;")
 	m.Conexao.Exec("ALTER TABLE empresas ADD COLUMN IF NOT EXISTS usa_estoque_compartilhado BOOLEAN DEFAULT FALSE;")
 	m.Conexao.Exec("ALTER TABLE empresas ADD COLUMN IF NOT EXISTS estoque_id INTEGER DEFAULT 0;")
+	m.Conexao.Exec("ALTER TABLE empresas ADD COLUMN IF NOT EXISTS contatos JSONB DEFAULT '[]'::jsonb;")
 	m.Conexao.Exec("ALTER TABLE matriz_fiscal ADD COLUMN IF NOT EXISTS tipo_destino TEXT DEFAULT 'TODAS';")
     
 	// Auto-migrations de Usuários
@@ -427,13 +429,50 @@ func (m *MotorBD) CriarTabelasIniciais(schema string) error {
 	return nil
 }
 
+// ExcluirEmpresa: Deleta uma empresa e suas filiais
+func (m *MotorBD) ExcluirEmpresa(id int) error {
+	// Exclui diretamente usando o cascade ou manualmente se filiais existirem.
+	// Assume-se que o banco PostgreSQL tenha ON DELETE CASCADE nas filiais caso o matriz_id defina ForeignKey.
+	// Senao, excluir recursivamente:
+	_, err := m.Conexao.Exec(`DELETE FROM empresas WHERE matriz_id = $1`, id)
+	if err != nil {
+		return err
+	}
+	_, err = m.Conexao.Exec(`DELETE FROM empresas WHERE id = $1`, id)
+	return err
+}
 // ListarEmpresas: Retorna todas as empresas do banco
 func (m *MotorBD) ObterEmpresa(id int) (Empresa, error) {
 	var e Empresa
 	err := m.Conexao.QueryRow(`
-		SELECT id, razao_social, fantasia, cnpj, inscricao_estadual, uf, regime_tributario 
+		SELECT 
+			id, 
+			razao_social, 
+			COALESCE(fantasia, ''), 
+			cnpj, 
+			COALESCE(inscricao_estadual, ''), 
+			COALESCE(regime_tributario, ''), 
+			COALESCE(logradouro, ''), 
+			COALESCE(numero, ''), 
+			COALESCE(bairro, ''), 
+			COALESCE(cidade, ''), 
+			COALESCE(uf, ''), 
+			COALESCE(cep, ''), 
+			COALESCE(telefone, ''), 
+			COALESCE(tipo, 'JURÍDICA'), 
+			COALESCE(complemento, ''),
+			COALESCE(cnae_principal, ''),
+			COALESCE(cnae_secundarios, ''),
+			is_matriz,
+			COALESCE(matriz_id, 0),
+			COALESCE(usa_estoque_compartilhado, false),
+			COALESCE(estoque_id, 0),
+			COALESCE(contatos::text, '[]')
 		FROM empresas WHERE id = $1`, id).Scan(
-		&e.ID, &e.RazaoSocial, &e.Fantasia, &e.CNPJ, &e.InscricaoEstadual, &e.UF, &e.RegimeTributario,
+		&e.ID, &e.RazaoSocial, &e.Fantasia, &e.CNPJ, &e.InscricaoEstadual, &e.RegimeTributario,
+		&e.Logradouro, &e.Numero, &e.Bairro, &e.Cidade, &e.UF, &e.CEP, &e.Telefone,
+		&e.Tipo, &e.Complemento, &e.CnaePrincipal, &e.CnaeSecundarios,
+		&e.IsMatriz, &e.MatrizID, &e.UsaEstoqueCompartilhado, &e.EstoqueID, &e.Contatos,
 	)
 	return e, err
 }
@@ -462,7 +501,8 @@ func (m *MotorBD) ListarEmpresas() ([]Empresa, error) {
 			is_matriz,
 			COALESCE(matriz_id, 0),
 			COALESCE(usa_estoque_compartilhado, false),
-			COALESCE(estoque_id, 0)
+			COALESCE(estoque_id, 0),
+			COALESCE(contatos::text, '[]')
 		FROM empresas 
 		ORDER BY id ASC
 	`
@@ -497,6 +537,7 @@ func (m *MotorBD) ListarEmpresas() ([]Empresa, error) {
 			&e.MatrizID,
 			&e.UsaEstoqueCompartilhado,
 			&e.EstoqueID,
+			&e.Contatos,
 		)
 		if err != nil {
 			fmt.Printf("Erro no Scan de Empresa: %v\n", err)
@@ -509,51 +550,37 @@ func (m *MotorBD) ListarEmpresas() ([]Empresa, error) {
 
 // SalvarEmpresa: Insere ou atualiza uma empresa no PostgreSQL
 func (m *MotorBD) SalvarEmpresa(e Empresa) error {
-	query := `
-		INSERT INTO empresas (razao_social, fantasia, cnpj, inscricao_estadual, regime_tributario, logradouro, numero, bairro, cidade, uf, cep, telefone, tipo, complemento, cnae_principal, cnae_secundarios, is_matriz, matriz_id, usa_estoque_compartilhado, estoque_id)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)
-		ON CONFLICT (cnpj) DO UPDATE SET
-			razao_social = EXCLUDED.razao_social,
-			fantasia = EXCLUDED.fantasia,
-			inscricao_estadual = EXCLUDED.inscricao_estadual,
-			regime_tributario = EXCLUDED.regime_tributario,
-			logradouro = EXCLUDED.logradouro,
-			numero = EXCLUDED.numero,
-			bairro = EXCLUDED.bairro,
-			cidade = EXCLUDED.cidade,
-			uf = EXCLUDED.uf,
-			cep = EXCLUDED.cep,
-			telefone = EXCLUDED.telefone,
-			tipo = EXCLUDED.tipo,
-			complemento = EXCLUDED.complemento,
-			cnae_principal = EXCLUDED.cnae_principal,
-			cnae_secundarios = EXCLUDED.cnae_secundarios,
-			is_matriz = EXCLUDED.is_matriz,
-			matriz_id = EXCLUDED.matriz_id,
-			usa_estoque_compartilhado = EXCLUDED.usa_estoque_compartilhado,
-			estoque_id = EXCLUDED.estoque_id
-	`
-	fmt.Printf("💾 SQL-DEBUG: Gravando empresa CNPJ=%s, Matriz=%v, EstoqueID=%d\n", e.CNPJ, e.IsMatriz, e.EstoqueID)
-	_, err := m.Conexao.Exec(query, 
-		e.RazaoSocial, e.Fantasia, e.CNPJ, e.InscricaoEstadual, e.RegimeTributario, 
-		e.Logradouro, e.Numero, e.Bairro, e.Cidade, e.UF, e.CEP, e.Telefone, e.Tipo,
-		e.Complemento, e.CnaePrincipal, e.CnaeSecundarios, e.IsMatriz, e.MatrizID, e.UsaEstoqueCompartilhado, e.EstoqueID)
-	if err != nil {
-		fmt.Printf("❌ ERRO SQL AO GRAVAR EMPRESA: %v\n", err)
-		return err
+	if e.ID > 0 {
+		query := `UPDATE empresas SET 
+			razao_social = $1, fantasia = $2, cnpj = $3, inscricao_estadual = $4, regime_tributario = $5, 
+			logradouro = $6, numero = $7, bairro = $8, cidade = $9, uf = $10, cep = $11, telefone = $12, 
+			tipo = $13, complemento = $14, cnae_principal = $15, cnae_secundarios = $16, is_matriz = $17, 
+			matriz_id = $18, usa_estoque_compartilhado = $19, estoque_id = $20, contatos = $21
+			WHERE id = $22`
+		_, err := m.Conexao.Exec(query,
+			e.RazaoSocial, e.Fantasia, e.CNPJ, e.InscricaoEstadual, e.RegimeTributario,
+			e.Logradouro, e.Numero, e.Bairro, e.Cidade, e.UF, e.CEP, e.Telefone, e.Tipo,
+			e.Complemento, e.CnaePrincipal, e.CnaeSecundarios, e.IsMatriz, e.MatrizID, e.UsaEstoqueCompartilhado, e.EstoqueID, e.Contatos, e.ID)
+		if err != nil {
+			fmt.Printf("❌ ERRO SQL AO ATUALIZAR EMPRESA: %v\n", err)
+			return err
+		}
+	} else {
+		query := `
+			INSERT INTO empresas (razao_social, fantasia, cnpj, inscricao_estadual, regime_tributario, logradouro, numero, bairro, cidade, uf, cep, telefone, tipo, complemento, cnae_principal, cnae_secundarios, is_matriz, matriz_id, usa_estoque_compartilhado, estoque_id, contatos)
+			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21)
+		`
+		_, err := m.Conexao.Exec(query, 
+			e.RazaoSocial, e.Fantasia, e.CNPJ, e.InscricaoEstadual, e.RegimeTributario, 
+			e.Logradouro, e.Numero, e.Bairro, e.Cidade, e.UF, e.CEP, e.Telefone, e.Tipo,
+			e.Complemento, e.CnaePrincipal, e.CnaeSecundarios, e.IsMatriz, e.MatrizID, e.UsaEstoqueCompartilhado, e.EstoqueID, e.Contatos)
+		if err != nil {
+			fmt.Printf("❌ ERRO SQL AO INSERIR EMPRESA: %v\n", err)
+			return err
+		}
 	}
 	m.Notificar("sig_events", "empresas_changed")
-	fmt.Println("✅ SQL-DEBUG: Empresa gravada com sucesso.")
 	return nil
-}
-
-// ExcluirEmpresa: Remove uma empresa pelo ID
-func (m *MotorBD) ExcluirEmpresa(id int) error {
-	_, err := m.Conexao.Exec("DELETE FROM empresas WHERE id = $1", id)
-	if err == nil {
-		m.Notificar("sig_events", "empresas_changed")
-	}
-	return err
 }
 
 // --- MÓDULO DE USUÁRIOS ---

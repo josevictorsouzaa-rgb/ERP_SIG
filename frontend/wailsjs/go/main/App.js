@@ -38,6 +38,10 @@ export function ConfirmarSaida() {
   return window['go']['main']['App']['ConfirmarSaida']();
 }
 
+export function DeletarEmpresa(arg1) {
+  return window['go']['main']['App']['DeletarEmpresa'](arg1);
+}
+
 export function DeletarEnderecamento(arg1) {
   return window['go']['main']['App']['DeletarEnderecamento'](arg1);
 }
@@ -200,6 +204,10 @@ export function NotificarSelecao(arg1) {
 
 export function ObterDescricaoCFOP(arg1) {
   return window['go']['main']['App']['ObterDescricaoCFOP'](arg1);
+}
+
+export function ObterEmpresa(arg1) {
+  return window['go']['main']['App']['ObterEmpresa'](arg1);
 }
 
 export function ObterEntrada(arg1) {
