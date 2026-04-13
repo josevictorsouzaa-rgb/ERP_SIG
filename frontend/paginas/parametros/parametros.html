@@ -22,7 +22,8 @@
         }
     </script>
     <link rel="stylesheet" href="../../assets/css/sig-ui.css">
-    <script src="../../componentes/blueprint/sig-statusbar.js"></script>
+    <script src="../../componentes/ui_global/sig-statusbar.js"></script>
+    <script src="../../componentes/ui_global/modal_fornecedor.js"></script>
     <script src="../../assets/js/sig-toast.js"></script>
     <style>
         /* ESTILIZAÇÃO PROFISSIONAL PARA DATAS (FIM DO LOOK NAVEGADOR) */
@@ -57,14 +58,15 @@
                     <span>Empresas</span>
                     <span class="sig-shortcut">F2</span>
                 </div>
-                <div id="btn-produtos" onclick="mostrarAba('produtos')" class="sig-menu-item">
-                    <span>Produtos</span>
+                <div id="btn-marcas" onclick="mostrarAba('marcas')" class="sig-menu-item">
+                    <span>Marcas</span>
                     <span class="sig-shortcut">F3</span>
                 </div>
-                <div id="btn-politicas" onclick="mostrarAba('politicas')" class="sig-menu-item">
-                    <span>Políticas</span>
+                <div id="btn-categorias" onclick="mostrarAba('categorias')" class="sig-menu-item">
+                    <span>Categorias</span>
                     <span class="sig-shortcut">F4</span>
                 </div>
+
                 <div id="btn-usuarios" onclick="mostrarAba('usuarios')" class="sig-menu-item">
                     <span>Usuários</span>
                     <span class="sig-shortcut">F5</span>
@@ -86,164 +88,34 @@
                 <!-- CONTEÚDO INJETADO VIA FETCH DE "./tabela/empresa_tabela.html" -->
             </div>
 
-            <!-- SEÇÃO DE PRODUTOS -->
-            <div id="aba-produtos" class="sig-secao hidden w-full flex flex-col h-full overflow-hidden">
-                <div class="mb-4 flex items-end justify-between shrink-0">
-                    <div>
-                        <h2 class="sig-header-classic">Parâmetros de Produtos</h2>
-                    </div>
-                </div>
-
-                <div class="sig-tabs shrink-0 -mb-[1px] relative z-10">
-                    <div id="btn-sub-marcas" onclick="mudarSubAba('marcas')" class="sig-tab ativa">MARCAS</div>
-                    <div id="btn-sub-categorias" onclick="mudarSubAba('categorias')" class="sig-tab">CATEGORIAS / SUBCATEGORIAS</div>
-                </div>
-
-                <div class="flex flex-col flex-1 overflow-hidden min-h-0 bg-white border border-t-0 border-slate-200 rounded-b-sm">
-                    <!-- ABA 1: MARCAS -->
-                    <div id="sub-marcas" class="flex-1 flex flex-col overflow-hidden hidden">
-                        <div class="p-2 px-4 flex justify-between items-center border-b border-slate-100 bg-slate-50/10">
-                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Lista de Marcas</span>
-                            <button onclick="abrirModalGenerico('Marca', 'salvarBdMarca')" class="text-sig-blue hover:underline text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
-                                <span class="material-symbols-outlined text-sm">add</span> Nova Marca
-                            </button>
-                        </div>
-                        <div class="flex-1 overflow-y-auto">
-                            <table class="sig-table sig-table-sm w-full">
-                                <thead class="sticky top-0 bg-white shadow-sm z-10">
-                                    <tr>
-                                        <th class="w-16">ID</th>
-                                        <th>Nome da Marca</th>
-                                        <th class="w-24 sig-text-center">Margem (%)</th>
-                                        <th class="w-24 sig-text-center">AÇÕES</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="corpo-tabela-marcas"></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- ABA 2: CATEGORIAS (ÁRVORE) -->
-                    <div id="sub-categorias" class="flex-1 flex flex-col overflow-hidden hidden">
-                        <div class="p-2 px-4 flex justify-between items-center border-b border-slate-100 bg-slate-50/10">
-                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Lista de Categorias</span>
-                            <button onclick="abrirModalGenerico('Categoria', 'salvarBdCategoria')" class="text-sig-blue hover:underline text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
-                                <span class="material-symbols-outlined text-sm">add</span> Nova Categoria
-                            </button>
-                        </div>
-                        <div class="flex-1 overflow-y-auto">
-                            <table class="sig-table sig-table-sm w-full">
-                                <thead class="sticky top-0 bg-white shadow-sm z-10">
-                                    <tr>
-                                        <th class="w-16">ID / PAI</th>
-                                        <th>Estrutura do Sistema</th>
-                                        <th class="w-24 sig-text-center">Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="corpo-tabela-categorias"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+            <!-- SEÇÃO DE MARCAS -->
+            <div id="aba-marcas" class="sig-secao hidden w-full flex flex-col h-full overflow-hidden">
+                <!-- CONTEÚDO INJETADO VIA FETCH -->
             </div>
 
-            <!-- SEÇÃO DE POLÍTICAS -->
-            <div id="aba-politicas" class="sig-secao hidden w-full">
-                <div class="mb-10 flex items-end justify-between border-b border-slate-100 pb-5">
-                    <div>
-                        <h2 class="sig-header-classic">Políticas Comerciais</h2>
-                        <p class="text-[10px] text-slate-400 font-bold uppercase mt-1 tracking-widest italic opacity-70">Regras e Diretrizes</p>
-                    </div>
-                </div>
-                <div class="overflow-hidden border border-slate-200 rounded-sm p-10 flex items-center justify-center bg-slate-50">
-                    <p class="text-slate-400 text-xs font-bold tracking-wider uppercase">Área em construção</p>
-                </div>
+            <!-- SEÇÃO DE CATEGORIAS -->
+            <div id="aba-categorias" class="sig-secao hidden w-full flex flex-col h-full overflow-hidden">
+                <!-- CONTEÚDO INJETADO VIA FETCH -->
             </div>
+
+
 
             <div id="aba-usuarios" class="sig-secao hidden flex flex-col h-full overflow-hidden">
-                <div class="mb-4 flex items-end justify-between border-b border-slate-100 pb-3 shrink-0 px-2 bg-slate-50/20">
-                    <div>
-                        <h2 class="sig-header-classic">Gestão de Acessos</h2>
-                        <p class="text-[9px] text-slate-400 font-black uppercase tracking-widest mt-0.5 opacity-70">Operadores do sistema e permissões</p>
-                    </div>
-                    <button onclick="abrirModalUsuario()" class="sig-btn sig-btn-primary shadow-sm flex items-center gap-2">
-                        <span class="text-xs">+</span> Novo Usuário
-                    </button>
-                </div>
-                <div class="flex-1 overflow-y-auto border border-slate-200 rounded-sm bg-white">
-                    <table class="sig-table sig-table-sm w-full">
-                        <thead class="sticky top-0 bg-white z-10 shadow-sm">
-                            <tr>
-                                <th class="w-16 sig-text-center">ID</th>
-                                <th>Operador / Nome Completo</th>
-                                <th>CPF</th>
-                                <th>Função de Acesso</th>
-                                <th>Login</th>
-                                <th class="sig-text-center">Último Acesso</th>
-                                <th class="sig-text-center">Status</th>
-                                <th class="w-32 sig-text-center">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="corpo-tabela-usuarios"></tbody>
-                    </table>
-                    <div id="status-usuarios" class="py-10 text-center text-slate-300 text-[10px] font-black uppercase tracking-widest">Carregando banco de usuários...</div>
-                </div>
+                <!-- CONTEÚDO INJETADO VIA FETCH DE "./tabelas/usuarios_tabela.html" -->
             </div>
 
             <div id="aba-funcoes" class="sig-secao hidden flex flex-col h-full overflow-hidden">
-                <div class="mb-4 flex items-end justify-between border-b border-slate-100 pb-3 shrink-0 px-2 bg-slate-50/20">
-                    <div>
-                        <h2 class="sig-header-classic">Cargos e Funções</h2>
-                        <p class="text-[9px] text-slate-400 font-black uppercase tracking-widest mt-0.5 opacity-70">Hierarquia e níveis de acesso</p>
-                    </div>
-                    <button onclick="abrirModalFuncao()" class="sig-btn sig-btn-primary shadow-sm flex items-center gap-2">
-                        <span class="text-xs">+</span> Nova Função
-                    </button>
-                </div>
-                <div class="flex-1 overflow-y-auto border border-slate-200 rounded-sm bg-white">
-                    <table class="sig-table sig-table-sm w-full">
-                        <thead class="sticky top-0 bg-slate-100 shadow-sm z-10 border-b border-slate-200">
-                            <tr>
-                                <th class="w-20 sig-text-center">ID</th>
-                                <th>Nome da Função</th>
-                                <th class="w-32 sig-text-center">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="corpo-tabela-funcoes"></tbody>
-                    </table>
-                </div>
+                <!-- CONTEÚDO INJETADO VIA FETCH DE "./tabelas/funcoes_tabela.html" -->
             </div>
 
             <div id="aba-fornecedores" class="sig-secao hidden flex flex-col h-full overflow-hidden">
-                <div class="mb-4 flex items-end justify-between border-b border-slate-100 pb-3 shrink-0 px-2 bg-slate-50/20">
-                    <div>
-                        <h2 class="sig-header-classic">Gerenciamento de Fornecedores</h2>
-                        <p class="text-[9px] text-slate-400 font-black uppercase tracking-widest mt-0.5 opacity-70">Cadastro centralizado de parceiros e fornecedores</p>
-                    </div>
-                    <button onclick="abrirModalFornecedor()" class="sig-btn sig-btn-primary shadow-sm flex items-center gap-2">
-                        <span class="text-xs">+</span> Novo Fornecedor
-                    </button>
-                </div>
-                <div class="flex-1 overflow-y-auto border border-slate-200 rounded-sm bg-white">
-                    <table class="sig-table sig-table-sm w-full">
-                        <thead class="sticky top-0 bg-slate-100 shadow-sm z-10 border-b border-slate-200">
-                            <tr>
-                                <th class="w-20 sig-text-center">ID</th>
-                                <th>Nome Fantasia / Razão Social</th>
-                                <th>CNPJ/CPF</th>
-                                <th class="w-32 sig-text-center">Status</th>
-                                <th class="w-24 sig-text-center">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="corpo-tabela-fornecedores"></tbody>
-                    </table>
-                </div>
+                <!-- CONTEÚDO INJETADO VIA FETCH DE "./tabelas/fornecedores_tabela.html" -->
             </div>
         </main>
     </div>
 
     <!-- STATUS BAR / RODAPÉ PADRÃO SIG (Web Component) -->
-    <sig-statusbar terminal="PARÂMETROS" atalhos="F2 EMPRESAS | F3 PRODUTOS | F5 USUÁRIOS | F7 FORNECEDORES"></sig-statusbar>
+    <sig-statusbar terminal="PARÂMETROS" atalhos="F2 EMPRESAS | F3 MARCAS | F4 CATEGORIAS | F5 USUÁRIOS | F7 FORNECEDORES"></sig-statusbar>
 
     <!-- CONTAINER DE MODAIS -->
     <div id="modal-container-fornecedores"></div>

@@ -1,0 +1,23 @@
+
+                <div class="mb-4 flex items-end justify-between border-b border-slate-100 pb-3 shrink-0 px-2 bg-slate-50/20">
+                    <div>
+                        <h2 class="sig-header-classic">Cargos e Funções</h2>
+                        <p class="text-[9px] text-slate-400 font-black uppercase tracking-widest mt-0.5 opacity-70">Hierarquia e níveis de acesso</p>
+                    </div>
+                    <button onclick="abrirModalFuncao()" class="sig-btn sig-btn-primary shadow-sm flex items-center gap-2">
+                        <span class="text-xs">+</span> Nova Função
+                    </button>
+                </div>
+                <div class="flex-1 overflow-y-auto border border-slate-200 rounded-sm bg-white">
+                    <table class="sig-table sig-table-sm w-full">
+                        <thead class="sticky top-0 bg-slate-100 shadow-sm z-10 border-b border-slate-200">
+                            <tr>
+                                <th class="w-20 sig-text-center">ID</th>
+                                <th>Nome da Função</th>
+                                <th class="w-32 sig-text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="corpo-tabela-funcoes"></tbody>
+                    </table>
+                </div>
+            

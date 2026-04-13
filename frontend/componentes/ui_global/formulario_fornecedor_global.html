@@ -1,0 +1,166 @@
+
+    <!-- MODAL CADASTRO COMPLETO FORNECEDOR (ESTILO SIG OFICIAL) -->
+    <div id="modal-fornecedor-rapido" class="fixed inset-0 bg-black/60 z-[99] flex justify-center items-center p-4 animate-opacity hidden">
+        <div class="bg-white w-full max-w-[850px] rounded-md shadow-2xl overflow-hidden border border-slate-400">
+            <!-- CABEÇALHO PADRÃO SIG -->
+            <div class="bg-slate-50 p-2 px-4 flex justify-between items-center border-b border-slate-300">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-slate-500 text-sm">person</span>
+                    <h3 class="text-slate-700 font-bold text-[11px] uppercase tracking-wider">Cadastro de Fornecedor</h3>
+                </div>
+                <button onclick="fecharCadastroRapidoFornecedor()" class="sig-btn-close !w-7 !h-7">
+                    <span class="material-symbols-outlined !text-base">close</span>
+                </button>
+            </div>
+
+            <!-- AREA DE CONTEÚDO (SEM ABAS, VISUAL ÚNICO) -->
+            <div class="flex-1 overflow-hidden flex flex-col bg-slate-50">
+                <div class="flex-1 p-5 grid grid-cols-12 gap-5 overflow-hidden">
+                    <!-- COLUNA ESQUERDA: FOTOS E DADOS PRINCIPAIS -->
+                    <div class="col-span-4 flex flex-col gap-4 overflow-hidden">
+                        <!-- LOGO DO FORNECEDOR -->
+                        <div class="sig-fieldset bg-white relative shrink-0">
+                            <span class="sig-legend text-blue-600">Logo do Fornecedor</span>
+                            <div class="flex flex-col items-center justify-center p-4 gap-3 bg-slate-50 border-2 border-dashed border-slate-200 rounded-sm group hover:border-sig-blue transition-colors cursor-pointer relative overflow-hidden h-[180px]"
+                                onclick="document.getElementById('forn-logo-input').click()">
+                                <input type="file" id="forn-logo-input" class="hidden" accept="image/*"
+                                    onchange="previewLogoFornecedor(this)">
+                                <img id="forn-logo-preview" class="hidden h-full w-full object-contain">
+                                <div id="forn-logo-placeholder" class="flex flex-col items-center text-slate-400 group-hover:text-sig-blue">
+                                    <span class="material-symbols-outlined !text-4xl">add_photo_alternate</span>
+                                    <span class="text-[9px] font-black uppercase mt-1">Carregar Logotipo</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ID E DOCUMENTO -->
+                        <div class="sig-fieldset bg-white relative">
+                            <span class="sig-legend">Identificação</span>
+                            <div class="space-y-3 pt-1">
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div class="flex flex-col">
+                                        <label class="sig-label">Tipo Fornecedor</label>
+                                        <div class="flex bg-slate-200/60 p-0.5 rounded-sm border border-slate-300 h-8">
+                                            <input type="hidden" id="forn-completo-tipo" value="J">
+                                            <button id="btn-tipo-j" type="button" onclick="setTipoFornecedor('J')" class="flex-1 flex items-center justify-center text-[10px] font-bold uppercase rounded-sm cursor-pointer transition-all bg-white text-blue-800 shadow-[0_1px_2px_rgba(0,0,0,0.1)]">Jurídica</button>
+                                            <button id="btn-tipo-f" type="button" onclick="setTipoFornecedor('F')" class="flex-1 flex items-center justify-center text-[10px] font-bold uppercase rounded-sm cursor-pointer transition-all text-slate-500">Física</button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="sig-label">ID Sistema</label>
+                                        <input type="text" id="forn-completo-id" class="sig-input sig-input-dense w-full bg-slate-100 text-center font-mono font-black border-slate-300 text-blue-900" value="0156" readonly>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="sig-label">CNPJ / CPF *</label>
+                                    <div class="flex gap-1">
+                                        <input type="text" id="forn-completo-documento" class="sig-input sig-input-dense font-mono flex-1 border-blue-200" placeholder="00.000.000/0000-00" oninput="formatarDocumento(this)">
+                                        <button id="btn-consulta-cnpj" onclick="consultarCNPJFornecedor()" class="sig-btn btn-search-blue px-3 !h-[28px] flex items-center shadow-sm">
+                                            <span class="material-symbols-outlined !text-sm">search</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="sig-label">Inscrição Estadual (IE)</label>
+                                    <input type="text" id="forn-completo-ie" class="sig-input sig-input-dense w-full disabled-field" placeholder="DIGITE O NÚMERO OU ISENTO" disabled>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COLUNA DIREITA: NOMES, ENDEREÇO E CONTATOS -->
+                    <div class="col-span-8 flex flex-col gap-4 overflow-hidden">
+                        <!-- NOMES -->
+                        <div id="section-nomes" class="sig-fieldset bg-white relative shrink-0 sig-fieldset-bloqueado">
+                            <span class="sig-legend text-blue-600">Nomes e Marcas</span>
+                            <div class="grid grid-cols-2 gap-4 mt-1">
+                                <div>
+                                    <label class="sig-label">Nome Fantasia (Como conhecemos) *</label>
+                                    <input type="text" id="forn-completo-fantasia" class="sig-input sig-input-dense uppercase font-bold text-blue-800" placeholder="EX: AUTO PEÇAS DO JOÃO">
+                                </div>
+                                <div>
+                                    <label class="sig-label">Razão Social (Oficial)</label>
+                                    <input type="text" id="forn-completo-razao" class="sig-input sig-input-dense uppercase" placeholder="EX: JOÃO DA SILVA AUTO PEÇAS LTDA">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ENDEREÇO COMPACTO -->
+                        <div id="section-endereco" class="sig-fieldset bg-white relative shrink-0 sig-fieldset-bloqueado">
+                            <span class="sig-legend">Localização & Logística</span>
+                            <div class="grid grid-cols-12 gap-3 mt-1">
+                                <div class="col-span-2">
+                                    <label class="sig-label">CEP</label>
+                                    <input type="text" id="forn-completo-cep" onblur="consultarCEPFornecedor()" class="sig-input sig-input-dense font-mono text-center" placeholder="00000-000">
+                                </div>
+                                <div class="col-span-7">
+                                    <label class="sig-label">Endereço (Logradouro)</label>
+                                    <input type="text" id="forn-completo-endereco" class="sig-input sig-input-dense uppercase" placeholder="RUA, AVENIDA, ETC">
+                                </div>
+                                <div class="col-span-3">
+                                    <label class="sig-label">Número</label>
+                                    <input type="text" id="forn-completo-numero" class="sig-input sig-input-dense text-center" placeholder="S/N">
+                                </div>
+                                <div class="col-span-4">
+                                    <label class="sig-label">Bairro</label>
+                                    <input type="text" id="forn-completo-bairro" class="sig-input sig-input-dense uppercase" placeholder="NOME DO BAIRRO">
+                                </div>
+                                <div class="col-span-6">
+                                    <label class="sig-label">Cidade (Município)</label>
+                                    <input type="text" id="forn-completo-cidade" class="sig-input sig-input-dense uppercase" placeholder="NOME DA CIDADE">
+                                </div>
+                                <div class="col-span-2">
+                                    <label class="sig-label">UF</label>
+                                    <input type="text" id="forn-completo-uf" class="sig-input sig-input-dense uppercase text-center" placeholder="UF" maxlength="2">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CONTATOS (GRID DINÂMICO) -->
+                        <div id="section-contatos" class="sig-fieldset bg-white relative flex-1 flex flex-col overflow-hidden min-h-[160px] sig-fieldset-bloqueado">
+                            <span class="sig-legend text-emerald-600">Canais de Atendimento</span>
+                            <div class="grid grid-cols-12 gap-2 mt-1 bg-slate-50 p-2 border border-slate-200 rounded-sm shrink-0">
+                                <div class="col-span-4">
+                                    <input type="text" id="contato-nome" class="sig-input sig-input-dense w-full uppercase" placeholder="NOME DO VENDEDOR">
+                                </div>
+                                <div class="col-span-4">
+                                    <input type="text" id="contato-tel" class="sig-input sig-input-dense w-full" placeholder="(00) 00000-0000" oninput="formatarTelefone(this)">
+                                </div>
+                                <div class="col-span-3">
+                                    <input type="text" id="contato-dept" class="sig-input sig-input-dense w-full uppercase" placeholder="EX: VENDAS / FINANC">
+                                </div>
+                                <div class="col-span-1">
+                                    <button onclick="adicionarContato()" class="btn-incluir-verde w-full !h-[28px] flex items-center justify-center rounded-sm">
+                                        <span class="material-symbols-outlined !text-sm">add</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="flex-1 overflow-y-auto mt-2 border border-slate-100 rounded-sm">
+                                <table class="sig-table sig-table-sm w-full">
+                                    <thead class="sticky top-0 z-10 bg-slate-100">
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th class="w-32 text-center">Telefone</th>
+                                            <th class="w-24 text-center">Dept.</th>
+                                            <th class="w-10 text-center">...</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="lista-contatos-fornecedor">
+                                        <!-- Vazio -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-3 bg-slate-50 border-t border-slate-200 flex justify-end gap-2 px-6">
+                <button id="btn-salvar-modal" onclick="salvarFornecedorRapido()" class="sig-btn sig-btn-primary min-w-[240px] shadow-lg flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined !text-[18px]">save</span>
+                    <span class="tracking-widest font-black uppercase text-[10px]">Gravar Fornecedor (F10)</span>
+                </button>
+            </div>
+        </div>
+    </div>

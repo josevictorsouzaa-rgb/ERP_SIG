@@ -54,8 +54,16 @@ export function ExcluirAliquotaFiscal(arg1) {
   return window['go']['main']['App']['ExcluirAliquotaFiscal'](arg1);
 }
 
+export function ExcluirCategoria(arg1) {
+  return window['go']['main']['App']['ExcluirCategoria'](arg1);
+}
+
 export function ExcluirFornecedor(arg1) {
   return window['go']['main']['App']['ExcluirFornecedor'](arg1);
+}
+
+export function ExcluirFuncao(arg1) {
+  return window['go']['main']['App']['ExcluirFuncao'](arg1);
 }
 
 export function ExcluirMatrizFiscal(arg1) {
@@ -68,6 +76,10 @@ export function ExcluirPerfilFiscal(arg1) {
 
 export function ExcluirProduto(arg1) {
   return window['go']['main']['App']['ExcluirProduto'](arg1);
+}
+
+export function ExcluirSubcategoria(arg1) {
+  return window['go']['main']['App']['ExcluirSubcategoria'](arg1);
 }
 
 export function ExcluirUsuario(arg1) {
@@ -92,6 +104,10 @@ export function GetPermissoesLogado() {
 
 export function GetProximoIDFornecedor() {
   return window['go']['main']['App']['GetProximoIDFornecedor']();
+}
+
+export function GetProximoIDFuncao() {
+  return window['go']['main']['App']['GetProximoIDFuncao']();
 }
 
 export function GetProximoIDUsuario() {
@@ -198,6 +214,10 @@ export function MostrarAlerta(arg1, arg2) {
   return window['go']['main']['App']['MostrarAlerta'](arg1, arg2);
 }
 
+export function MostrarConfirmacao(arg1, arg2) {
+  return window['go']['main']['App']['MostrarConfirmacao'](arg1, arg2);
+}
+
 export function NotificarSelecao(arg1) {
   return window['go']['main']['App']['NotificarSelecao'](arg1);
 }
@@ -262,12 +282,20 @@ export function SalvarAliquotaFiscal(arg1) {
   return window['go']['main']['App']['SalvarAliquotaFiscal'](arg1);
 }
 
+export function SalvarCategoria(arg1, arg2) {
+  return window['go']['main']['App']['SalvarCategoria'](arg1, arg2);
+}
+
 export function SalvarEntrada(arg1) {
   return window['go']['main']['App']['SalvarEntrada'](arg1);
 }
 
 export function SalvarFornecedor(arg1) {
   return window['go']['main']['App']['SalvarFornecedor'](arg1);
+}
+
+export function SalvarFuncao(arg1) {
+  return window['go']['main']['App']['SalvarFuncao'](arg1);
 }
 
 export function SalvarGrupoAcesso(arg1) {
@@ -296,6 +324,10 @@ export function SalvarProduto(arg1) {
 
 export function SalvarSolicitacaoCompra(arg1) {
   return window['go']['main']['App']['SalvarSolicitacaoCompra'](arg1);
+}
+
+export function SalvarSubcategoria(arg1, arg2, arg3) {
+  return window['go']['main']['App']['SalvarSubcategoria'](arg1, arg2, arg3);
 }
 
 export function SalvarUsuario(arg1) {

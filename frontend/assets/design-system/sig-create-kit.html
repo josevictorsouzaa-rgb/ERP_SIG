@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <title>SIG CREATE KIT - Showcase Oficial</title>
     <!-- Web Components Oficiais -->
-    <script src="../../componentes/blueprint/sig-sidebar.js"></script>
-    <script src="../../componentes/blueprint/sig-toolbar.js"></script>
-    <script src="../../componentes/blueprint/sig-statusbar.js"></script>
-    <script src="../../componentes/blueprint/sig-tabs.js"></script>
-    <script src="../../componentes/blueprint/sig-tree.js"></script>
+    <script src="../../componentes/ui_global/sig-sidebar.js"></script>
+    <script src="../../componentes/ui_global/sig-toolbar.js"></script>
+    <script src="../../componentes/ui_global/sig-statusbar.js"></script>
+    <script src="../../componentes/ui_global/sig-tabs.js"></script>
+    <script src="../../componentes/ui_global/sig-tree.js"></script>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -694,7 +694,11 @@
                 <td class="text-right font-mono font-bold text-slate-800 border-l border-slate-100">R$ 1.500,00</td>
                 <td class="sig-text-center border-l border-slate-100"><span class="sig-badge-primary">ATIVO</span></td>
                 <td class="sig-text-center border-l border-slate-100">
-                    <button class="sig-btn-icon" title="Editar"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+                    <div class="flex items-center justify-center gap-1">
+                        <button class="sig-btn-icon" title="Editar"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+                        <button class="sig-btn-icon hover:!border-orange-500 hover:!text-orange-600 hover:!bg-orange-50" title="Desabilitar"><span class="material-symbols-outlined text-[18px]">block</span></button>
+                        <button class="sig-btn-icon hover:!border-red-500 hover:!text-red-600 hover:!bg-red-50" title="Excluir"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+                    </div>
                 </td>
             </tr>
         </tbody>
@@ -721,7 +725,11 @@
                 <td class="text-right font-mono font-bold text-slate-800 border-l border-slate-100">R$ 800,00</td>
                 <td class="sig-text-center border-l border-slate-100"><span class="sig-badge-warning" style="font-size: 9px; padding: 2px 6px;">PENDENTE</span></td>
                 <td class="sig-text-center border-l border-slate-100">
-                    <button class="sig-btn-icon" title="Editar"><span class="material-symbols-outlined text-[16px]">edit</span></button>
+                    <div class="flex items-center justify-center gap-1">
+                        <button class="sig-btn-icon" title="Editar"><span class="material-symbols-outlined text-[16px]">edit</span></button>
+                        <button class="sig-btn-icon hover:!border-orange-500 hover:!text-orange-600 hover:!bg-orange-50" title="Desabilitar"><span class="material-symbols-outlined text-[16px]">block</span></button>
+                        <button class="sig-btn-icon hover:!border-red-500 hover:!text-red-600 hover:!bg-red-50" title="Excluir"><span class="material-symbols-outlined text-[16px]">delete</span></button>
+                    </div>
                 </td>
             </tr>
         </tbody>
@@ -748,7 +756,11 @@
                 <td class="text-right font-mono font-bold text-slate-800 border-l border-slate-100">R$ 15,50</td>
                 <td class="sig-text-center border-l border-slate-100"><span class="sig-badge-success" style="font-size: 8px; padding: 1px 4px;">OK</span></td>
                 <td class="sig-text-center border-l border-slate-100">
-                    <button class="sig-btn-icon" title="Editar" style="width:16px; height:16px;"><span class="material-symbols-outlined text-[14px]">edit</span></button>
+                    <div class="flex items-center justify-center gap-1">
+                        <button class="sig-btn-icon" title="Editar" style="width:16px; height:16px;"><span class="material-symbols-outlined text-[14px]">edit</span></button>
+                        <button class="sig-btn-icon hover:!border-orange-500 hover:!text-orange-600 hover:!bg-orange-50" title="Desabilitar" style="width:16px; height:16px;"><span class="material-symbols-outlined text-[14px]">block</span></button>
+                        <button class="sig-btn-icon hover:!border-red-500 hover:!text-red-600 hover:!bg-red-50" title="Excluir" style="width:16px; height:16px;"><span class="material-symbols-outlined text-[14px]">delete</span></button>
+                    </div>
                 </td>
             </tr>
             <tr class="hover:bg-blue-50 cursor-pointer border-b border-slate-100 transition-colors bg-white">
@@ -757,7 +769,11 @@
                 <td class="text-right font-mono font-bold text-slate-800 border-l border-slate-100">R$ 220,00</td>
                 <td class="sig-text-center border-l border-slate-100"><span class="sig-badge-success" style="font-size: 8px; padding: 1px 4px;">OK</span></td>
                 <td class="sig-text-center border-l border-slate-100">
-                    <button class="sig-btn-icon" title="Editar" style="width:16px; height:16px;"><span class="material-symbols-outlined text-[14px]">edit</span></button>
+                    <div class="flex items-center justify-center gap-1">
+                        <button class="sig-btn-icon" title="Editar" style="width:16px; height:16px;"><span class="material-symbols-outlined text-[14px]">edit</span></button>
+                        <button class="sig-btn-icon hover:!border-orange-500 hover:!text-orange-600 hover:!bg-orange-50" title="Desabilitar" style="width:16px; height:16px;"><span class="material-symbols-outlined text-[14px]">block</span></button>
+                        <button class="sig-btn-icon hover:!border-red-500 hover:!text-red-600 hover:!bg-red-50" title="Excluir" style="width:16px; height:16px;"><span class="material-symbols-outlined text-[14px]">delete</span></button>
+                    </div>
                 </td>
             </tr>
         </tbody>
@@ -791,18 +807,16 @@
                 <td class="font-mono text-[#1e40af] text-xs sig-text-center font-bold border-r border-slate-200">001</td>
                 <td class="font-bold text-slate-800 text-sm tracking-wide">
                     <div class="flex items-center gap-2 uppercase">
-                        <span class="material-symbols-outlined text-[#1e40af] text-[20px] transition-transform duration-200" id="icon-sys-001">keyboard_arrow_down</span>
+                        <span class="material-symbols-outlined text-[#1e40af] text-[20px] transition-transform duration-200 icon-tree rotate-90" id="icon-sys-001">chevron_right</span>
                         SISTEMA MOTOR
                     </div>
                 </td>
                 <td class="sig-text-center border-l border-slate-200">
-                    <div class="flex justify-center gap-2 opacity-50 group-hover:opacity-100 transition-opacity">
-                        <button class="sig-btn-icon text-[#1e40af] hover:bg-blue-100" title="+ Nova Subcategoria" onclick="event.stopPropagation()">
-                            <span class="material-symbols-outlined text-[18px]">add_circle</span>
-                        </button>
-                        <button class="sig-btn-icon sig-text-red hover:bg-red-50" title="Apagar Categoria" onclick="event.stopPropagation()">
-                            <span class="material-symbols-outlined text-[18px]">delete</span>
-                        </button>
+                    <div class="flex items-center justify-center gap-1" onclick="event.stopPropagation()">
+                        <button class="sig-btn-icon" title="Nova Subcategoria"><span class="material-symbols-outlined text-[18px]">add</span></button>
+                        <button class="sig-btn-icon" title="Editar"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+                        <button class="sig-btn-icon hover:!border-orange-500 hover:!text-orange-600 hover:!bg-orange-50" title="Desabilitar"><span class="material-symbols-outlined text-[18px]">block</span></button>
+                        <button class="sig-btn-icon hover:!border-red-500 hover:!text-red-600 hover:!bg-red-50" title="Excluir"><span class="material-symbols-outlined text-[18px]">delete</span></button>
                     </div>
                 </td>
             </tr>
@@ -821,13 +835,10 @@
                     </div>
                 </td>
                 <td class="sig-text-center border-l border-slate-100">
-                    <div class="flex justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button class="sig-btn-icon text-slate-400 hover:text-[#1e40af] hover:bg-blue-50" title="Editar Subcategoria">
-                            <span class="material-symbols-outlined text-[16px]">edit</span>
-                        </button>
-                        <button class="sig-btn-icon sig-text-red hover:bg-red-50" title="Remover Subcategoria">
-                            <span class="material-symbols-outlined text-[16px]">close</span>
-                        </button>
+                    <div class="flex justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button class="sig-btn-icon" title="Editar"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+                        <button class="sig-btn-icon hover:!border-orange-500 hover:!text-orange-600 hover:!bg-orange-50" title="Desabilitar"><span class="material-symbols-outlined text-[18px]">block</span></button>
+                        <button class="sig-btn-icon hover:!border-red-500 hover:!text-red-600 hover:!bg-red-50" title="Excluir"><span class="material-symbols-outlined text-[18px]">delete</span></button>
                     </div>
                 </td>
             </tr>
@@ -841,17 +852,14 @@
                 </td>
                 <td class="uppercase font-semibold text-slate-600 group-hover:text-[#1e40af] text-[11px] transition-colors">
                     <div class="flex items-center gap-2 pl-6 border-l-2 border-slate-200 group-hover:border-[#1e40af] py-1 transition-colors">
-                        CORREIAS DENTADAS
+                        BOMBA D'ÁGUA
                     </div>
                 </td>
                 <td class="sig-text-center border-l border-slate-100">
-                    <div class="flex justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button class="sig-btn-icon text-slate-400 hover:text-[#1e40af] hover:bg-blue-50" title="Editar Subcategoria">
-                            <span class="material-symbols-outlined text-[16px]">edit</span>
-                        </button>
-                        <button class="sig-btn-icon sig-text-red hover:bg-red-50" title="Remover Subcategoria">
-                            <span class="material-symbols-outlined text-[16px]">close</span>
-                        </button>
+                    <div class="flex justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button class="sig-btn-icon" title="Editar"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+                        <button class="sig-btn-icon hover:!border-orange-500 hover:!text-orange-600 hover:!bg-orange-50" title="Desabilitar"><span class="material-symbols-outlined text-[18px]">block</span></button>
+                        <button class="sig-btn-icon hover:!border-red-500 hover:!text-red-600 hover:!bg-red-50" title="Excluir"><span class="material-symbols-outlined text-[18px]">delete</span></button>
                     </div>
                 </td>
             </tr>
@@ -1765,5 +1773,24 @@
             </div>
         </div> <!-- Fim Grid -->
     </div> <!-- Fim Wrap MAX -->
+
+<script>
+    function toggleTree(id, row) {
+        const children = document.querySelectorAll(`.tree-child-${id}`);
+        // Find icon inside the clicked row
+        const icon = row.querySelector('.icon-tree');
+        if(!icon) return;
+        
+        const isExpanded = icon.classList.contains('rotate-90');
+        
+        if (isExpanded) {
+            icon.classList.remove('rotate-90');
+            children.forEach(child => child.classList.add('hidden'));
+        } else {
+            icon.classList.add('rotate-90');
+            children.forEach(child => child.classList.remove('hidden'));
+        }
+    }
+</script>
 </body>
 </html>

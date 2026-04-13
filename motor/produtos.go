@@ -21,6 +21,7 @@ type Marca struct {
 	MkpExterno  float64 `json:"mkp_externo"`
 	MkpOficina  float64 `json:"mkp_oficina"`
 	CriadoEm    string  `json:"criado_em"`
+	Ativo       bool    `json:"ativo"`
 }
 
 type FiltrosProdutos struct {
@@ -404,7 +405,7 @@ type NFeXML struct {
 // -----------------------------------------------------
 
 func (m *MotorBD) ListarMarcas() ([]Marca, error) {
-	query := `SELECT id, nome, margem, COALESCE(mkp_balcao, 0), COALESCE(mkp_externo, 0), COALESCE(mkp_oficina, 0), to_char(criado_em, 'DD/MM/YYYY') FROM marcas ORDER BY id ASC`
+	query := `SELECT id, nome, margem, COALESCE(mkp_balcao, 0), COALESCE(mkp_externo, 0), COALESCE(mkp_oficina, 0), to_char(criado_em, 'DD/MM/YYYY'), COALESCE(ativo, TRUE) FROM marcas ORDER BY id ASC`
 	rows, err := m.Conexao.Query(query)
 	if err != nil {
 		return nil, err
@@ -414,7 +415,7 @@ func (m *MotorBD) ListarMarcas() ([]Marca, error) {
 	var lista []Marca
 	for rows.Next() {
 		var item Marca
-		if err := rows.Scan(&item.ID, &item.Nome, &item.Margem, &item.MkpBalcao, &item.MkpExterno, &item.MkpOficina, &item.CriadoEm); err != nil {
+		if err := rows.Scan(&item.ID, &item.Nome, &item.Margem, &item.MkpBalcao, &item.MkpExterno, &item.MkpOficina, &item.CriadoEm, &item.Ativo); err != nil {
 			return nil, err
 		}
 		lista = append(lista, item)
@@ -427,7 +428,7 @@ func (m *MotorBD) ListarMarcas() ([]Marca, error) {
 
 func (m *MotorBD) SalvarMarca(nome string, margem float64) error {
 	_, err := m.Conexao.Exec(`
-		INSERT INTO marcas (nome, margem, mkp_balcao, mkp_externo, mkp_oficina) VALUES ($1, $2, $2, $2, $2)
+		INSERT INTO marcas (nome, margem, mkp_balcao, mkp_externo, mkp_oficina, ativo) VALUES ($1, $2, $2, $2, $2, TRUE)
 		ON CONFLICT (nome) DO UPDATE SET margem = EXCLUDED.margem, mkp_balcao = EXCLUDED.margem, mkp_externo = EXCLUDED.margem, mkp_oficina = EXCLUDED.margem
 	`, nome, margem)
 	if err == nil {
@@ -470,11 +471,14 @@ func (m *MotorBD) ListarCategorias() ([]Categoria, error) {
 	return lista, nil
 }
 
-func (m *MotorBD) SalvarCategoria(nome string) error {
-	_, err := m.Conexao.Exec(`
-		INSERT INTO categorias (nome) VALUES ($1)
-		ON CONFLICT (nome) DO UPDATE SET nome = EXCLUDED.nome
-	`, nome)
+func (m *MotorBD) SalvarCategoria(id int, nome string) error {
+	var err error
+	if id > 0 {
+		_, err = m.Conexao.Exec(`UPDATE categorias SET nome = $1 WHERE id = $2`, nome, id)
+	} else {
+		m.Conexao.Exec("SELECT setval(pg_get_serial_sequence('categorias', 'id'), COALESCE((SELECT MAX(id) FROM categorias), 0))")
+		_, err = m.Conexao.Exec(`INSERT INTO categorias (nome) VALUES ($1)`, nome)
+	}
 	return err
 }
 
@@ -514,11 +518,14 @@ func (m *MotorBD) ListarSubcategorias() ([]Subcategoria, error) {
 	return lista, nil
 }
 
-func (m *MotorBD) SalvarSubcategoria(categoriaId int, nome string) error {
-	_, err := m.Conexao.Exec(`
-		INSERT INTO subcategorias (categoria_id, nome) VALUES ($1, $2)
-		ON CONFLICT (categoria_id, nome) DO UPDATE SET nome = EXCLUDED.nome
-	`, categoriaId, nome)
+func (m *MotorBD) SalvarSubcategoria(id int, categoriaId int, nome string) error {
+	var err error
+	if id > 0 {
+		_, err = m.Conexao.Exec(`UPDATE subcategorias SET nome = $1, categoria_id = $2 WHERE id = $3`, nome, categoriaId, id)
+	} else {
+		m.Conexao.Exec("SELECT setval(pg_get_serial_sequence('subcategorias', 'id'), COALESCE((SELECT MAX(id) FROM subcategorias), 0))")
+		_, err = m.Conexao.Exec(`INSERT INTO subcategorias (categoria_id, nome) VALUES ($1, $2)`, categoriaId, nome)
+	}
 	return err
 }
 
@@ -615,8 +622,11 @@ func (m *MotorBD) SetupProdutosData() error {
 			id SERIAL PRIMARY KEY,
 			nome VARCHAR(100) UNIQUE NOT NULL,
 			margem DECIMAL(12, 2) DEFAULT 0.00,
+			ativo BOOLEAN DEFAULT TRUE,
 			criado_em TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 		);`,
+		`ALTER TABLE marcas ADD COLUMN IF NOT EXISTS ativo BOOLEAN DEFAULT TRUE;`,
+		`UPDATE marcas SET ativo = TRUE WHERE ativo IS NULL;`,
 		`CREATE TABLE IF NOT EXISTS categorias (
 			id SERIAL PRIMARY KEY,
 			nome VARCHAR(100) UNIQUE NOT NULL,

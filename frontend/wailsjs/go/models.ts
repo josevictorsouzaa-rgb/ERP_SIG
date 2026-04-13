@@ -433,6 +433,7 @@ export namespace motor {
 	    mkp_externo: number;
 	    mkp_oficina: number;
 	    criado_em: string;
+	    ativo: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new Marca(source);
@@ -447,6 +448,7 @@ export namespace motor {
 	        this.mkp_externo = source["mkp_externo"];
 	        this.mkp_oficina = source["mkp_oficina"];
 	        this.criado_em = source["criado_em"];
+	        this.ativo = source["ativo"];
 	    }
 	}
 	export class MatrizFiscal {

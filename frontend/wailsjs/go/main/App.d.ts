@@ -28,13 +28,19 @@ export function EscutarBanco():Promise<void>;
 
 export function ExcluirAliquotaFiscal(arg1:number):Promise<string>;
 
+export function ExcluirCategoria(arg1:number):Promise<void>;
+
 export function ExcluirFornecedor(arg1:number):Promise<string>;
+
+export function ExcluirFuncao(arg1:number):Promise<string>;
 
 export function ExcluirMatrizFiscal(arg1:number):Promise<string>;
 
 export function ExcluirPerfilFiscal(arg1:number):Promise<string>;
 
 export function ExcluirProduto(arg1:number):Promise<string>;
+
+export function ExcluirSubcategoria(arg1:number):Promise<void>;
 
 export function ExcluirUsuario(arg1:number):Promise<string>;
 
@@ -47,6 +53,8 @@ export function GetOperadorLogado():Promise<motor.Usuario>;
 export function GetPermissoesLogado():Promise<string>;
 
 export function GetProximoIDFornecedor():Promise<number>;
+
+export function GetProximoIDFuncao():Promise<number>;
 
 export function GetProximoIDUsuario():Promise<number>;
 
@@ -100,6 +108,8 @@ export function MaximizarJanela():Promise<void>;
 
 export function MostrarAlerta(arg1:string,arg2:string):Promise<void>;
 
+export function MostrarConfirmacao(arg1:string,arg2:string):Promise<boolean>;
+
 export function NotificarSelecao(arg1:string):Promise<void>;
 
 export function ObterDescricaoCFOP(arg1:string):Promise<string>;
@@ -132,9 +142,13 @@ export function ResolverMatrizFiscal(arg1:motor.ContextoFiscal):Promise<motor.Ma
 
 export function SalvarAliquotaFiscal(arg1:motor.AliquotaFiscal):Promise<string>;
 
+export function SalvarCategoria(arg1:number,arg2:string):Promise<void>;
+
 export function SalvarEntrada(arg1:motor.Entrada):Promise<string>;
 
 export function SalvarFornecedor(arg1:motor.Fornecedor):Promise<string>;
+
+export function SalvarFuncao(arg1:motor.Funcao):Promise<string>;
 
 export function SalvarGrupoAcesso(arg1:motor.GrupoAcesso):Promise<string>;
 
@@ -149,6 +163,8 @@ export function SalvarPerfilFiscal(arg1:motor.PerfilFiscal):Promise<string>;
 export function SalvarProduto(arg1:motor.Produto):Promise<string>;
 
 export function SalvarSolicitacaoCompra(arg1:motor.SolicitacaoCompra):Promise<string>;
+
+export function SalvarSubcategoria(arg1:number,arg2:number,arg3:string):Promise<void>;
 
 export function SalvarUsuario(arg1:motor.Usuario):Promise<string>;
 

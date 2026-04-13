@@ -1,0 +1,63 @@
+
+<div class="mb-4 flex items-end justify-between border-b border-slate-100 pb-3 shrink-0 px-2 bg-slate-50/20">
+    <div>
+        <h2 class="sig-header-classic">Estrutura de Categorias</h2>
+        <p class="text-[9px] text-slate-400 font-black uppercase tracking-widest mt-0.5 opacity-70">Árvore de categorias e subcategorias</p>
+    </div>
+    <button onclick="abrirModalCategoria()" class="sig-btn sig-btn-primary shadow-sm flex items-center gap-2">
+        <span class="material-symbols-outlined !text-[16px]">add_circle</span> NOVA CATEGORIA
+    </button>
+</div>
+<div class="flex-1 overflow-y-auto border border-slate-200 rounded-sm bg-white">
+    <table class="sig-table w-full">
+        <thead class="sticky top-0 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.05)] z-10">
+            <tr>
+                <th class="w-20 border-r border-slate-200">ID / PAI</th>
+                <th>ESTRUTURA HIERÁRQUICA</th>
+                <th class="w-36 sig-text-center border-l border-slate-200">AÇÕES</th>
+            </tr>
+        </thead>
+        <tbody id="corpo-tabela-categorias"></tbody>
+    </table>
+</div>
+
+<!-- Modal Compartilhado para Categoria/Subcategoria -->
+<div id="modal-categoria" class="fixed inset-0 bg-black/60 z-[99] hidden justify-center items-center p-4 animate-opacity">
+    <div class="bg-white w-full max-w-[450px] rounded-md shadow-2xl overflow-hidden border border-slate-400">
+        <div class="bg-slate-50 p-2 px-4 flex justify-between items-center border-b border-slate-300">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-slate-500 text-sm">account_tree</span>
+                <h3 id="titulo-modal-categoria" class="text-slate-700 font-bold text-[11px] uppercase tracking-wider">Cadastro de Categoria</h3>
+            </div>
+            <button onclick="fecharModalCategoria()" class="sig-btn-close !w-7 !h-7">
+                <span class="material-symbols-outlined !text-base">close</span>
+            </button>
+        </div>
+        <div class="p-8">
+            <form id="form-categoria" class="space-y-6">
+                <div class="sig-fieldset-blueprint w-full">
+                    <span class="sig-legend-blueprint w-auto font-black px-2" id="legend-categoria">INFORMAÇÕES</span>
+                    <div class="space-y-4 p-2">
+                        <input type="hidden" id="categoria-id">
+                        <input type="hidden" id="categoria-tipo"> <!-- 'CATEGORIA' ou 'SUBCATEGORIA' -->
+                        <input type="hidden" id="categoria-pai-id">
+                        
+                        <div>
+                            <label class="sig-label-dense">NOME / DESCRITIVO OFICIAL *</label>
+                            <input type="text" id="categoria-nome" class="sig-input-dense w-full uppercase font-bold text-sig-blue" placeholder="EX: ELÉTRICA">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="p-3 bg-slate-50 border-t border-slate-200 flex justify-end gap-2 px-6">
+            <button onclick="fecharModalCategoria()" class="sig-btn sig-btn-neutral w-28 uppercase text-[10px] font-bold">
+                <span class="material-symbols-outlined !text-[16px]">close</span> Cancelar
+            </button>
+            <button id="btn-salvar-categoria" onclick="salvarBdCategoriaSub()" type="button" class="sig-btn sig-btn-primary min-w-[150px] shadow-sm flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined !text-[18px]">save</span>
+                <span class="tracking-widest font-black uppercase text-[10px]">Salvar</span>
+            </button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,24 @@
+
+<div class="mb-4 flex items-end justify-between border-b border-slate-100 pb-3 shrink-0 px-2 bg-slate-50/20">
+    <div>
+        <h2 class="sig-header-classic">Parâmetros de Marcas</h2>
+        <p class="text-[9px] text-slate-400 font-black uppercase tracking-widest mt-0.5 opacity-70">Gerenciamento de marcas</p>
+    </div>
+    <button onclick="abrirModalMarca()" class="sig-btn sig-btn-primary shadow-sm flex items-center gap-2">
+        <span class="material-symbols-outlined !text-[16px]">add_circle</span> NOVA MARCA
+    </button>
+</div>
+<div class="flex-1 overflow-y-auto border border-slate-200 rounded-sm bg-white">
+    <table class="sig-table sig-table-sm w-full">
+        <thead class="sticky top-0 bg-slate-100 shadow-sm z-10 border-b border-slate-200">
+            <tr>
+                <th class="w-16 sig-text-center border-r border-slate-200">ID</th>
+                <th>NOME DA MARCA</th>
+                <th class="w-32 sig-text-center border-l border-slate-200">MARGEM (%)</th>
+                <th class="w-32 sig-text-center border-l border-slate-200">STATUS</th>
+                <th class="w-24 sig-text-center border-l border-slate-200">AÇÕES</th>
+            </tr>
+        </thead>
+        <tbody id="corpo-tabela-marcas"></tbody>
+    </table>
+</div>

@@ -837,6 +837,27 @@ func (a *App) ListarCategorias() []motor.Categoria {
 	return lista
 }
 
+
+func (a *App) SalvarCategoria(id int, nome string) error {
+	if a.banco == nil { return nil }
+	return a.banco.SalvarCategoria(id, nome)
+}
+
+func (a *App) ExcluirCategoria(id int) error {
+	if a.banco == nil { return nil }
+	return a.banco.ExcluirCategoria(id)
+}
+
+func (a *App) SalvarSubcategoria(id int, categoriaId int, nome string) error {
+	if a.banco == nil { return nil }
+	return a.banco.SalvarSubcategoria(id, categoriaId, nome)
+}
+
+func (a *App) ExcluirSubcategoria(id int) error {
+	if a.banco == nil { return nil }
+	return a.banco.ExcluirSubcategoria(id)
+}
+
 func (a *App) ListarSubcategorias() []motor.Subcategoria {
 	if a.banco == nil { return []motor.Subcategoria{} }
 	lista, _ := a.banco.ListarSubcategorias()
@@ -993,3 +1014,40 @@ func (a *App) ExcluirFornecedor(id int) string {
 	if err != nil { return err.Error() }
 	return "OK"
 }
+
+
+// MostrarConfirmacao displays a native OS prompt for YES/NO
+func (a *App) MostrarConfirmacao(titulo string, mensagem string) bool {
+	dialog := runtime.MessageDialogOptions{
+		Type:          runtime.QuestionDialog,
+		Title:         titulo,
+		Message:       mensagem,
+		DefaultButton: "Não",
+		CancelButton:  "Não",
+	}
+	result, _ := runtime.MessageDialog(a.ctx, dialog)
+	return result == "Yes" || result == "Sim"
+}
+
+
+func (a *App) SalvarFuncao(f motor.Funcao) string {
+	if a.banco == nil { return "Erro DB" }
+	err := a.banco.SalvarFuncao(f)
+	if err != nil { return err.Error() }
+	return "OK"
+}
+
+func (a *App) ExcluirFuncao(id int) string {
+	if a.banco == nil { return "Erro DB" }
+	err := a.banco.ExcluirFuncao(id)
+	if err != nil { return err.Error() }
+	return "OK"
+}
+
+
+func (a *App) GetProximoIDFuncao() int {
+	if a.banco == nil { return 1 }
+	max, _ := a.banco.GetProximoIDFuncao()
+	return max
+}
+

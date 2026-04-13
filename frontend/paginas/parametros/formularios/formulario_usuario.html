@@ -1,0 +1,141 @@
+<!-- MODAL USUÁRIO: DESIGN BLUEPRINT OFICIAL (COMPACTO) -->
+<div id="modal-usuario" class="fixed inset-0 z-[100] bg-black/60 items-center justify-center hidden">
+    <div class="bg-white w-full max-w-[900px] rounded-md shadow-2xl overflow-hidden border border-slate-400">
+        
+        <!-- HEADER DO MODAL -->
+        <div class="bg-slate-50 p-2 px-4 flex justify-between items-center border-b border-slate-300">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-slate-500 text-sm">person</span>
+                <h3 id="titulo-modal-usuario" class="text-slate-700 font-bold text-[11px] uppercase tracking-wider">Cadastro Completo de Operador / Usuário</h3>
+            </div>
+            <button onclick="fecharModalUsuario()" class="sig-btn-close !w-7 !h-7">
+                <span class="material-symbols-outlined !text-base">close</span>
+            </button>
+        </div>
+
+        <!-- CONTEÚDO DO MODAL -->
+        <div class="p-5 max-h-[85vh] overflow-y-auto custom-scrollbar">
+            <form id="form-usuario" class="space-y-6">
+
+                <!-- DADOS PESSOAIS -->
+                <div class="sig-fieldset-container w-full">
+                    <div class="sig-fieldset-header">
+                        <span class="material-symbols-outlined text-[14px]">badge</span> DADOS PESSOAIS E IDENTIFICAÇÃO
+                    </div>
+                    <div class="sig-fieldset-content grid grid-cols-12 gap-x-3 gap-y-2.5">
+                        <div class="col-span-12 md:col-span-6">
+                            <label class="sig-label-dense">PRIMEIRO NOME (OPERADOR) *</label>
+                            <input type="text" id="usr-nome" class="sig-input-dense w-full uppercase font-bold text-sig-blue" required>
+                        </div>
+                        <div class="col-span-12 md:col-span-6">
+                            <label class="sig-label-dense">SOBRENOME / APELIDO</label>
+                            <input type="text" id="usr-sobrenome" class="sig-input-dense w-full uppercase font-bold">
+                        </div>
+
+                        <div class="col-span-12 md:col-span-4">
+                            <label class="sig-label-dense">Nº CPF (OFICIAL)</label>
+                            <input type="text" id="usr-cpf" class="sig-input-dense w-full font-mono font-bold" placeholder="000.000.000-00" oninput="this.value = this.value.replace(/\D/g, '').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})$/, '$1-$2')" maxlength="14">
+                        </div>
+                        <div class="col-span-12 md:col-span-4">
+                            <label class="sig-label-dense">Nº RG (IDENTIDADE)</label>
+                            <input type="text" id="usr-rg" class="sig-input-dense w-full font-mono font-bold">
+                        </div>
+                        <div class="col-span-12 md:col-span-4">
+                            <label class="sig-label-dense">DATA DE NASCIMENTO</label>
+                            <input type="date" id="usr-data-nascimento" class="sig-input-dense w-full font-bold">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ENDEREÇAMENTO -->
+                <div class="sig-fieldset-container w-full">
+                    <div class="sig-fieldset-header !bg-slate-50 text-slate-700 border-b border-slate-200">
+                        <span class="material-symbols-outlined text-[14px]">home_pin</span> ENDEREÇAMENTO RESIDENCIAL
+                    </div>
+                    <div class="sig-fieldset-content grid grid-cols-12 gap-x-3 gap-y-2.5">
+                        <div class="col-span-6 md:col-span-3">
+                            <label class="sig-label-dense flex justify-between items-center">CEP</label>
+                            <input type="text" id="usr-cep" class="sig-input-dense w-full font-mono font-bold" placeholder="00000-000" onblur="consultarCEP()" oninput="this.value = this.value.replace(/\D/g, '').replace(/^(\d{5})(\d)/, '$1-$2')" maxlength="9">
+                        </div>
+                        <div class="col-span-12 md:col-span-7">
+                            <label class="sig-label-dense">LOGRADOURO / ENDEREÇO</label>
+                            <input type="text" id="usr-logradouro" class="sig-input-dense w-full uppercase">
+                        </div>
+                        <div class="col-span-6 md:col-span-2">
+                            <label class="sig-label-dense text-center">NÚMERO</label>
+                            <input type="text" id="usr-numero" class="sig-input-dense w-full text-center font-bold">
+                        </div>
+
+                        <div class="col-span-12 md:col-span-4">
+                            <label class="sig-label-dense">COMPLEMENTO (APTO / BLOCO)</label>
+                            <input type="text" id="usr-complemento" class="sig-input-dense w-full uppercase">
+                        </div>
+                        <div class="col-span-12 md:col-span-4">
+                            <label class="sig-label-dense">BAIRRO / REGIÃO</label>
+                            <input type="text" id="usr-bairro" class="sig-input-dense w-full uppercase">
+                        </div>
+                        <div class="col-span-12 md:col-span-3">
+                            <label class="sig-label-dense">CIDADE</label>
+                            <input type="text" id="usr-cidade" class="sig-input-dense w-full uppercase">
+                        </div>
+                        <div class="col-span-6 md:col-span-1">
+                            <label class="sig-label-dense text-center">UF</label>
+                            <input type="text" id="usr-uf" class="sig-input-dense w-full text-center font-black uppercase" maxlength="2">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CONFIGURAÇÕES DE ACESSO -->
+                <div class="sig-fieldset-container w-full">
+                    <div class="sig-fieldset-header !bg-amber-50 text-amber-900 border-b border-amber-200">
+                        <span class="material-symbols-outlined text-[14px] text-amber-600">lock_person</span> CREDENCIAIS E ACESSO
+                    </div>
+                    <div class="sig-fieldset-content grid grid-cols-12 gap-x-3 gap-y-2.5">
+                        <div class="col-span-4 md:col-span-1">
+                            <label class="sig-label-dense text-center">ID</label>
+                            <input type="text" id="usr-id" class="sig-input-dense w-full bg-slate-50 font-mono text-center text-slate-400" readonly placeholder="-">
+                        </div>
+                        <div class="col-span-8 md:col-span-5">
+                            <label class="sig-label-dense">LOGIN DE ACESSO *</label>
+                            <input type="text" id="usr-login" class="sig-input-dense w-full lowercase font-black text-sig-blue" required oninput="this.value = this.value.replace(/\s/g, '')" onblur="verificarLoginUsuarios(this)">
+                        </div>
+                        <div class="col-span-12 md:col-span-6">
+                            <label class="sig-label-dense text-sig-blue">FUNÇÃO / PERFIL DE CARGO (COMBO)</label>
+                            <select id="usr-funcao" class="sig-input-dense w-full font-bold uppercase text-sig-blue">
+                                <option value="0">SELECIONE O PERFIL...</option>
+                            </select>
+                        </div>
+
+                        <div class="col-span-6 md:col-span-3">
+                            <label class="sig-label-dense">DATA DE ADMISSÃO</label>
+                            <input type="date" id="usr-data-admissao" class="sig-input-dense w-full font-bold">
+                        </div>
+
+                        <div id="usr-box-senha" class="col-span-6 md:col-span-4">
+                            <label class="sig-label-dense">SENHA INICIAL</label>
+                            <input type="text" id="usr-senha" class="sig-input-dense w-full font-mono text-sig-blue bg-slate-100 placeholder-slate-400" value="sig123" readonly>
+                        </div>
+
+                        <div class="col-span-12 md:col-span-5 flex items-end">
+                            <label class="sig-check-group cursor-pointer w-full bg-slate-50 border border-slate-200 p-1.5 px-3 rounded hover:bg-slate-100 transition-all">
+                                <input type="checkbox" id="usr-ativo" checked class="sig-check-input hidden">
+                                <div class="sig-checkbox"></div>
+                                <span class="text-[9px] font-black text-slate-700 uppercase tracking-widest ml-2">Acesso Ativo ao Sistema</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- FOOTER DO MODAL -->
+        <div class="p-3 bg-slate-50 border-t border-slate-200 flex justify-end gap-2 px-6">
+            <button onclick="fecharModalUsuario()" class="sig-btn text-slate-500 hover:bg-slate-200 uppercase text-[10px] font-bold px-6 py-2">Cancelar</button>
+            <button onclick="salvarBdUsuario()" class="sig-btn sig-btn-primary min-w-[240px] shadow-lg flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined !text-[18px]">save</span>
+                <span class="tracking-widest font-black uppercase text-[10px]">Gravar Operador (F10)</span>
+            </button>
+        </div>
+    </div>
+</div>
+

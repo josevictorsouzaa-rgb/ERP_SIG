@@ -806,6 +806,8 @@ func (m *MotorBD) SalvarUsuario(u Usuario) error {
 		}
 		return err
 	}
+	// Sincroniza a sequence para garantir ID sequencial estrito (caso haja buracos)
+	m.Conexao.Exec("SELECT setval(pg_get_serial_sequence('usuarios', 'id'), COALESCE((SELECT MAX(id) FROM usuarios), 0))")
 	query := `
 		INSERT INTO usuarios (
 			nome, sobrenome, cpf, rg, data_nascimento, data_admissao,
@@ -827,6 +829,13 @@ func (m *MotorBD) SalvarUsuario(u Usuario) error {
 }
 
 // --- MÓDULO DE FUNÇÕES ---
+
+
+func (m *MotorBD) GetProximoIDFuncao() (int, error) {
+	var nID int
+	err := m.Conexao.QueryRow("SELECT COALESCE(MAX(id), 0) + 1 FROM funcoes").Scan(&nID)
+	return nID, err
+}
 
 func (m *MotorBD) ListarFuncoes() ([]Funcao, error) {
 	rows, err := m.Conexao.Query("SELECT id, nome FROM funcoes ORDER BY id ASC")
@@ -851,6 +860,8 @@ func (m *MotorBD) SalvarFuncao(f Funcao) error {
 		_, err := m.Conexao.Exec("UPDATE funcoes SET nome=$1 WHERE id=$2", f.Nome, f.ID)
 		return err
 	}
+	// Sincroniza a sequence para garantir ID sequencial estrito
+	m.Conexao.Exec("SELECT setval(pg_get_serial_sequence('funcoes', 'id'), COALESCE((SELECT MAX(id) FROM funcoes), 0))")
 	_, err := m.Conexao.Exec("INSERT INTO funcoes (nome) VALUES ($1)", f.Nome)
 	return err
 }

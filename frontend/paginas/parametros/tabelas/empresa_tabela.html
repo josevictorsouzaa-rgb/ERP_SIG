@@ -1,0 +1,34 @@
+<div class="mb-4 flex items-end justify-between border-b border-slate-100 pb-3 shrink-0 px-2 bg-slate-50/20">
+    <div>
+        <h2 class="sig-header-classic">Gerenciamento de Empresas</h2>
+        <p class="text-[9px] text-slate-400 font-black uppercase tracking-widest mt-0.5 opacity-70">Estrutura organizacional / cadastro mestre</p>
+    </div>
+    <button onclick="abrirSelecaoTipo()" class="sig-btn sig-btn-primary shadow-sm flex items-center gap-2">
+        <span class="text-xs">+</span> Nova Empresa
+    </button>
+</div>
+<div class="flex-1 overflow-y-auto border border-slate-300 rounded-sm bg-white shadow-inner">
+    <table class="sig-table sig-table-md w-full">
+        <thead class="sticky top-0 bg-slate-100 shadow-sm z-10 font-bold border-b border-slate-200">
+            <tr>
+                <th class="sig-text-center w-12 border-r border-slate-200">ID</th>
+                <th>NOME / RAZÃO SOCIAL</th>
+                 <th class="w-48 border-l border-slate-200">CPF / CNPJ</th>
+                 <th class="w-32 border-l border-slate-200">ESTOQUE</th>
+                 <th class="w-40 border-l border-slate-200">REGIME</th>
+                 <th class="sig-text-center w-24 border-l border-slate-200">AÇÕES</th>
+            </tr>
+        </thead>
+        <tbody id="corpo-tabela-empresas">
+            <tr id="status-lista">
+                <td colspan="6" class="py-12 text-center text-slate-300 text-[10px] font-black uppercase tracking-widest bg-white">
+                    <div class="flex flex-col items-center gap-2">
+                        <span class="material-symbols-outlined animate-spin text-slate-200 text-3xl">sync</span>
+                        Sincronizando com banco...
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
