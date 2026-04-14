@@ -226,8 +226,7 @@ func (m *MotorBD) CriarTabelasIniciais(schema string) error {
 
 	// TABELA DE FORNECEDORES
 	m.Conexao.Exec(`
-		DROP TABLE IF EXISTS fornecedores CASCADE;
-		CREATE TABLE fornecedores (
+		CREATE TABLE IF NOT EXISTS fornecedores (
 			id SERIAL PRIMARY KEY,
 			ativo BOOLEAN DEFAULT true,
 			tipo_pessoa VARCHAR(1) DEFAULT 'J',

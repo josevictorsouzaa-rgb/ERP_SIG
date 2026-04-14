@@ -616,6 +616,45 @@
                 </div>
             </div>
 
+            <!-- BLOCO 4: MENUS E NAVEGAÇÃO INTERNA -->
+            <div id="menus" class="showcase-card break-inside-avoid" style="column-span: all;">
+                <h3 class="showcase-block-title">Menus e Navegação de Seções (Inner Tabs)</h3>
+                
+                <div class="group relative">
+                    <div class="absolute -right-2 -top-2">
+                        <button class="copy-trigger bg-white border border-slate-200 shadow-sm text-slate-500 rounded p-1.5 hover:bg-emerald-50 outline-none z-10" onclick="copiarHTML(this)"><span class="material-symbols-outlined text-[14px]">content_copy</span></button>
+                    </div>
+                    <div class="sig-copyable-target pr-8 flex flex-col gap-2">
+<!-- Abas Internas (Header de Div) para Separação de Seções / Dados -->
+<div class="h-40 bg-white border border-slate-300 rounded-sm flex flex-col overflow-hidden transition-opacity">
+    
+    <!-- Header de Abas -->
+    <div class="flex bg-slate-100 border-b border-slate-300 shrink-0">
+        <!-- Aba Ativa -->
+        <button class="px-4 py-1.5 text-[9px] font-black uppercase bg-white border-r border-slate-300 text-blue-700">DADOS GERAIS</button>
+        <!-- Aba Inativa -->
+        <button class="px-4 py-1.5 text-[9px] font-black uppercase text-slate-500 hover:bg-slate-50 border-r border-slate-300 transition-colors">FINANCEIRO</button>
+        <!-- Aba Inativa Secundaria -->
+        <button class="px-4 py-1.5 text-[9px] font-black uppercase text-slate-500 hover:bg-slate-50 border-r border-slate-300 transition-colors">CONFIGURAÇÕES</button>
+    </div>
+    
+    <!-- Conteúdo da Aba (Painel Dinâmico) -->
+    <div class="p-3 grid grid-cols-12 gap-3 flex-1 overflow-y-auto">
+        <div class="col-span-12 md:col-span-8">
+            <p class="text-[11px] text-slate-500 mt-2 italic font-medium">
+                Componente utilizado para menus horizontais menores dentro de painéis. Para trocar as abas implemente uma lógica JS alternando a classe <code>bg-white text-blue-700</code> da aba ativa, em detrimento do padrão <code>bg-slate-100 text-slate-500</code>.
+            </p>
+        </div>
+        <div class="col-span-12 md:col-span-4 mt-2">
+            <label class="sig-label-dense">CAMPO GENÉRICO EXCEPCIONAL</label>
+            <input type="text" class="sig-input-dense w-full border-blue-200 focus:border-blue-500" placeholder="Apenas exemplo">
+        </div>
+    </div>
+</div>
+                    </div>
+                </div>
+            </div>
+
             <!-- BLOCO 4.5: ABAS (TABS) OPERACIONAIS ESTÁTICAS -->
             <div class="showcase-card">
                 <h3 class="showcase-block-title">Navegação e Filtros Operacionais (Abas com Contadores)</h3>

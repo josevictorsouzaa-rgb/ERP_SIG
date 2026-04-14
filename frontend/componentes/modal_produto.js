@@ -72,12 +72,13 @@ async function carregarFragmentoCadastro() {
 
     try {
 
-        const response = await fetch('../../componentes/cadastro_form_fragmento.html');
-
-        if (!response.ok) throw new Error("Erro ao carregar fragmento.");
+        let response = await fetch('/componentes/cadastro_form_fragmento.html');
+        if (!response.ok) {
+             response = await fetch('../../componentes/cadastro_form_fragmento.html');
+        }
+        if (!response.ok) throw new Error("Erro ao carregar fragmento da UI.");
 
         window.FragmentoCadastroHTML = await response.text();
-
         return window.FragmentoCadastroHTML;
 
     } catch (e) {

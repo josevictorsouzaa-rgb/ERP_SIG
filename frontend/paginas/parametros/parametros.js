@@ -994,7 +994,7 @@ async function carregarCategorias() {
         let dom = "";
         if (cats.length === 0) { dom = `<tr><td colspan="3" class="text-center py-4 text-slate-400">Nenhuma estrutura encontrada</td></tr>`; }
         
-        cats.forEach(c => {
+        cats.sort((a,b) => a.id - b.id).forEach(c => {
             // MASTER
             dom += `
             <tr class="group bg-slate-50 border-y border-slate-200 cursor-pointer hover:bg-[#eff6ff] transition-colors shadow-[inset_4px_0_0_#1e40af]" onclick="toggleTree('cat-${c.id}', this)">
@@ -1017,7 +1017,7 @@ async function carregarCategorias() {
             `;
             
             // DETAILS
-            let subChildren = subs.filter(s => s.categoria_id === c.id);
+            let subChildren = subs.filter(s => s.categoria_id === c.id).sort((a,b) => a.id - b.id);
             subChildren.forEach(s => {
                 dom += `
                 <tr class="group bg-white hover:bg-[#eff6ff] tree-child-cat-${c.id} transition-all border-b border-slate-50/50 hidden">
